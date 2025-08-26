@@ -10,18 +10,38 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
+type OptsFunc func(*WindowOpts)
+
+type WindowOpts struct {
+	TickerDurationMil time.Duration
+}
+
 var (
 	screen      tcell.Screen
 	initOnce    sync.Once
-	initLock    sync.Mutex
 	cleanupOnce sync.Once
 	ticker      *time.Ticker
 	style       tcell.Style
-	delta       float64
 )
 
-func initScreen() {
+func ChangeTickerDuration(duration time.Duration) OptsFunc {
+	return func(opts *WindowOpts) {
+		opts.TickerDurationMil = duration
+	}
+}
+
+func defautlOpts() WindowOpts {
+	return WindowOpts{
+		TickerDurationMil: 33,
+	}
+}
+
+func InitScreen(opts ...OptsFunc) {
 	initOnce.Do(func() {
+		o := defautlOpts()
+		for _, fn := range opts {
+			fn(&o)
+		}
 		var s tcell.Screen
 		var err error
 		s, err = tcell.NewScreen()
@@ -32,39 +52,37 @@ func initScreen() {
 			log.Fatal(err)
 		}
 		s.SetTitle("not set")
-		ticker = time.NewTicker(33 * time.Millisecond)
+		ticker = time.NewTicker(o.TickerDurationMil * time.Millisecond)
 		style = tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorGreenYellow)
 		screen = s
 	})
 }
 
 func GetScreen() tcell.Screen {
-	initLock.Lock()
-	defer initLock.Unlock()
 	if screen != nil {
-		return screen
+		log.Fatal("Screen must be initialized first. Call InitScreen()")
 	}
-	initScreen()
 	return screen
 }
 
 func GetTicker() *time.Ticker {
-	initLock.Lock()
-	defer initLock.Unlock()
 	if ticker == nil {
-		// ensures both ticker and screen are initialized
-		initScreen()
+		log.Fatal("Screen must be initialized first. Call InitScreen()")
 	}
 	return ticker
 }
 
 func SetTitle(title string) {
-	initScreen()
+	if screen == nil {
+		log.Fatal("Screen must be initialized first. Call InitScreen()")
+	}
 	screen.SetTitle(title)
 }
 
 func InputEvent(exitCha chan int, keys func(tcell.Event)) {
-	initScreen()
+	if screen == nil {
+		log.Fatal("Screen must be initialized first. Call InitScreen()")
+	}
 	go func() {
 		for {
 			event := screen.PollEvent()
@@ -86,7 +104,10 @@ func InputEvent(exitCha chan int, keys func(tcell.Event)) {
 }
 
 func Update(exitCha chan int, updates func(delta float64)) {
-	initScreen()
+	if screen == nil || ticker == nil {
+		log.Fatal("Screen and/or ticker must be initialized first. Call InitScreen()")
+		return
+	}
 	var delta float64
 	go func() {
 		last := time.Now()

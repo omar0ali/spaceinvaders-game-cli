@@ -9,6 +9,10 @@ import (
 func main() {
 	exit := make(chan int)
 
+	// window by default is set to 30 FPS
+	// window.InitScreen(window.ChangeTickerDuration(16)) // this can update the framerate to 60
+	window.InitScreen()
+
 	window.SetTitle("Space Invader Game")
 
 	window.InputEvent(exit,
