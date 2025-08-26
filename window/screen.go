@@ -14,6 +14,7 @@ type OptsFunc func(*WindowOpts)
 
 type WindowOpts struct {
 	TickerDurationMil time.Duration
+	EnableMouse       bool
 }
 
 var (
@@ -31,6 +32,10 @@ func ChangeTickerDuration(duration time.Duration) OptsFunc {
 	}
 }
 
+func EnableMouse(opts *WindowOpts) {
+	opts.EnableMouse = true
+}
+
 func defautlOpts() WindowOpts {
 	return WindowOpts{
 		TickerDurationMil: 33,
@@ -38,26 +43,28 @@ func defautlOpts() WindowOpts {
 }
 
 func InitScreen(opts ...OptsFunc) tcell.Screen {
-	var s tcell.Screen
 	var err error
 	initOnce.Do(func() {
 		o := defautlOpts()
 		for _, fn := range opts {
 			fn(&o)
 		}
-		s, err = tcell.NewScreen()
+		screen, err = tcell.NewScreen()
 		if err != nil {
 			log.Fatal(err)
 		}
-		if err = s.Init(); err != nil {
+		if err = screen.Init(); err != nil {
 			log.Fatal(err)
 		}
-		s.SetTitle("not set")
+		// enable mouse
+		if o.EnableMouse {
+			screen.EnableMouse()
+		}
+		screen.SetTitle("not set")
 		ticker = time.NewTicker(o.TickerDurationMil * time.Millisecond)
 		style = tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorGreenYellow)
-		screen = s
 	})
-	return s
+	return screen
 }
 
 func GetStyle() tcell.Style {
