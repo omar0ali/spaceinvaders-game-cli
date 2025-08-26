@@ -22,6 +22,7 @@ var (
 	cleanupOnce sync.Once
 	ticker      *time.Ticker
 	style       tcell.Style
+	delta       float64
 )
 
 func ChangeTickerDuration(duration time.Duration) OptsFunc {
@@ -120,7 +121,6 @@ func Update(exitCha chan int, updates func(delta float64)) {
 		log.Fatal("Screen and/or ticker must be initialized first. Call InitScreen()")
 		return
 	}
-	var delta float64
 	go func() {
 		last := time.Now()
 		for {
@@ -150,4 +150,8 @@ func Update(exitCha chan int, updates func(delta float64)) {
 			}
 		}
 	}()
+}
+
+func GetDelta() float64 {
+	return delta
 }
