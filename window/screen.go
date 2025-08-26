@@ -36,14 +36,14 @@ func defautlOpts() WindowOpts {
 	}
 }
 
-func InitScreen(opts ...OptsFunc) {
+func InitScreen(opts ...OptsFunc) tcell.Screen {
+	var s tcell.Screen
+	var err error
 	initOnce.Do(func() {
 		o := defautlOpts()
 		for _, fn := range opts {
 			fn(&o)
 		}
-		var s tcell.Screen
-		var err error
 		s, err = tcell.NewScreen()
 		if err != nil {
 			log.Fatal(err)
@@ -56,25 +56,37 @@ func InitScreen(opts ...OptsFunc) {
 		style = tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorGreenYellow)
 		screen = s
 	})
+	return s
+}
+
+func GetStyle() tcell.Style {
+	return style
 }
 
 func GetScreen() tcell.Screen {
 	if screen != nil {
-		log.Fatal("Screen must be initialized first. Call InitScreen()")
+		log.Fatal("[SCREEN] Screen must be initialized first. Call InitScreen()")
 	}
 	return screen
 }
 
 func GetTicker() *time.Ticker {
 	if ticker == nil {
-		log.Fatal("Screen must be initialized first. Call InitScreen()")
+		log.Fatal("[TICKER] Screen must be initialized first. Call InitScreen()")
 	}
 	return ticker
 }
 
+func GetSize() (int, int) {
+	if screen == nil {
+		log.Fatal("[SCREEN] Screen must be initialized first. Call InitScreen()")
+	}
+	return screen.Size()
+}
+
 func SetTitle(title string) {
 	if screen == nil {
-		log.Fatal("Screen must be initialized first. Call InitScreen()")
+		log.Fatal("[TITLE] Screen must be initialized first. Call InitScreen()")
 	}
 	screen.SetTitle(title)
 }
