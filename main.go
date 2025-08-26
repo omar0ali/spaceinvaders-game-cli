@@ -12,33 +12,30 @@ func main() {
 	exit := make(chan int)
 
 	// window by default is set to 30 FPS
-	// window.InitScreen(window.ChangeTickerDuration(16)) // this can update the framerate to 60
-	screen := window.InitScreen()
-	w, h := window.GetSize()
-	window.SetTitle("Space Invader Game")
+	// window.InitScreen(window.ChangeTickerDuration(16), window.EnableMouse) // this can update the framerate to 60
+	screen := window.InitScreen(window.EnableMouse)
+	// ------------------------------- Setup ------------------------------------
+	screen.SetTitle("Space Invader Game")
 	// ------------------------------------- Objects ----------------------------------
 	gameContext := core.GameContext{
 		Screen: screen,
 	}
 	// ---------------------------------- entities --------------------------------------
-	spaceship := entities.InitSpaceShip(core.Point{
-		X: w / 2,
-		Y: h - 4,
-	})
+	spaceship := entities.InitSpaceShip()
 
-	gameContext.AddEntity(spaceship)
+	gameContext.AddEntity(&spaceship)
 
+	// ----------------------------------------- window ------------------------------------
 	window.InputEvent(exit,
 		func(event tcell.Event) {
 			switch ev := event.(type) {
 			case *tcell.EventKey:
 				if ev.Rune() == 'r' {
-					// testing exit with letter r
 					exit <- 0
 				}
-				for _, entity := range gameContext.GetEntities() {
-					entity.InputEvents(event, &gameContext)
-				}
+			}
+			for _, entity := range gameContext.GetEntities() {
+				entity.InputEvents(event, &gameContext)
 			}
 		},
 	)
