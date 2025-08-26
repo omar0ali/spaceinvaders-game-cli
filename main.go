@@ -29,6 +29,7 @@ func main() {
 
 	window.Update(exit,
 		func(delta float64) {
+			// update game
 		},
 	)
 
