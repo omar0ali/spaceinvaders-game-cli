@@ -5,6 +5,6 @@ A terminal-based implementation of the classic space invaders game written in Go
 
 ### TODOS
 - [X] Create a spaceship placed at the bottom of the screen.
-    - [X] Add controls to the spaceship, `Arow Keys` left and right. 
-    - [ ] Draw a proper Triangle shape.
-    - [ ] Shoots laser beam by hitting the `Space Bar`.
+    - [X] Add controls to the spaceship, `Mouse Motion` left and right. 
+    - [X] Draw a proper Triangle shape.
+    - [ ] Shoots laser beam by hitting the `Left Mouse Button`.
