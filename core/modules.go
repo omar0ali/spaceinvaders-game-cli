@@ -1,6 +1,9 @@
 package core
 
 type Point struct {
-	X int
-	Y int
+	X, Y int
+}
+
+type Triangle struct {
+	A, B, C Point
 }
