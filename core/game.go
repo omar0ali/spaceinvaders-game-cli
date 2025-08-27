@@ -6,7 +6,7 @@ import "github.com/gdamore/tcell/v2"
 type (
 	Entity interface {
 		Draw(gs *GameContext)
-		Update(gs *GameContext)
+		Update(gs *GameContext, delta float64)
 		InputEvents(event tcell.Event, gc *GameContext)
 		GetType() string
 	}
