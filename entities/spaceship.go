@@ -30,7 +30,7 @@ func InitSpaceShip() SpaceShip {
 			C: core.Point{X: origin.X + 2, Y: origin.Y + 1}, // right
 		},
 		Gun: Gun{
-			Beams: []Beam{},
+			Beams: []*Beam{},
 		},
 	}
 }
