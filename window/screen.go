@@ -101,7 +101,7 @@ func SetTitle(title string) {
 
 func InputEvent(exitCha chan int, keys func(tcell.Event)) {
 	if screen == nil {
-		log.Fatal("Screen must be initialized first. Call InitScreen()")
+		log.Fatal("[InputEvent] Screen must be initialized first. Call InitScreen()")
 	}
 	go func() {
 		for {
@@ -156,4 +156,11 @@ func Update(exitCha chan int, updates func(delta float64)) {
 			}
 		}
 	}()
+}
+
+func SetContent(x, y int, r rune) {
+	if screen == nil {
+		log.Fatal("[InputEvent] Screen must be initialized first. Call InitScreen()")
+	}
+	screen.SetContent(x, y, r, nil, style)
 }
