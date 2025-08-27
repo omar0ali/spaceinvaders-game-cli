@@ -23,7 +23,7 @@ var (
 	cleanupOnce sync.Once
 	ticker      *time.Ticker
 	style       tcell.Style
-	delta       float64
+	Delta       float64
 )
 
 func ChangeTickerDuration(duration time.Duration) OptsFunc {
@@ -126,7 +126,6 @@ func InputEvent(exitCha chan int, keys func(tcell.Event)) {
 func Update(exitCha chan int, updates func(delta float64)) {
 	if screen == nil || ticker == nil {
 		log.Fatal("Screen and/or ticker must be initialized first. Call InitScreen()")
-		return
 	}
 	go func() {
 		last := time.Now()
@@ -134,17 +133,17 @@ func Update(exitCha chan int, updates func(delta float64)) {
 			select {
 			case <-ticker.C:
 				now := time.Now()
-				delta = now.Sub(last).Seconds()
+				Delta = now.Sub(last).Seconds()
 				last = now
 
 				screen.Clear()
 
-				lenStr := []rune(fmt.Sprintf("FPS: %.2f", (1 / delta)))
+				lenStr := []rune(fmt.Sprintf("FPS: %.2f", (1 / Delta)))
 				for i, r := range lenStr {
 					screen.SetContent(i, 0, r, nil, style)
 				}
 
-				updates(delta)
+				updates(Delta)
 
 				screen.Show()
 			case val := <-exitCha:
@@ -157,8 +156,4 @@ func Update(exitCha chan int, updates func(delta float64)) {
 			}
 		}
 	}()
-}
-
-func GetDelta() float64 {
-	return delta
 }

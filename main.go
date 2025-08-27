@@ -45,7 +45,7 @@ func main() {
 			// update game
 			for _, entity := range gameContext.GetEntities() {
 				entity.Draw(&gameContext)
-				entity.Update(&gameContext)
+				entity.Update(&gameContext, delta)
 			}
 		},
 	)
