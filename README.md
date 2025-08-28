@@ -13,3 +13,6 @@ A terminal-based implementation of the classic space invaders game written in Go
 - [X] Create a single enemy spaceship. Can be produced by hitting the `Space Bar` key. This will be changed later.
     - [X] Alien ship can move towards the player.
     - [X] Can place aliens ships in a random X position
+- [ ] Spaceship (Player) health, each alien ship reaching the end will depletes the health.
+
+- [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
