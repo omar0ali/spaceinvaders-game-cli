@@ -34,20 +34,17 @@ func (g *Gun) Update(gc *core.GameContext, delta float64) {
 		return
 	}
 
-	// Temporary slice for alive beams
 	var activeBeams []*Beam
 
 	for _, beam := range g.Beams {
 		distance := int(float64(beam.speed) * delta)
 		beam.position.Y -= distance
 
-		// Only keep beam if it's still on screen
 		if beam.position.Y >= 0 {
 			activeBeams = append(activeBeams, beam)
 		}
 	}
 
-	// Replace old list with filtered one
 	g.Beams = activeBeams
 }
 
