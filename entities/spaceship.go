@@ -35,9 +35,6 @@ func InitSpaceShip() SpaceShip {
 	}
 }
 
-// TODO: will need to use delta to ensure smooth movements
-// delta can be used with window.GetDelta()
-
 func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 	defer s.Gun.Update(gc, delta)
 }
