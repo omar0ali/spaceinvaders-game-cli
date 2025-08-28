@@ -47,7 +47,7 @@ func (a *AlienProducer) AddAlien(health, speed int, origin core.PointFloat) {
 
 func (a *alien) IsHit(point core.PointInterface) bool {
 	if a.triangle.A.GetY() > point.GetY() &&
-		a.triangle.C.GetY() < point.GetY() &&
+		a.triangle.C.GetY()-2 < point.GetY() &&
 		(a.triangle.C.GetX()-1 < point.GetX() && a.triangle.B.GetX()+1 > point.GetX()) {
 
 		window.SetContent(int(point.GetX()-1), int(point.GetY()+1), 'X')
@@ -121,14 +121,21 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 func (a *AlienProducer) Draw(gc *core.GameContext) {
 	for _, alien := range a.aliens {
 		// drawing the points
-		window.SetContent(int(alien.triangle.A.GetX()), int(alien.triangle.A.GetY()+1), '*')
-		window.SetContent(int(alien.triangle.B.GetX()), int(alien.triangle.B.GetY()), '*')
-		window.SetContent(int(alien.triangle.C.GetX()), int(alien.triangle.C.GetY()), '*')
+		// header
+		window.SetContent(int(alien.triangle.A.GetX()), int(alien.triangle.A.GetY()+1), '*') // top
+		window.SetContent(int(alien.triangle.A.GetX()+1), int(alien.triangle.A.GetY()+1), '>')
+		window.SetContent(int(alien.triangle.A.GetX()+2), int(alien.triangle.A.GetY()+1), ']')
+		window.SetContent(int(alien.triangle.A.GetX()-1), int(alien.triangle.A.GetY()+1), '<')
+		window.SetContent(int(alien.triangle.A.GetX()-2), int(alien.triangle.A.GetY()+1), '[')
+
+		window.SetContent(int(alien.triangle.B.GetX()), int(alien.triangle.B.GetY()), '*') // left
+		window.SetContent(int(alien.triangle.C.GetX()), int(alien.triangle.C.GetY()), '*') // right
+
 		// lines bellow
 		window.SetContent(int(alien.triangle.C.GetX()+1), int(alien.triangle.C.GetY()), '-')
-
-		window.SetContent(int(alien.triangle.B.GetX()-1), int(alien.triangle.C.GetY()), '-')
 		window.SetContent(int(alien.triangle.C.GetX()+2), int(alien.triangle.C.GetY()), '-')
+		window.SetContent(int(alien.triangle.C.GetX()+3), int(alien.triangle.C.GetY()), '^')
+		window.SetContent(int(alien.triangle.B.GetX()-1), int(alien.triangle.C.GetY()), '-')
 		window.SetContent(int(alien.triangle.B.GetX()-2), int(alien.triangle.C.GetY()), '-')
 		// lines left
 		window.SetContent(int(alien.triangle.B.GetX()-1), int(alien.triangle.B.GetY()+1), '/')
