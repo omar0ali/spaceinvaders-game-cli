@@ -44,11 +44,10 @@ func (a *AlienProducer) AddAlien(health, speed int, origin core.PointFloat) {
 }
 
 func (a *alien) IsHit(point core.PointInterface) bool {
-	if point == a.triangle.A ||
-		point == a.triangle.B ||
-		point == a.triangle.C ||
-		point.GetX() == a.origin.X+1 && point.GetY() == a.origin.Y ||
-		point.GetX() == a.origin.X-1 && point.GetY() == a.origin.Y {
+	if a.triangle.A.GetY() > point.GetY() &&
+		a.triangle.C.GetY() < point.GetY() &&
+		(a.triangle.C.GetX()-1 < point.GetX() && a.triangle.B.GetX()+1 > point.GetX()) {
+
 		window.SetContent(int(point.GetX()-1), int(point.GetY()+1), 'X')
 		window.SetContent(int(point.GetY()-1), int(point.GetY()), 'X')
 		window.SetContent(int(point.GetX()+1), int(point.GetY()), 'X')
@@ -73,21 +72,22 @@ func InitAlienProducer() AlienProducer {
 
 func (a *AlienProducer) CheckAliensHealth(gc *core.GameContext) {
 	var activeAliens []*alien
-	var beams []*Beam
+	var gun *Gun
 	// look for the spaceship since it has the gun and the number of beams
 	for _, entity := range gc.GetEntities() {
 		if entity.GetType() == "spaceship" {
 			if spaceship, ok := entity.(*SpaceShip); ok {
-				beams = spaceship.Gun.Beams
+				gun = &spaceship.Gun
 			}
 			break
 		}
 	}
 	// on each alien avaiable check its position and check if the beam is at the same position
 	for _, alien := range a.aliens {
-		for _, beam := range beams {
+		for _, beam := range gun.Beams {
 			if alien.IsHit(&beam.position) {
 				alien.health -= beam.power
+				gun.RemoveBeam(beam)
 			}
 		}
 
