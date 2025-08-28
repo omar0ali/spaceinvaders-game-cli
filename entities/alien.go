@@ -121,7 +121,7 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 func (a *AlienProducer) Draw(gc *core.GameContext) {
 	for _, alien := range a.aliens {
 		// drawing the points
-		window.SetContent(int(alien.triangle.A.GetX()), int(alien.triangle.A.GetY()), '*')
+		window.SetContent(int(alien.triangle.A.GetX()), int(alien.triangle.A.GetY()+1), '*')
 		window.SetContent(int(alien.triangle.B.GetX()), int(alien.triangle.B.GetY()), '*')
 		window.SetContent(int(alien.triangle.C.GetX()), int(alien.triangle.C.GetY()), '*')
 		// lines bellow
