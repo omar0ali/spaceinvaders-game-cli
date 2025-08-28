@@ -1,6 +1,8 @@
 package entities
 
 import (
+	"math/rand"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvader-game-cli/core"
 	"github.com/omar0ali/spaceinvader-game-cli/window"
@@ -49,7 +51,7 @@ func (a *alien) IsHit(point core.PointInterface) bool {
 		(a.triangle.C.GetX()-1 < point.GetX() && a.triangle.B.GetX()+1 > point.GetX()) {
 
 		window.SetContent(int(point.GetX()-1), int(point.GetY()+1), 'X')
-		window.SetContent(int(point.GetY()-1), int(point.GetY()), 'X')
+		window.SetContent(int(point.GetX()-1), int(point.GetY()), 'X')
 		window.SetContent(int(point.GetX()+1), int(point.GetY()), 'X')
 		window.SetContent(int(point.GetX()), int(point.GetY()+1), 'X')
 		window.SetContent(int(point.GetX()), int(point.GetY()-1), 'X')
@@ -140,11 +142,15 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 	switch ev := event.(type) {
 	case *tcell.EventKey:
-		if ev.Rune() == ' ' {
+		if ev.Rune() == ' ' { // dev mode
 			// testing spawn an alinen
 			w, _ := gc.Screen.Size()
+			// pick a random X position to place the alien ship on screen
+			// ----from----------------------------to----// example
+			distance := w - 10 + 10 - 1
+			xPos := rand.Intn(distance) + 10
 			a.AddAlien(200, 8, core.PointFloat{
-				X: float64(w / 2),
+				X: float64(xPos),
 				Y: (0) - 5,
 			})
 		}
