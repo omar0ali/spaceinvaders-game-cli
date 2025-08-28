@@ -74,11 +74,17 @@ func (g *Gun) InputEvents(event tcell.Event, gc *core.GameContext) {
 	switch ev := event.(type) {
 	case *tcell.EventMouse:
 		if ev.Buttons() == tcell.Button1 {
+			// limit how many beams shot
+			// number of beams can't exceed 10
+			// TODO: this can be changed later when implementing config file.
+			if len(g.Beams) > 10 {
+				return
+			}
 			for _, entity := range gc.GetEntities() {
 				if entity.GetType() == "spaceship" {
 					spaceShip, ok := entity.(*SpaceShip)
 					if ok {
-						g.initBeam(20, 50, spaceShip.origin)
+						g.initBeam(20, 40, spaceShip.origin)
 						break
 					}
 				}
