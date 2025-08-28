@@ -147,8 +147,10 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 			w, _ := gc.Screen.Size()
 			// pick a random X position to place the alien ship on screen
 			// ----from----------------------------to----// example
-			distance := w - 10 + 10 - 1
-			xPos := rand.Intn(distance) + 10
+			//      20                             80
+			// distance = 80 - 20 = 60
+			distance := (w - 20) + 1
+			xPos := rand.Intn(distance) + 20
 			a.AddAlien(150, 5, core.PointFloat{
 				X: float64(xPos),
 				Y: (0) - 5,
