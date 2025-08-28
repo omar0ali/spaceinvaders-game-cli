@@ -13,6 +13,13 @@ type alien struct {
 	triangle core.Triangle // this will be used to draw the shape of the alien
 }
 
+func (a *alien) moveForward(distance int) {
+	a.origin.Y += distance
+	a.triangle.A.Y += distance
+	a.triangle.B.Y += distance
+	a.triangle.C.Y += distance
+}
+
 func (a *AlienProducer) AddAlien(health, speed int, origin core.Point) {
 	alien := alien{
 		health: health,
@@ -93,9 +100,14 @@ func (a *AlienProducer) CheckAliensHealth(gc *core.GameContext) {
 	a.aliens = activeAliens
 }
 
+// TODO: should create alines and place them in random positions on screen.
+
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	// Update the coordinates of the aliens.
-	// should create alines and place them in random positions on screen.
+	for _, alien := range a.aliens {
+		distance := int(float64(alien.speed) * delta)
+		alien.moveForward(distance)
+	}
 	a.CheckAliensHealth(gc) // this will ensure to clean up dead aliens
 }
 
@@ -124,10 +136,10 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 	case *tcell.EventKey:
 		if ev.Rune() == ' ' {
 			// testing spawn an alinen
-			w, h := gc.Screen.Size()
-			a.AddAlien(300, 10, core.Point{
+			w, _ := gc.Screen.Size()
+			a.AddAlien(300, 30, core.Point{
 				X: w / 2,
-				Y: (h / 2) - 5,
+				Y: (0) - 5,
 			})
 		}
 	}
