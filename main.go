@@ -22,8 +22,10 @@ func main() {
 	}
 	// ---------------------------------- entities --------------------------------------
 	spaceship := entities.InitSpaceShip()
+	alienProducer := entities.InitAlienProducer()
 
 	gameContext.AddEntity(&spaceship)
+	gameContext.AddEntity(&alienProducer)
 
 	// ----------------------------------------- window ------------------------------------
 	window.InputEvent(exit,
