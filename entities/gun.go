@@ -30,6 +30,15 @@ func (g *Gun) initBeam(power, speed int, pos core.Point) {
 	g.Beams = append(g.Beams, &beam)
 }
 
+func (g *Gun) RemoveBeam(beam *Beam) {
+	for i, b := range g.Beams {
+		if beam == b {
+			g.Beams = append(g.Beams[:i], g.Beams[i+1:]...)
+			break
+		}
+	}
+}
+
 func (g *Gun) Update(gc *core.GameContext, delta float64) {
 	// update the coordinates of the beam
 	if len(g.Beams) < 1 {
