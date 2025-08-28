@@ -10,13 +10,14 @@ type Beam struct {
 	speed    int
 	position core.Point
 	symbol   rune
+	power    int
 }
 
 type Gun struct {
 	Beams []*Beam
 }
 
-func (g *Gun) initBeam(speed int, pos core.Point) {
+func (g *Gun) initBeam(power, speed int, pos core.Point) {
 	beam := Beam{
 		speed,
 		core.Point{
@@ -24,6 +25,7 @@ func (g *Gun) initBeam(speed int, pos core.Point) {
 			Y: pos.Y - 2,
 		},
 		tcell.RuneDiamond,
+		power,
 	}
 	g.Beams = append(g.Beams, &beam)
 }
@@ -67,7 +69,7 @@ func (g *Gun) InputEvents(event tcell.Event, gc *core.GameContext) {
 				if entity.GetType() == "spaceship" {
 					spaceShip, ok := entity.(*SpaceShip)
 					if ok {
-						g.initBeam(50, spaceShip.origin)
+						g.initBeam(20, 50, spaceShip.origin)
 						break
 					}
 				}
@@ -77,5 +79,5 @@ func (g *Gun) InputEvents(event tcell.Event, gc *core.GameContext) {
 }
 
 func (g *Gun) GetType() string {
-	return "Gun"
+	return "gun"
 }
