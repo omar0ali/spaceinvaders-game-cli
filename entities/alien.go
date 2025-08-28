@@ -91,6 +91,11 @@ func (a *AlienProducer) CheckAliensHealth(gc *core.GameContext) {
 			}
 		}
 
+		// check the alien ship height position
+		_, h := window.GetSize()
+		if alien.origin.Y >= h-2 {
+			alien.health = 0
+		}
 		// check the health of each alien
 		if alien.health > 0 {
 			activeAliens = append(activeAliens, alien)
@@ -137,7 +142,7 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 		if ev.Rune() == ' ' {
 			// testing spawn an alinen
 			w, _ := gc.Screen.Size()
-			a.AddAlien(300, 30, core.Point{
+			a.AddAlien(200, 30, core.Point{
 				X: w / 2,
 				Y: (0) - 5,
 			})
