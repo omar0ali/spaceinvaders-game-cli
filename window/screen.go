@@ -99,7 +99,7 @@ func SetTitle(title string) {
 	screen.SetTitle(title)
 }
 
-func InputEvent(exitCha chan int, keys func(tcell.Event)) {
+func InputEvent(exitCha chan struct{}, keys func(tcell.Event)) {
 	if screen == nil {
 		log.Fatal("[InputEvent] Screen must be initialized first. Call InitScreen()")
 	}
@@ -111,10 +111,10 @@ func InputEvent(exitCha chan int, keys func(tcell.Event)) {
 				screen.Clear()
 			case *tcell.EventKey:
 				if ev.Key() == tcell.KeyESC || ev.Rune() == 'q' {
-					exitCha <- 0
 					cleanupOnce.Do(func() {
 						screen.Fini()
 					})
+					close(exitCha)
 					return
 				}
 			}
@@ -123,7 +123,7 @@ func InputEvent(exitCha chan int, keys func(tcell.Event)) {
 	}()
 }
 
-func Update(exitCha chan int, updates func(delta float64)) {
+func Update(exitCha chan struct{}, updates func(delta float64)) {
 	if screen == nil || ticker == nil {
 		log.Fatal("Screen and/or ticker must be initialized first. Call InitScreen()")
 	}
@@ -146,13 +146,11 @@ func Update(exitCha chan int, updates func(delta float64)) {
 				updates(Delta)
 
 				screen.Show()
-			case val := <-exitCha:
-				if val == 0 {
-					cleanupOnce.Do(func() {
-						screen.Fini()
-					})
-					return
-				}
+			case <-exitCha:
+				cleanupOnce.Do(func() {
+					screen.Fini()
+				})
+				return
 			}
 		}
 	}()

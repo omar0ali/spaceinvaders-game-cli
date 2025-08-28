@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	exit := make(chan int)
+	exit := make(chan struct{})
 
 	// window by default is set to 30 FPS
 	// window.InitScreen(window.ChangeTickerDuration(16), window.EnableMouse) // this can update the framerate to 60
@@ -31,7 +31,7 @@ func main() {
 			switch ev := event.(type) {
 			case *tcell.EventKey:
 				if ev.Rune() == 'r' {
-					exit <- 0
+					close(exit)
 				}
 			}
 			for _, entity := range gameContext.GetEntities() {
@@ -51,7 +51,5 @@ func main() {
 	)
 
 	// exit
-	if val := <-exit; val == 0 {
-		return
-	}
+	<-exit
 }
