@@ -25,9 +25,9 @@ func InitSpaceShip() SpaceShip {
 	return SpaceShip{
 		origin: origin,
 		triangle: core.Triangle{
-			A: core.Point{X: origin.X, Y: origin.Y - 1},
-			B: core.Point{X: origin.X - 2, Y: origin.Y + 1}, // left
-			C: core.Point{X: origin.X + 2, Y: origin.Y + 1}, // right
+			A: &core.Point{X: origin.X, Y: origin.Y - 1},
+			B: &core.Point{X: origin.X - 2, Y: origin.Y + 1}, // left
+			C: &core.Point{X: origin.X + 2, Y: origin.Y + 1}, // right
 		},
 		Gun: Gun{
 			Beams: []*Beam{},
@@ -41,24 +41,24 @@ func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 
 func (s *SpaceShip) Draw(gc *core.GameContext) {
 	defer s.Gun.Draw(gc)
-	gc.Screen.SetContent(s.triangle.A.X, s.triangle.A.Y, '^', nil, window.GetStyle())
-	gc.Screen.SetContent(s.triangle.B.X, s.triangle.B.Y, '*', nil, window.GetStyle()) // left
-	gc.Screen.SetContent(s.triangle.C.X, s.triangle.C.Y, '*', nil, window.GetStyle()) // right
+	gc.Screen.SetContent(int(s.triangle.A.GetX()), int(s.triangle.A.GetY()), '^', nil, window.GetStyle())
+	gc.Screen.SetContent(int(s.triangle.B.GetX()), int(s.triangle.B.GetY()), '*', nil, window.GetStyle()) // left
+	gc.Screen.SetContent(int(s.triangle.C.GetX()), int(s.triangle.C.GetY()), '*', nil, window.GetStyle()) // right
 	// left line
-	gc.Screen.SetContent(s.triangle.A.X-1, s.triangle.A.Y+1, '/', nil, window.GetStyle())
+	gc.Screen.SetContent(int(s.triangle.A.GetX())-1, int(s.triangle.A.GetY())+1, '/', nil, window.GetStyle())
 	// right line
-	gc.Screen.SetContent(s.triangle.A.X+1, s.triangle.A.Y+1, '\\', nil, window.GetStyle())
+	gc.Screen.SetContent(int(s.triangle.A.GetX())+1, int(s.triangle.A.GetY())+1, '\\', nil, window.GetStyle())
 	// bottom line
-	gc.Screen.SetContent(s.triangle.A.X, s.triangle.A.Y+2, tcell.RuneS7, nil, window.GetStyle())
+	gc.Screen.SetContent(int(s.triangle.A.GetX()), int(s.triangle.A.GetY())+2, tcell.RuneS7, nil, window.GetStyle())
 }
 
 func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 	defer s.Gun.InputEvents(event, gc)
 	moveMouse := func(x int) {
 		s.origin.X = x
-		s.triangle.A.X = x
-		s.triangle.B.X = x + 2
-		s.triangle.C.X = x - 2
+		s.triangle.A.SetX(float64(x))
+		s.triangle.B.SetX(float64(x + 2))
+		s.triangle.C.SetX(float64(x - 2))
 	}
 	switch ev := event.(type) {
 	case *tcell.EventMouse:

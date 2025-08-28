@@ -9,32 +9,32 @@ import (
 type alien struct {
 	health   int
 	speed    int
-	origin   core.Point
-	triangle core.Triangle // this will be used to draw the shape of the alien
+	origin   core.PointFloat
+	triangle core.Triangle
 }
 
-func (a *alien) moveForward(distance int) {
+func (a *alien) moveForward(distance float64) {
 	a.origin.Y += distance
-	a.triangle.A.Y += distance
-	a.triangle.B.Y += distance
-	a.triangle.C.Y += distance
+	a.triangle.A.AppendY(distance)
+	a.triangle.B.AppendY(distance)
+	a.triangle.C.AppendY(distance)
 }
 
-func (a *AlienProducer) AddAlien(health, speed int, origin core.Point) {
+func (a *AlienProducer) AddAlien(health, speed int, origin core.PointFloat) {
 	alien := alien{
 		health: health,
 		speed:  speed,
 		origin: origin,
 		triangle: core.Triangle{
-			A: core.Point{
+			A: &core.PointFloat{
 				X: origin.X,
 				Y: origin.Y + 2,
 			},
-			B: core.Point{
+			B: &core.PointFloat{
 				X: origin.X + 3,
 				Y: origin.Y,
 			},
-			C: core.Point{
+			C: &core.PointFloat{
 				X: origin.X - 3,
 				Y: origin.Y,
 			},
@@ -43,18 +43,18 @@ func (a *AlienProducer) AddAlien(health, speed int, origin core.Point) {
 	a.aliens = append(a.aliens, &alien)
 }
 
-func (a *alien) IsHit(point core.Point) bool {
+func (a *alien) IsHit(point core.PointInterface) bool {
 	if point == a.triangle.A ||
 		point == a.triangle.B ||
 		point == a.triangle.C ||
-		point.X == a.origin.X+1 && point.Y == a.origin.Y ||
-		point.X == a.origin.X-1 && point.Y == a.origin.Y {
-		window.SetContent(point.X-1, point.Y+1, 'X')
-		window.SetContent(point.X-1, point.Y, 'X')
-		window.SetContent(point.X+1, point.Y, 'X')
-		window.SetContent(point.X, point.Y+1, 'X')
-		window.SetContent(point.X, point.Y-1, 'X')
-		window.SetContent(point.X+1, point.Y+1, 'X')
+		point.GetX() == a.origin.X+1 && point.GetY() == a.origin.Y ||
+		point.GetX() == a.origin.X-1 && point.GetY() == a.origin.Y {
+		window.SetContent(int(point.GetX()-1), int(point.GetY()+1), 'X')
+		window.SetContent(int(point.GetY()-1), int(point.GetY()), 'X')
+		window.SetContent(int(point.GetX()+1), int(point.GetY()), 'X')
+		window.SetContent(int(point.GetX()), int(point.GetY()+1), 'X')
+		window.SetContent(int(point.GetX()), int(point.GetY()-1), 'X')
+		window.SetContent(int(point.GetX()+1), int(point.GetY()+1), 'X')
 		return true
 	}
 
@@ -86,14 +86,14 @@ func (a *AlienProducer) CheckAliensHealth(gc *core.GameContext) {
 	// on each alien avaiable check its position and check if the beam is at the same position
 	for _, alien := range a.aliens {
 		for _, beam := range beams {
-			if alien.IsHit(beam.position) {
+			if alien.IsHit(&beam.position) {
 				alien.health -= beam.power
 			}
 		}
 
 		// check the alien ship height position
 		_, h := window.GetSize()
-		if alien.origin.Y >= h-2 {
+		if int(alien.origin.Y) >= h-2 {
 			alien.health = 0
 		}
 		// check the health of each alien
@@ -110,7 +110,7 @@ func (a *AlienProducer) CheckAliensHealth(gc *core.GameContext) {
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	// Update the coordinates of the aliens.
 	for _, alien := range a.aliens {
-		distance := int(float64(alien.speed) * delta)
+		distance := float64(alien.speed) * delta
 		alien.moveForward(distance)
 	}
 	a.CheckAliensHealth(gc) // this will ensure to clean up dead aliens
@@ -119,20 +119,21 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 func (a *AlienProducer) Draw(gc *core.GameContext) {
 	for _, alien := range a.aliens {
 		// drawing the points
-		window.SetContent(alien.triangle.A.X, alien.triangle.A.Y, '*')
-		window.SetContent(alien.triangle.B.X, alien.triangle.B.Y, '*')
-		window.SetContent(alien.triangle.C.X, alien.triangle.C.Y, '*')
+		window.SetContent(int(alien.triangle.A.GetX()), int(alien.triangle.A.GetY()), '*')
+		window.SetContent(int(alien.triangle.B.GetX()), int(alien.triangle.B.GetY()), '*')
+		window.SetContent(int(alien.triangle.C.GetX()), int(alien.triangle.C.GetY()), '*')
 		// lines bellow
-		window.SetContent(alien.triangle.C.X+1, alien.triangle.C.Y, '-')
-		window.SetContent(alien.triangle.B.X-1, alien.triangle.C.Y, '-')
-		window.SetContent(alien.triangle.C.X+2, alien.triangle.C.Y, '-')
-		window.SetContent(alien.triangle.B.X-2, alien.triangle.C.Y, '-')
+		window.SetContent(int(alien.triangle.C.GetX()+1), int(alien.triangle.C.GetY()), '-')
+
+		window.SetContent(int(alien.triangle.B.GetX()-1), int(alien.triangle.C.GetY()), '-')
+		window.SetContent(int(alien.triangle.C.GetX()+2), int(alien.triangle.C.GetY()), '-')
+		window.SetContent(int(alien.triangle.B.GetX()-2), int(alien.triangle.C.GetY()), '-')
 		// lines left
-		window.SetContent(alien.triangle.B.X-1, alien.triangle.B.Y+1, '/')
-		window.SetContent(alien.triangle.B.X-2, alien.triangle.B.Y+2, '/')
+		window.SetContent(int(alien.triangle.B.GetX()-1), int(alien.triangle.B.GetY()+1), '/')
+		window.SetContent(int(alien.triangle.B.GetX()-2), int(alien.triangle.B.GetY()+2), '/')
 		// lines right
-		window.SetContent(alien.triangle.C.X+1, alien.triangle.B.Y+1, '\\')
-		window.SetContent(alien.triangle.C.X+2, alien.triangle.B.Y+2, '\\')
+		window.SetContent(int(alien.triangle.C.GetX()+1), int(alien.triangle.B.GetY()+1), '\\')
+		window.SetContent(int(alien.triangle.C.GetX()+2), int(alien.triangle.B.GetY()+2), '\\')
 	}
 }
 
@@ -142,8 +143,8 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 		if ev.Rune() == ' ' {
 			// testing spawn an alinen
 			w, _ := gc.Screen.Size()
-			a.AddAlien(200, 30, core.Point{
-				X: w / 2,
+			a.AddAlien(200, 8, core.PointFloat{
+				X: float64(w / 2),
 				Y: (0) - 5,
 			})
 		}
