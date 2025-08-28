@@ -10,5 +10,6 @@ A terminal-based implementation of the classic space invaders game written in Go
     - [X] Draw a proper Triangle shape.
     - [X] Shoots laser beam by hitting the `Left Mouse Button`.
 - [ ] Performance Logs Window, to keep track whats being rendered in the current window.
-- [X] Create a single enemy spaceship. Can be produced by hitting the `Space Bar` key.
+- [X] Create a single enemy spaceship. Can be produced by hitting the `Space Bar` key. This will be changed later.
     - [X] Alien ship can move towards the player.
+    - [X] Can place aliens ships in a random X position

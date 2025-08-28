@@ -89,7 +89,7 @@ func (a *AlienProducer) CheckAliensHealth(gc *core.GameContext) {
 		for _, beam := range gun.Beams {
 			if alien.IsHit(&beam.position) {
 				alien.health -= beam.power
-				gun.RemoveBeam(beam)
+				gun.RemoveBeam(beam) // removing a beam when hitting the ship
 			}
 		}
 
@@ -149,7 +149,7 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 			// ----from----------------------------to----// example
 			distance := w - 10 + 10 - 1
 			xPos := rand.Intn(distance) + 10
-			a.AddAlien(200, 8, core.PointFloat{
+			a.AddAlien(150, 5, core.PointFloat{
 				X: float64(xPos),
 				Y: (0) - 5,
 			})
