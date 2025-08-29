@@ -46,16 +46,25 @@ func (a *AlienProducer) AddAlien(health, speed int, origin core.PointFloat) {
 }
 
 func (a *alien) IsHit(point core.PointInterface) bool {
+	grayColor := window.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
+	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
+	yellowColor := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
 	if a.triangle.A.GetY() > point.GetY() &&
 		a.triangle.C.GetY()-2 < point.GetY() &&
 		(a.triangle.C.GetX()-1 < point.GetX() && a.triangle.B.GetX()+1 > point.GetX()) {
 
-		window.SetContent(int(point.GetX()-1), int(point.GetY()+1), 'X')
-		window.SetContent(int(point.GetX()-1), int(point.GetY()), 'X')
-		window.SetContent(int(point.GetX()+1), int(point.GetY()), 'X')
-		window.SetContent(int(point.GetX()), int(point.GetY()+1), 'X')
-		window.SetContent(int(point.GetX()), int(point.GetY()-1), 'X')
-		window.SetContent(int(point.GetX()+1), int(point.GetY()+1), 'X')
+		window.SetContentWithStyle(
+			int(point.GetX()-1), int(point.GetY()+1), tcell.RuneBoard, grayColor)
+		window.SetContentWithStyle(
+			int(point.GetX()-1), int(point.GetY()), tcell.RuneCkBoard, yellowColor)
+		window.SetContentWithStyle(
+			int(point.GetX()+1), int(point.GetY()), tcell.RuneBoard, grayColor)
+		window.SetContentWithStyle(
+			int(point.GetX()), int(point.GetY()+1), tcell.RuneCkBoard, redColor)
+		window.SetContentWithStyle(
+			int(point.GetX()), int(point.GetY()-1), tcell.RuneBoard, yellowColor)
+		window.SetContentWithStyle(
+			int(point.GetX()+1), int(point.GetY()+1), tcell.RuneCkBoard, grayColor)
 		return true
 	}
 
@@ -119,17 +128,25 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 }
 
 func (a *AlienProducer) Draw(gc *core.GameContext) {
+	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
 	for _, alien := range a.aliens {
 		// drawing the points
 		// header
-		window.SetContent(int(alien.triangle.A.GetX()), int(alien.triangle.A.GetY()+1), '*') // top
-		window.SetContent(int(alien.triangle.A.GetX()+1), int(alien.triangle.A.GetY()+1), '>')
-		window.SetContent(int(alien.triangle.A.GetX()+2), int(alien.triangle.A.GetY()+1), ']')
-		window.SetContent(int(alien.triangle.A.GetX()-1), int(alien.triangle.A.GetY()+1), '<')
-		window.SetContent(int(alien.triangle.A.GetX()-2), int(alien.triangle.A.GetY()+1), '[')
+		window.SetContentWithStyle(
+			int(alien.triangle.A.GetX()), int(alien.triangle.A.GetY()+1), '*', redColor) // top
+		window.SetContentWithStyle(
+			int(alien.triangle.A.GetX()+1), int(alien.triangle.A.GetY()+1), '>', redColor)
+		window.SetContentWithStyle(
+			int(alien.triangle.A.GetX()+2), int(alien.triangle.A.GetY()+1), ']', redColor)
+		window.SetContentWithStyle(
+			int(alien.triangle.A.GetX()-1), int(alien.triangle.A.GetY()+1), '<', redColor)
+		window.SetContentWithStyle(
+			int(alien.triangle.A.GetX()-2), int(alien.triangle.A.GetY()+1), '[', redColor)
 
-		window.SetContent(int(alien.triangle.B.GetX()), int(alien.triangle.B.GetY()), '*') // left
-		window.SetContent(int(alien.triangle.C.GetX()), int(alien.triangle.C.GetY()), '*') // right
+		window.SetContentWithStyle(
+			int(alien.triangle.B.GetX()), int(alien.triangle.B.GetY()), '*', redColor) // left
+		window.SetContentWithStyle(
+			int(alien.triangle.C.GetX()), int(alien.triangle.C.GetY()), '*', redColor) // right
 
 		// lines bellow
 		window.SetContent(int(alien.triangle.C.GetX()+1), int(alien.triangle.C.GetY()), '-')
