@@ -158,7 +158,18 @@ func Update(exitCha chan struct{}, updates func(delta float64)) {
 
 func SetContent(x, y int, r rune) {
 	if screen == nil {
-		log.Fatal("[InputEvent] Screen must be initialized first. Call InitScreen()")
+		log.Fatal("[SetContent] Screen must be initialized first. Call InitScreen()")
 	}
 	screen.SetContent(x, y, r, nil, style)
+}
+
+func SetContentWithStyle(x, y int, r rune, style tcell.Style) {
+	if screen == nil {
+		log.Fatal("[SetContentWithStyle] Screen must be initialized first. Call InitScreen()")
+	}
+	screen.SetContent(x, y, r, nil, style)
+}
+
+func StyleIt(background, forground tcell.Color) tcell.Style {
+	return tcell.StyleDefault.Background(background).Foreground(forground)
 }
