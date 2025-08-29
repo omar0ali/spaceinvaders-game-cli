@@ -24,7 +24,7 @@ func (g *Gun) initBeam(power, speed int, pos core.Point) {
 			X: pos.X,
 			Y: pos.Y - 2,
 		},
-		tcell.RuneDiamond,
+		tcell.RuneVLine,
 		power,
 	}
 	g.Beams = append(g.Beams, &beam)
