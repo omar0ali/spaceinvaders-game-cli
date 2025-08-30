@@ -65,7 +65,7 @@ func (s *StarProducer) Draw(gc *core.GameContext) {
 			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '*', whiteColor)
 		case star.Speed >= 45 && star.Speed < 60:
 			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), tcell.RuneDegree, whiteColor)
-		case star.Speed >= 60:
+		default:
 			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '.', whiteColor)
 		}
 	}
@@ -77,7 +77,7 @@ func (s *StarProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 		if ev.Rune() == 's' { // dev mode to create a star
 			w, _ := window.GetSize()
 			xPos := rand.Intn(w)
-			randSpeed := rand.Intn(60)
+			randSpeed := rand.Intn(70)
 			// create star
 			s.Stars = append(s.Stars, &Star{
 				FallingObjectBase: *NewObject(1, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
