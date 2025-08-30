@@ -13,6 +13,14 @@ type FallingObjectBase struct {
 	TrianglePoint core.Triangle
 }
 
+func (f *FallingObjectBase) checkHeightPosition(h int) bool {
+	return int(f.OriginPoint.Y) < h-4
+}
+
+func (f *FallingObjectBase) isDead() bool {
+	return f.Health <= 0
+}
+
 func (f *FallingObjectBase) isHit(point core.PointInterface, power int) bool {
 	grayColor := window.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
 	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
