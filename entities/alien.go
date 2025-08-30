@@ -19,6 +19,24 @@ type AlienProducer struct {
 // TODO: should create alines and place them in random positions on screen.
 
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
+	// limit amount of ships Falling
+	if len(a.Aliens) < 3 {
+		// testing spawn an alinen
+		w, _ := window.GetSize()
+		// pick a random X position to place the alien ship on screen
+		// ----from----------------------------to----// example
+		//      15                             85
+		// distance = from 15 to width-15 = high - low (85 - 15) = 70
+		distance := (w - (15 * 2))
+		xPos := rand.Intn(distance) + 15 // starting from 15
+		randSpeed := rand.Intn(10) + 2   // start at 2
+
+		// create alien
+		a.Aliens = append(a.Aliens, &Alien{
+			FallingObjectBase: *NewObject(100, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
+		})
+
+	}
 	// Update the coordinates of the aliens.
 	for _, alien := range a.Aliens {
 		distance := float64(alien.Speed) * delta
@@ -57,38 +75,39 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 }
 
 func (a *AlienProducer) Draw(gc *core.GameContext) {
-	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
+	brownColor := window.StyleIt(tcell.ColorReset, tcell.ColorBrown)
+	color := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
 	for _, alien := range a.Aliens {
 		// drawing the points
 		// header
 		window.SetContentWithStyle(
-			int(alien.TrianglePoint.A.GetX()), int(alien.TrianglePoint.A.GetY()+1), 'v', redColor) // top
+			int(alien.TrianglePoint.A.GetX()), int(alien.TrianglePoint.A.GetY()+1), 'v', brownColor) // top
 		window.SetContentWithStyle(
-			int(alien.TrianglePoint.A.GetX()+1), int(alien.TrianglePoint.A.GetY()+1), '>', redColor)
+			int(alien.TrianglePoint.A.GetX()+1), int(alien.TrianglePoint.A.GetY()+1), '>', brownColor)
 		window.SetContentWithStyle(
-			int(alien.TrianglePoint.A.GetX()+2), int(alien.TrianglePoint.A.GetY()+1), ']', redColor)
+			int(alien.TrianglePoint.A.GetX()+2), int(alien.TrianglePoint.A.GetY()+1), ']', brownColor)
 		window.SetContentWithStyle(
-			int(alien.TrianglePoint.A.GetX()-1), int(alien.TrianglePoint.A.GetY()+1), '<', redColor)
+			int(alien.TrianglePoint.A.GetX()-1), int(alien.TrianglePoint.A.GetY()+1), '<', brownColor)
 		window.SetContentWithStyle(
-			int(alien.TrianglePoint.A.GetX()-2), int(alien.TrianglePoint.A.GetY()+1), '[', redColor)
+			int(alien.TrianglePoint.A.GetX()-2), int(alien.TrianglePoint.A.GetY()+1), '[', brownColor)
 
 		window.SetContentWithStyle(
-			int(alien.TrianglePoint.B.GetX()), int(alien.TrianglePoint.B.GetY()), ']', redColor) // right
+			int(alien.TrianglePoint.B.GetX()), int(alien.TrianglePoint.B.GetY()), ']', brownColor) // right
 		window.SetContentWithStyle(
-			int(alien.TrianglePoint.C.GetX()), int(alien.TrianglePoint.C.GetY()), '[', redColor) // left
+			int(alien.TrianglePoint.C.GetX()), int(alien.TrianglePoint.C.GetY()), '[', brownColor) // left
 
 		// lines bellow
-		window.SetContent(int(alien.TrianglePoint.C.GetX()+1), int(alien.TrianglePoint.C.GetY()), '-')
-		window.SetContent(int(alien.TrianglePoint.C.GetX()+2), int(alien.TrianglePoint.C.GetY()), '-')
-		window.SetContent(int(alien.TrianglePoint.C.GetX()+3), int(alien.TrianglePoint.C.GetY()), '^')
-		window.SetContent(int(alien.TrianglePoint.B.GetX()-1), int(alien.TrianglePoint.C.GetY()), '-')
-		window.SetContent(int(alien.TrianglePoint.B.GetX()-2), int(alien.TrianglePoint.C.GetY()), '-')
+		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+1), int(alien.TrianglePoint.C.GetY()), '-', brownColor)
+		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+2), int(alien.TrianglePoint.C.GetY()), '-', brownColor)
+		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+3), int(alien.TrianglePoint.C.GetY()), '^', brownColor)
+		window.SetContentWithStyle(int(alien.TrianglePoint.B.GetX()-1), int(alien.TrianglePoint.C.GetY()), '-', brownColor)
+		window.SetContentWithStyle(int(alien.TrianglePoint.B.GetX()-2), int(alien.TrianglePoint.C.GetY()), '-', brownColor)
 		// lines left
-		window.SetContent(int(alien.TrianglePoint.B.GetX()-1), int(alien.TrianglePoint.B.GetY()+1), '/')
-		window.SetContent(int(alien.TrianglePoint.B.GetX()-2), int(alien.TrianglePoint.B.GetY()+2), '/')
+		window.SetContentWithStyle(int(alien.TrianglePoint.B.GetX()-1), int(alien.TrianglePoint.B.GetY()+1), '/', color)
+		window.SetContentWithStyle(int(alien.TrianglePoint.B.GetX()-2), int(alien.TrianglePoint.B.GetY()+2), '/', color)
 		// lines right
-		window.SetContent(int(alien.TrianglePoint.C.GetX()+1), int(alien.TrianglePoint.B.GetY()+1), '\\')
-		window.SetContent(int(alien.TrianglePoint.C.GetX()+2), int(alien.TrianglePoint.B.GetY()+2), '\\')
+		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+1), int(alien.TrianglePoint.B.GetY()+1), '\\', color)
+		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+2), int(alien.TrianglePoint.B.GetY()+2), '\\', color)
 	}
 }
 
@@ -104,15 +123,16 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 			// distance = from 15 to width-15 = high - low (85 - 15) = 70
 			distance := (w - (15 * 2))
 			xPos := rand.Intn(distance) + 15 // starting from 15
+			randSpeed := rand.Intn(10) + 2   // start at 2
 
 			// create alien
 			a.Aliens = append(a.Aliens, &Alien{
-				FallingObjectBase: *NewObject(100, 3, core.PointFloat{X: float64(xPos), Y: -5}),
+				FallingObjectBase: *NewObject(100, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
 			})
 		}
 	}
 }
 
 func (a *AlienProducer) GetType() string {
-	return "AlienProducer"
+	return "alien"
 }
