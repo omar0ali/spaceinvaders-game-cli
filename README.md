@@ -17,3 +17,17 @@ A terminal-based implementation of the classic space invaders game written in Go
 - [X] Stars falling down with different speed. (just to look cool)
 - [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
 - [ ] Performance Logs Window, to keep track whats being rendered in the current window.
+
+## Getting Started
+
+Clone repository
+
+```bash
+git clone https://github.com/omar0ali/spaceinvader-game-cli.git
+```
+
+Run the game
+
+```bash
+go run .
+```
