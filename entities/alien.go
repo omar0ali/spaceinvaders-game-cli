@@ -47,12 +47,10 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 
 	var activeAliens []*Alien
 	var gun *Gun
+
 	// look for the spaceship since it has the gun and the number of beams
-	for _, entity := range gc.GetEntities() {
-		if spaceship, ok := entity.(*SpaceShip); ok {
-			gun = &spaceship.Gun
-			break
-		}
+	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+		gun = &spaceship.Gun
 	}
 	// on each alien avaiable check its position and check if the beam is at the same position
 	for _, alien := range a.Aliens {
