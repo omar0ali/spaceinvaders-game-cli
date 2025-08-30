@@ -13,7 +13,7 @@ type FallingObjectBase struct {
 	TrianglePoint core.Triangle
 }
 
-func (f *FallingObjectBase) isHit(point core.PointInterface) bool {
+func (f *FallingObjectBase) isHit(point core.PointInterface, power int) bool {
 	grayColor := window.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
 	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
 	yellowColor := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
@@ -21,6 +21,8 @@ func (f *FallingObjectBase) isHit(point core.PointInterface) bool {
 	if f.TrianglePoint.A.GetY() > point.GetY() &&
 		f.TrianglePoint.C.GetY()-2 < point.GetY() &&
 		(f.TrianglePoint.C.GetX()-1 < point.GetX() && f.TrianglePoint.B.GetX()+1 > point.GetX()) {
+
+		f.Health -= power // update health of the falling object
 
 		window.SetContentWithStyle(
 			int(point.GetX()-1), int(point.GetY()+1), tcell.RuneBoard, grayColor)
@@ -46,7 +48,30 @@ func (f *FallingObjectBase) move(distance float64) {
 	f.TrianglePoint.C.AppendY(distance)
 }
 
+func NewObject(health, speed int, origin core.PointFloat) *FallingObjectBase {
+	return &FallingObjectBase{
+		Health:      health,
+		Speed:       speed,
+		OriginPoint: origin,
+		TrianglePoint: core.Triangle{
+			A: &core.PointFloat{
+				X: origin.X,
+				Y: origin.Y + 2,
+			},
+			B: &core.PointFloat{
+				X: origin.X + 3,
+				Y: origin.Y,
+			},
+			C: &core.PointFloat{
+				X: origin.X - 3,
+				Y: origin.Y,
+			},
+		},
+	}
+}
+
 type FallingObjects interface {
 	move(distance float64)
 	isHit(point core.PointInterface)
+	NewObject(health, speed int, origin core.PointFloat)
 }

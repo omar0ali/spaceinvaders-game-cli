@@ -12,46 +12,27 @@ type Alien struct {
 	FallingObjectBase
 }
 
-func NewAlien(health, speed int, origin core.PointFloat) *Alien {
-	return &Alien{
-		FallingObjectBase: FallingObjectBase{
-			Health:      health,
-			Speed:       speed,
-			OriginPoint: origin,
-			TrianglePoint: core.Triangle{
-				A: &core.PointFloat{
-					X: origin.X,
-					Y: origin.Y + 2,
-				},
-				B: &core.PointFloat{
-					X: origin.X + 3,
-					Y: origin.Y,
-				},
-				C: &core.PointFloat{
-					X: origin.X - 3,
-					Y: origin.Y,
-				},
-			},
-		},
-	}
-}
-
 type AlienProducer struct {
-	aliens []*Alien
+	Aliens []*Alien
 }
 
 func (a *AlienProducer) AddAlien(health, speed int, origin core.PointFloat) {
-	alien := NewAlien(health, speed, origin)
-	a.aliens = append(a.aliens, alien)
+	a.Aliens = append(a.Aliens, &Alien{
+		FallingObjectBase: *NewObject(health, speed, origin),
+	})
 }
 
-func InitAlienProducer() AlienProducer {
-	return AlienProducer{
-		aliens: []*Alien{},
+// TODO: should create alines and place them in random positions on screen.
+
+func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
+	// Update the coordinates of the aliens.
+	for _, alien := range a.Aliens {
+		distance := float64(alien.Speed) * delta
+		alien.move(distance)
 	}
-}
 
-func (a *AlienProducer) CheckAliensState(gc *core.GameContext) {
+	// -------- this will ensure to clean up dead aliens and beams --------
+
 	var activeAliens []*Alien
 	var gun *Gun
 	// look for the spaceship since it has the gun and the number of beams
@@ -62,39 +43,28 @@ func (a *AlienProducer) CheckAliensState(gc *core.GameContext) {
 		}
 	}
 	// on each alien avaiable check its position and check if the beam is at the same position
-	for _, alien := range a.aliens {
+	for _, alien := range a.Aliens {
 		for _, beam := range gun.Beams {
-			if alien.isHit(&beam.position) {
-				alien.Health -= beam.power
+			if alien.isHit(&beam.position, beam.power) {
 				gun.RemoveBeam(beam) // removing a beam when hitting the ship
 			}
 		}
 
 		// check the alien ship height position
 		// check the health of each alien
+		// clear
 		_, h := window.GetSize()
 		if alien.Health > 0 && int(alien.OriginPoint.Y) < h-1 {
 			activeAliens = append(activeAliens, alien)
 		}
 	}
 
-	a.aliens = activeAliens
-}
-
-// TODO: should create alines and place them in random positions on screen.
-
-func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
-	// Update the coordinates of the aliens.
-	for _, alien := range a.aliens {
-		distance := float64(alien.Speed) * delta
-		alien.move(distance)
-	}
-	a.CheckAliensState(gc) // this will ensure to clean up dead aliens
+	a.Aliens = activeAliens
 }
 
 func (a *AlienProducer) Draw(gc *core.GameContext) {
 	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
-	for _, alien := range a.aliens {
+	for _, alien := range a.Aliens {
 		// drawing the points
 		// header
 		window.SetContentWithStyle(
@@ -140,9 +110,10 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 			// distance = from 15 to width-15 = high - low (85 - 15) = 70
 			distance := (w - (15 * 2))
 			xPos := rand.Intn(distance) + 15 // starting from 15
-			a.AddAlien(150, 3, core.PointFloat{
-				X: float64(xPos),
-				Y: (0) - 5,
+
+			// create alien
+			a.Aliens = append(a.Aliens, &Alien{
+				FallingObjectBase: *NewObject(100, 3, core.PointFloat{X: float64(xPos), Y: -5}),
 			})
 		}
 	}

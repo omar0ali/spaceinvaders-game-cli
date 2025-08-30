@@ -22,7 +22,10 @@ func main() {
 	}
 	// ---------------------------------- entities --------------------------------------
 	spaceship := entities.InitSpaceShip()
-	alienProducer := entities.InitAlienProducer()
+
+	alienProducer := entities.AlienProducer{
+		Aliens: []*entities.Alien{},
+	}
 
 	gameContext.AddEntity(&spaceship)
 	gameContext.AddEntity(&alienProducer)
