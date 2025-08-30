@@ -103,12 +103,9 @@ func (a *AlienProducer) CheckAliensHealth(gc *core.GameContext) {
 		}
 
 		// check the alien ship height position
-		_, h := window.GetSize()
-		if int(alien.origin.Y) >= h-2 {
-			alien.health = 0
-		}
 		// check the health of each alien
-		if alien.health > 0 {
+		_, h := window.GetSize()
+		if alien.health > 0 && int(alien.origin.Y) < h-1 {
 			activeAliens = append(activeAliens, alien)
 		}
 	}
