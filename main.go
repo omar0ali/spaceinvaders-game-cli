@@ -13,8 +13,8 @@ func main() {
 
 	// window by default is set to 30 FPS
 	// window.InitScreen(window.ChangeTickerDuration(16), window.EnableMouse) // this can update the framerate to 60
-	screen := window.InitScreen(window.EnableMouse)
 	// ------------------------------- Setup ------------------------------------
+	screen := window.InitScreen(window.EnableMouse)
 	screen.SetTitle("Space Invader Game")
 	// ------------------------------------- Objects ----------------------------------
 	gameContext := core.GameContext{
@@ -31,9 +31,10 @@ func main() {
 		Stars: []*entities.Star{},
 	}
 
-	gameContext.AddEntity(&spaceship)
-	gameContext.AddEntity(&alienProducer)
+	// order is important since some objects might overlap others
 	gameContext.AddEntity(&starProducer)
+	gameContext.AddEntity(&alienProducer)
+	gameContext.AddEntity(&spaceship)
 
 	// ----------------------------------------- window ------------------------------------
 	window.InputEvent(exit,
