@@ -43,7 +43,7 @@ func (s *StarProducer) Update(gc *core.GameContext, delta float64) {
 		// check the star height position
 		// clear
 		_, h := window.GetSize()
-		if star.checkHeightPosition(h) {
+		if star.isOffScreen(h) {
 			activeStars = append(activeStars, star)
 		}
 	}
