@@ -17,11 +17,11 @@ type StarProducer struct {
 }
 
 func (s *StarProducer) Update(gc *core.GameContext, delta float64) {
-	// create stars at least 30
-	if len(s.Stars) < 30 {
+	// create stars at least 15
+	if len(s.Stars) < 15 {
 		w, _ := window.GetSize()
 		xPos := rand.Intn(w)
-		randSpeed := rand.Intn(60)
+		randSpeed := rand.Intn(50) + 10
 		// create star
 		s.Stars = append(s.Stars, &Star{
 			FallingObjectBase: *NewObject(1, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
@@ -43,7 +43,7 @@ func (s *StarProducer) Update(gc *core.GameContext, delta float64) {
 		// check the star height position
 		// clear
 		_, h := window.GetSize()
-		if int(star.OriginPoint.Y) < h-1 {
+		if star.checkHeightPosition(h) {
 			activeStars = append(activeStars, star)
 		}
 	}
@@ -55,15 +55,13 @@ func (s *StarProducer) Draw(gc *core.GameContext) {
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	for _, star := range s.Stars {
 		switch {
-		case star.Speed < 2:
+		case star.Speed < 15:
 			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '◆', whiteColor)
-		case star.Speed >= 2 && star.Speed < 10:
-			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), 'o', whiteColor)
-		case star.Speed >= 10 && star.Speed < 25:
+		case star.Speed >= 15 && star.Speed < 25:
 			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '+', whiteColor)
 		case star.Speed >= 25 && star.Speed < 45:
 			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '*', whiteColor)
-		case star.Speed >= 45 && star.Speed < 60:
+		case star.Speed >= 45 && star.Speed < 50:
 			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), tcell.RuneDegree, whiteColor)
 		default:
 			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '.', whiteColor)
@@ -77,7 +75,7 @@ func (s *StarProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 		if ev.Rune() == 's' { // dev mode to create a star
 			w, _ := window.GetSize()
 			xPos := rand.Intn(w)
-			randSpeed := rand.Intn(70)
+			randSpeed := rand.Intn(50) + 4
 			// create star
 			s.Stars = append(s.Stars, &Star{
 				FallingObjectBase: *NewObject(1, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
