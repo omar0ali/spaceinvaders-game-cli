@@ -19,7 +19,7 @@ func InitSpaceShip() SpaceShip {
 	w, h := window.GetSize()
 	origin := core.Point{
 		X: w / 2,
-		Y: h - 2,
+		Y: h - 3,
 	}
 
 	return SpaceShip{
@@ -45,9 +45,9 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 	window.SetContentWithStyle(
 		int(s.triangle.A.GetX()), int(s.triangle.A.GetY()), '^', color)
 	window.SetContentWithStyle(
-		int(s.triangle.B.GetX()), int(s.triangle.B.GetY()), '*', color) // left
+		int(s.triangle.B.GetX()), int(s.triangle.B.GetY()), 'O', color) // right
 	window.SetContentWithStyle(
-		int(s.triangle.C.GetX()), int(s.triangle.C.GetY()), '*', color) // right
+		int(s.triangle.C.GetX()), int(s.triangle.C.GetY()), 'O', color) // left
 	// left line
 	window.SetContentWithStyle(
 		int(s.triangle.A.GetX())-1, int(s.triangle.A.GetY())+1, '/', color)
@@ -56,7 +56,7 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 		int(s.triangle.A.GetX())+1, int(s.triangle.A.GetY())+1, '\\', color)
 	// bottom line
 	window.SetContentWithStyle(
-		int(s.triangle.A.GetX()), int(s.triangle.A.GetY())+2, tcell.RuneS7, color)
+		int(s.triangle.A.GetX()), int(s.triangle.A.GetY())+2, '=', color)
 }
 
 func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
