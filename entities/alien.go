@@ -29,7 +29,7 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 		// distance = from 15 to width-15 = high - low (85 - 15) = 70
 		distance := (w - (15 * 2))
 		xPos := rand.Intn(distance) + 15 // starting from 15
-		randSpeed := rand.Intn(10) + 2   // start at 2
+		randSpeed := rand.Intn(8) + 2    // start at 2
 
 		// create alien
 		a.Aliens = append(a.Aliens, &Alien{
