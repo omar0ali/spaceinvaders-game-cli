@@ -16,12 +16,6 @@ type AlienProducer struct {
 	Aliens []*Alien
 }
 
-func (a *AlienProducer) AddAlien(health, speed int, origin core.PointFloat) {
-	a.Aliens = append(a.Aliens, &Alien{
-		FallingObjectBase: *NewObject(health, speed, origin),
-	})
-}
-
 // TODO: should create alines and place them in random positions on screen.
 
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
