@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/gdamore/tcell/v2"
@@ -81,7 +82,7 @@ func InitAlienProducer() AlienProducer {
 	}
 }
 
-func (a *AlienProducer) CheckAliensHealth(gc *core.GameContext) {
+func (a *AlienProducer) CheckAliensState(gc *core.GameContext) {
 	var activeAliens []*alien
 	var gun *Gun
 	// look for the spaceship since it has the gun and the number of beams
@@ -119,7 +120,7 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 		distance := float64(alien.speed) * delta
 		alien.moveForward(distance)
 	}
-	a.CheckAliensHealth(gc) // this will ensure to clean up dead aliens
+	a.CheckAliensState(gc) // this will ensure to clean up dead aliens
 }
 
 func (a *AlienProducer) Draw(gc *core.GameContext) {
@@ -128,7 +129,7 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 		// drawing the points
 		// header
 		window.SetContentWithStyle(
-			int(alien.triangle.A.GetX()), int(alien.triangle.A.GetY()+1), '*', redColor) // top
+			int(alien.triangle.A.GetX()), int(alien.triangle.A.GetY()+1), 'v', redColor) // top
 		window.SetContentWithStyle(
 			int(alien.triangle.A.GetX()+1), int(alien.triangle.A.GetY()+1), '>', redColor)
 		window.SetContentWithStyle(
@@ -139,9 +140,9 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 			int(alien.triangle.A.GetX()-2), int(alien.triangle.A.GetY()+1), '[', redColor)
 
 		window.SetContentWithStyle(
-			int(alien.triangle.B.GetX()), int(alien.triangle.B.GetY()), '*', redColor) // left
+			int(alien.triangle.B.GetX()), int(alien.triangle.B.GetY()), ']', redColor) // right
 		window.SetContentWithStyle(
-			int(alien.triangle.C.GetX()), int(alien.triangle.C.GetY()), '*', redColor) // right
+			int(alien.triangle.C.GetX()), int(alien.triangle.C.GetY()), '[', redColor) // left
 
 		// lines bellow
 		window.SetContent(int(alien.triangle.C.GetX()+1), int(alien.triangle.C.GetY()), '-')
@@ -166,10 +167,11 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 			w, _ := gc.Screen.Size()
 			// pick a random X position to place the alien ship on screen
 			// ----from----------------------------to----// example
-			//      20                             80
-			// distance = 80 - 20 = 60
-			distance := (w - 20) + 1
-			xPos := rand.Intn(distance) + 20
+			//      15                             85
+			// distance = from 15 to width-15 = high - low (85 - 15) = 70
+			distance := (w - (15 * 2))
+			xPos := rand.Intn(distance) + 15 // starting from 15
+			fmt.Println(xPos, distance, w)
 			a.AddAlien(150, 5, core.PointFloat{
 				X: float64(xPos),
 				Y: (0) - 5,
