@@ -13,11 +13,20 @@ A terminal-based implementation of the classic space invaders game written in Go
     - [X] Alien ship can move towards the player.
     - [X] Can place aliens ships in a random X position
     - [X] Alien ship automatically falls with a limit of 3 ships at a time.
-- [ ] Spaceship (Player) health, each alien ship reaching the end will depletes the health. (just a little bit)
 - [X] Stars falling down with different speed. (just to look cool)
+- [ ] Spaceship (Player) health, each alien ship reaching the end will depletes the health. (just a little bit)
 - [ ] Logs Window, to keep track whats being rendered in the current window.
 - [ ] Show control info at the bottom of the screen.
 - [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
+
+### Game Status
+Currently the game is endless, only alien ship can be destroyed. And 3 ships can be spawned at a time.
+
+#### Objective
+The game will start at wave 1, so it will be waves were each wave will increase the number of alien ships and power. Number of waves is endless, the higher it gets the higher the score. Also can loot boxes to get extra health or increase power of the beams to destroy the alien ships quicker.
+
+### Controls
+For now mouse `left click` to shoot beams, and moving the mouse left and right will be moving the spaceship.
 
 ## Getting Started
 
