@@ -15,8 +15,9 @@ A terminal-based implementation of the classic space invaders game written in Go
     - [X] Alien ship automatically falls with a limit of 3 ships at a time.
 - [ ] Spaceship (Player) health, each alien ship reaching the end will depletes the health. (just a little bit)
 - [X] Stars falling down with different speed. (just to look cool)
+- [ ] Logs Window, to keep track whats being rendered in the current window.
+- [ ] Show control info at the bottom of the screen.
 - [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
-- [ ] Performance Logs Window, to keep track whats being rendered in the current window.
 
 ## Getting Started
 
