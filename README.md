@@ -1,10 +1,16 @@
-# Space Invader Game
+# Space Invaders Game
 
 A terminal-based implementation of the classic space invaders game written in Go, using the [tcell](https://github.com/gdamore/tcell) library for handling terminal graphics and input. A simple game where the player controls spaceship with a laser, and shoots and destroy descending waves of alien invaders before they reach the bottom of the screen.
 
+### Game Status
+Currently the game is endless, only alien ship can be destroyed. And 3 ships can be spawned at a time.
+
+#### Objective
+The game will start at wave 1, so it will be waves were each wave will increase the number of alien ships and power. Number of waves is endless, the higher it gets the higher the score. Also can loot boxes to get extra health or increase power of the beams to destroy the alien ships quicker.
+
 ![Space Invaders Game](https://raw.githubusercontent.com/omar0ali/spaceinvader-game-cli/refs/heads/main/screenshots/spaceinvader-game-cli.png)
 
-### TODOS
+### Checklist:
 - [X] Create a spaceship placed at the bottom of the screen.
     - [X] Add controls to the spaceship, `Mouse Motion` left and right. 
     - [X] Draw a proper Triangle shape.
@@ -19,11 +25,6 @@ A terminal-based implementation of the classic space invaders game written in Go
 - [ ] Show control info at the bottom of the screen.
 - [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
 
-### Game Status
-Currently the game is endless, only alien ship can be destroyed. And 3 ships can be spawned at a time.
-
-#### Objective
-The game will start at wave 1, so it will be waves were each wave will increase the number of alien ships and power. Number of waves is endless, the higher it gets the higher the score. Also can loot boxes to get extra health or increase power of the beams to destroy the alien ships quicker.
 
 ### Controls
 For now mouse `left click` to shoot beams, and moving the mouse left and right will be moving the spaceship.
@@ -33,7 +34,7 @@ For now mouse `left click` to shoot beams, and moving the mouse left and right w
 Clone repository
 
 ```bash
-git clone https://github.com/omar0ali/spaceinvader-game-cli.git
+git clone https://github.com/omar0ali/spaceinvaders-game-cli.git
 ```
 
 Run the game
