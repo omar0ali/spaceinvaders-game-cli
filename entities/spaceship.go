@@ -40,23 +40,23 @@ func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 }
 
 func (s *SpaceShip) Draw(gc *core.GameContext) {
-	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	color := window.StyleIt(tcell.ColorReset, tcell.ColorRoyalBlue)
 	defer s.Gun.Draw(gc)
 	window.SetContentWithStyle(
-		int(s.triangle.A.GetX()), int(s.triangle.A.GetY()), '^', whiteColor)
+		int(s.triangle.A.GetX()), int(s.triangle.A.GetY()), '^', color)
 	window.SetContentWithStyle(
-		int(s.triangle.B.GetX()), int(s.triangle.B.GetY()), '*', whiteColor) // left
+		int(s.triangle.B.GetX()), int(s.triangle.B.GetY()), '*', color) // left
 	window.SetContentWithStyle(
-		int(s.triangle.C.GetX()), int(s.triangle.C.GetY()), '*', whiteColor) // right
+		int(s.triangle.C.GetX()), int(s.triangle.C.GetY()), '*', color) // right
 	// left line
 	window.SetContentWithStyle(
-		int(s.triangle.A.GetX())-1, int(s.triangle.A.GetY())+1, '/', whiteColor)
+		int(s.triangle.A.GetX())-1, int(s.triangle.A.GetY())+1, '/', color)
 	// right line
 	window.SetContentWithStyle(
-		int(s.triangle.A.GetX())+1, int(s.triangle.A.GetY())+1, '\\', whiteColor)
+		int(s.triangle.A.GetX())+1, int(s.triangle.A.GetY())+1, '\\', color)
 	// bottom line
 	window.SetContentWithStyle(
-		int(s.triangle.A.GetX()), int(s.triangle.A.GetY())+2, tcell.RuneS7, whiteColor)
+		int(s.triangle.A.GetX()), int(s.triangle.A.GetY())+2, tcell.RuneS7, color)
 }
 
 func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
