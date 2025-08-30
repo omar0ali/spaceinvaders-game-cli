@@ -66,7 +66,7 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 		// check the health of each alien
 		// clear
 		_, h := window.GetSize()
-		if alien.Health > 0 && int(alien.OriginPoint.Y) < h-1 {
+		if !alien.isDead() && alien.checkHeightPosition(h) {
 			activeAliens = append(activeAliens, alien)
 		}
 	}
