@@ -27,8 +27,13 @@ func main() {
 		Aliens: []*entities.Alien{},
 	}
 
+	starProducer := entities.StarProducer{
+		Stars: []*entities.Star{},
+	}
+
 	gameContext.AddEntity(&spaceship)
 	gameContext.AddEntity(&alienProducer)
+	gameContext.AddEntity(&starProducer)
 
 	// ----------------------------------------- window ------------------------------------
 	window.InputEvent(exit,
