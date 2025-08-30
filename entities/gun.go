@@ -81,12 +81,10 @@ func (g *Gun) InputEvents(event tcell.Event, gc *core.GameContext) {
 				return
 			}
 			for _, entity := range gc.GetEntities() {
-				if entity.GetType() == "spaceship" {
-					spaceShip, ok := entity.(*SpaceShip)
-					if ok {
-						g.initBeam(20, 40, spaceShip.origin)
-						break
-					}
+				spaceShip, ok := entity.(*SpaceShip)
+				if ok {
+					g.initBeam(20, 40, spaceShip.origin)
+					break
 				}
 			}
 		}

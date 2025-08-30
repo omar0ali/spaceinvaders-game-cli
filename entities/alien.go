@@ -86,10 +86,8 @@ func (a *AlienProducer) CheckAliensHealth(gc *core.GameContext) {
 	var gun *Gun
 	// look for the spaceship since it has the gun and the number of beams
 	for _, entity := range gc.GetEntities() {
-		if entity.GetType() == "spaceship" {
-			if spaceship, ok := entity.(*SpaceShip); ok {
-				gun = &spaceship.Gun
-			}
+		if spaceship, ok := entity.(*SpaceShip); ok {
+			gun = &spaceship.Gun
 			break
 		}
 	}
