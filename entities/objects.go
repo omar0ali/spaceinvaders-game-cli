@@ -13,7 +13,7 @@ type FallingObjectBase struct {
 	TrianglePoint core.Triangle
 }
 
-func (f *FallingObjectBase) checkHeightPosition(h int) bool {
+func (f *FallingObjectBase) isOffScreen(h int) bool {
 	return int(f.OriginPoint.Y) < h-4
 }
 
