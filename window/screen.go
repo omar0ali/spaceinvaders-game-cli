@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/omar0ali/spaceinvader-game-cli/core"
 )
 
 type OptsFunc func(*WindowOpts)
@@ -110,7 +111,7 @@ func InputEvent(exitCha chan struct{}, keys func(tcell.Event)) {
 			case *tcell.EventResize:
 				screen.Clear()
 			case *tcell.EventKey:
-				if ev.Key() == tcell.KeyESC || ev.Rune() == 'q' {
+				if ev.Key() == tcell.KeyESC || ev.Rune() == 'q' || ev.Rune() == 'Q' {
 					cleanupOnce.Do(func() {
 						screen.Fini()
 					})
@@ -172,4 +173,12 @@ func SetContentWithStyle(x, y int, r rune, style tcell.Style) {
 
 func StyleIt(background, forground tcell.Color) tcell.Style {
 	return tcell.StyleDefault.Background(background).Foreground(forground)
+}
+
+func GetCenterPoint() core.Point {
+	if screen == nil {
+		log.Fatal("[GetCenterPoint] Screen must be initialized first. Call InitScreen()")
+	}
+	w, h := GetSize()
+	return core.Point{X: w / 2, Y: h / 2}
 }
