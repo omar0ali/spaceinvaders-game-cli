@@ -20,10 +20,12 @@ The game will start at wave 1, so it will be waves were each wave will increase 
     - [X] Can place aliens ships in a random X position
     - [X] Alien ship automatically falls with a limit of 3 ships at a time.
 - [X] Stars falling down with different speed. (just to look cool)
+- [X] Adding Start Screen UI
+- [X] Adding Pause Menu using `p` to pause the game.
 - [ ] Spaceship (Player) health, each alien ship reaching the end will depletes the health. (just a little bit)
-- [ ] Logs Window, to keep track whats being rendered in the current window.
-- [ ] Show control info at the bottom of the screen.
+- [X] Show control info at the bottom of the screen.
 - [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
+- [ ] Logs Window, to keep track whats being rendered in the current window.
 
 
 ### Controls
