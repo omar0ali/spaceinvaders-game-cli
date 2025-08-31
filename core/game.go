@@ -13,6 +13,7 @@ type (
 	GameContext struct {
 		entities []Entity
 		Screen   tcell.Screen
+		Halt     bool
 	}
 )
 
