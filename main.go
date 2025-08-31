@@ -31,20 +31,20 @@ func main() {
 		Stars: []*entities.Star{},
 	}
 
+	ui := entities.UI{
+		MenuScreen:  true,
+		PauseScreen: false,
+	}
+
 	// order is important since some objects might overlap others
 	gameContext.AddEntity(&starProducer)
 	gameContext.AddEntity(&alienProducer)
 	gameContext.AddEntity(&spaceship)
+	gameContext.AddEntity(&ui)
 
 	// ----------------------------------------- window ------------------------------------
 	window.InputEvent(exit,
 		func(event tcell.Event) {
-			switch ev := event.(type) {
-			case *tcell.EventKey:
-				if ev.Rune() == 'r' {
-					close(exit)
-				}
-			}
 			for _, entity := range gameContext.GetEntities() {
 				entity.InputEvents(event, &gameContext)
 			}
@@ -54,9 +54,18 @@ func main() {
 	window.Update(exit,
 		func(delta float64) {
 			// update game
-			for _, entity := range gameContext.GetEntities() {
-				entity.Draw(&gameContext)
-				entity.Update(&gameContext, delta)
+
+			// only let ui to be displayed
+			if gameContext.Halt {
+				if ui, ok := gameContext.FindEntity("ui").(*entities.UI); ok {
+					ui.Update(&gameContext, delta)
+					ui.Draw(&gameContext)
+				}
+			} else { // update everything
+				for _, entity := range gameContext.GetEntities() {
+					entity.Draw(&gameContext)
+					entity.Update(&gameContext, delta)
+				}
 			}
 		},
 	)
