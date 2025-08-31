@@ -8,6 +8,23 @@ import (
 	"github.com/omar0ali/spaceinvader-game-cli/window"
 )
 
+func DeployEntities(gc *core.GameContext) {
+	// order is important since some objects might overlap others
+	gc.AddEntity(
+		entities.InitSpaceShip(5, 5),
+		&entities.AlienProducer{
+			Aliens: []*entities.Alien{},
+		},
+		&entities.StarProducer{
+			Stars: []*entities.Star{},
+		},
+		&entities.UI{
+			MenuScreen:  true,
+			PauseScreen: false,
+		},
+	)
+}
+
 func main() {
 	exit := make(chan struct{})
 
@@ -21,30 +38,19 @@ func main() {
 		Screen: screen,
 	}
 	// ---------------------------------- entities --------------------------------------
-	spaceship := entities.InitSpaceShip()
 
-	alienProducer := entities.AlienProducer{
-		Aliens: []*entities.Alien{},
-	}
-
-	starProducer := entities.StarProducer{
-		Stars: []*entities.Star{},
-	}
-
-	ui := entities.UI{
-		MenuScreen:  true,
-		PauseScreen: false,
-	}
-
-	// order is important since some objects might overlap others
-	gameContext.AddEntity(&starProducer)
-	gameContext.AddEntity(&alienProducer)
-	gameContext.AddEntity(&spaceship)
-	gameContext.AddEntity(&ui)
+	DeployEntities(&gameContext)
 
 	// ----------------------------------------- window ------------------------------------
 	window.InputEvent(exit,
 		func(event tcell.Event) {
+			switch ev := event.(type) {
+			case *tcell.EventKey:
+				if ev.Rune() == 'r' || ev.Rune() == 'R' {
+					gameContext.RemoveAllEntities()
+					DeployEntities(&gameContext)
+				}
+			}
 			for _, entity := range gameContext.GetEntities() {
 				entity.InputEvents(event, &gameContext)
 			}
