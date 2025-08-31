@@ -72,7 +72,7 @@ func (s *StarProducer) Draw(gc *core.GameContext) {
 func (s *StarProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 	switch ev := event.(type) {
 	case *tcell.EventKey:
-		if ev.Rune() == 's' { // dev mode to create a star
+		if ev.Rune() == 'n' { // dev mode to create a star
 			w, _ := window.GetSize()
 			xPos := rand.Intn(w)
 			randSpeed := rand.Intn(50) + 4
