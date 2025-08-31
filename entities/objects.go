@@ -14,7 +14,7 @@ type FallingObjectBase struct {
 }
 
 func (f *FallingObjectBase) isOffScreen(h int) bool {
-	return int(f.OriginPoint.Y) < h-4
+	return int(f.OriginPoint.Y) > h-2
 }
 
 func (f *FallingObjectBase) isDead() bool {
