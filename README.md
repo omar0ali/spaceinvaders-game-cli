@@ -26,10 +26,12 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 - [X] Show control info at the bottom of the screen.
 - [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
 - [ ] Logs Window, to keep track whats being rendered in the current window.
+- [ ] Implement a configuration file.
+- [ ] Timer
 
 
 ### Controls
-For now mouse `left click` to shoot beams, and moving the mouse left and right will be moving the spaceship.
+For now mouse `leftoo click` to shoot beams, and moving the mouse left and right will be moving the spaceship.
 
 ## Getting Started
 
