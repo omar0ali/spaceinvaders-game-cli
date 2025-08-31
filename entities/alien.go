@@ -112,7 +112,7 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 	switch ev := event.(type) {
 	case *tcell.EventKey:
-		if ev.Rune() == ' ' { // dev mode
+		if ev.Rune() == 'm' { // dev mode
 			// testing spawn an alinen
 			w, _ := window.GetSize()
 			// pick a random X position to place the alien ship on screen
