@@ -31,7 +31,7 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 - [X] Adding Start Screen UI
 - [X] Adding Pause Menu using `p` to pause the game.
     - [X] Adding spaceship details
-- [ ] Spaceship (Player) health, each alien ship reaching the end will depletes the health. (just a little bit)
+- [X] Spaceship (Player) health, each alien ship reaching the end will depletes the health. (just a little bit)
 - [X] Show control info at the bottom of the screen.
 - [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
 - [ ] Logs Window, to keep track whats being rendered in the current window.
