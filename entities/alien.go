@@ -13,63 +13,26 @@ type Alien struct {
 }
 
 type AlienProducer struct {
-	Aliens []*Alien
+	Aliens   []*Alien
+	limit    int
+	MaxSpeed int
+	Health   int
 }
 
 // TODO: should create alines and place them in random positions on screen.
 
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
-	// limit amount of ships Falling
-	if len(a.Aliens) < 3 {
-		// testing spawn an alinen
-		w, _ := window.GetSize()
-		// pick a random X position to place the alien ship on screen
-		// ----from----------------------------to----// example
-		//      15                             85
-		// distance = from 15 to width-15 = high - low (85 - 15) = 70
-		distance := (w - (15 * 2))
-		xPos := rand.Intn(distance) + 15 // starting from 15
-		randSpeed := rand.Intn(8) + 2    // start at 2
-
-		// create alien
-		a.Aliens = append(a.Aliens, &Alien{
-			FallingObjectBase: *NewObject(100, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
-		})
-
-	}
-	// Update the coordinates of the aliens.
-	for _, alien := range a.Aliens {
-		distance := float64(alien.Speed) * delta
-		alien.move(distance)
-	}
+	// limit amount of ships Falling (generate alien ships)
+	a.DeployAliens(18)
 
 	// -------- this will ensure to clean up dead aliens and beams --------
+	spaceship := a.MovementAndCollision(delta, gc)
 
-	var activeAliens []*Alien
-	var gun *Gun
-
-	// look for the spaceship since it has the gun and the number of beams
-	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-		gun = &spaceship.Gun
-	}
-	// on each alien avaiable check its position and check if the beam is at the same position
-	for _, alien := range a.Aliens {
-		for _, beam := range gun.Beams {
-			if alien.isHit(&beam.position, beam.power) {
-				gun.RemoveBeam(beam) // removing a beam when hitting the ship
-			}
-		}
-
-		// check the alien ship height position
-		// check the health of each alien
-		// clear
-		_, h := window.GetSize()
-		if !alien.isDead() && alien.isOffScreen(h) {
-			activeAliens = append(activeAliens, alien)
-		}
-	}
-
-	a.Aliens = activeAliens
+	// -------- progression ---------
+	spaceship.LevelUp(func() { // on every spaceship level up, deployed alien health increases
+		a.limit += 1
+		a.Health += 1
+	})
 }
 
 func (a *AlienProducer) Draw(gc *core.GameContext) {
@@ -106,6 +69,9 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 		// lines right
 		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+1), int(alien.TrianglePoint.B.GetY()+1), '\\', color)
 		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+2), int(alien.TrianglePoint.B.GetY()+2), '\\', color)
+
+		// draw alien ship details
+		a.UIAlienShipData(gc)
 	}
 }
 
@@ -125,10 +91,69 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 
 			// create alien
 			a.Aliens = append(a.Aliens, &Alien{
-				FallingObjectBase: *NewObject(100, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
+				FallingObjectBase: *NewObject(10, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
 			})
 		}
 	}
+}
+
+func (a *AlienProducer) DeployAliens(padding int) {
+	if len(a.Aliens) < a.limit {
+		w, _ := window.GetSize()
+		// pick a random X position to place the alien ship on screen
+		// ----from----------------------------to----// example
+		//      15                             85
+		// distance = from 15 to width-15 = high - low (85 - 15) = 70
+		padding := padding
+		distance := (w - (padding * 2))
+		xPos := rand.Intn(distance) + padding // starting from 18
+		randSpeed := rand.Intn(a.MaxSpeed) + 3
+		// spawn alien
+		a.Aliens = append(a.Aliens, &Alien{
+			FallingObjectBase: *NewObject(a.Health, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
+		})
+	}
+}
+
+func (a *AlienProducer) UIAlienShipData(gc *core.GameContext) {}
+
+func (a *AlienProducer) MovementAndCollision(delta float64, gc *core.GameContext) *SpaceShip {
+	var activeAliens []*Alien
+	var gun *Gun
+	var spaceship *SpaceShip
+
+	// look for the spaceship since it has the gun and the number of beams
+	if ship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+		spaceship = ship
+		gun = &spaceship.Gun
+	}
+
+	// on each alien avaiable check its position and check if the beam is at the same position
+	for _, alien := range a.Aliens {
+		// Update the coordinates of the aliens.
+		alien.move(delta)
+		for _, beam := range gun.Beams {
+			if alien.isHit(&beam.position, gun.Power) {
+				spaceship.ScoreHit()
+				gun.RemoveBeam(beam) // removing a beam when hitting the ship
+			}
+		}
+
+		// check the alien ship height position
+		// check the health of each alien
+		_, h := window.GetSize()
+		if alien.isOffScreen(h) {
+			spaceship.Health -= 1
+		}
+		if alien.isDead() {
+			spaceship.ScoreKill()
+		}
+		if !alien.isDead() && !alien.isOffScreen(h) { // still flying
+			activeAliens = append(activeAliens, alien)
+		}
+	}
+	a.Aliens = activeAliens
+	return spaceship
 }
 
 func (a *AlienProducer) GetType() string {

@@ -11,9 +11,16 @@ import (
 func DeployEntities(gc *core.GameContext) {
 	// order is important since some objects might overlap others
 	gc.AddEntity(
-		entities.InitSpaceShip(5, 5),
+		entities.InitSpaceShip(entities.SpaceshipOpts{
+			SpaceShipHealth: 4,
+			GunPower:        2,
+			GunCapacity:     5,
+			GunSpeed:        40,
+		}),
 		&entities.AlienProducer{
-			Aliens: []*entities.Alien{},
+			Aliens:   []*entities.Alien{},
+			MaxSpeed: 8,
+			Health:   10,
 		},
 		&entities.StarProducer{
 			Stars: []*entities.Star{},
