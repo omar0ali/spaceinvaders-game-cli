@@ -8,7 +8,15 @@ Currently the game is endless, only alien ship can be destroyed. And 3 ships can
 #### Objective
 The game will start at wave 1, so it will be waves were each wave will increase the number of alien ships and power. Number of waves is endless, the higher it gets the higher the score. Also can loot boxes to get extra health or increase power of the beams to destroy the alien ships quicker.
 
-![Space Invaders Game](https://raw.githubusercontent.com/omar0ali/spaceinvader-game-cli/refs/heads/main/screenshots/spaceinvader-game-cli.png)
+![Space Invaders Game (Start Menu)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-startmenu.png)
+
+![Space Invaders Game (Gameplay 1)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-gameplay0.png)
+
+![Space Invaders Game (Gameplay 2)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-gameplay1.png)
+
+![Space Invaders Game (Pause)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-pause.png)
+
+![Space Invaders Game (Game Over)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-gameover.png)
 
 ### Checklist:
 - [X] Create a spaceship placed at the bottom of the screen.
