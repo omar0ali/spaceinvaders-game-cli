@@ -22,18 +22,23 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 - [X] Stars falling down with different speed. (just to look cool)
 - [X] Adding Start Screen UI
 - [X] Adding Pause Menu using `p` to pause the game.
+    - [X] Adding spaceship details
 - [ ] Spaceship (Player) health, each alien ship reaching the end will depletes the health. (just a little bit)
 - [X] Show control info at the bottom of the screen.
 - [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
 - [ ] Logs Window, to keep track whats being rendered in the current window.
 - [ ] Implement a configuration file.
 - [ ] Timer
-
+- [X] Spaceship stats on the left of screen.
+- [X] Alien Ship Stats on the right of the screen.
 
 ### Controls
-For now mouse `leftoo click` to shoot beams, and moving the mouse left and right will be moving the spaceship.
+For now mouse `[LM] left click` to shoot beams, and moving the mouse left and right will move the spaceship.
 
 ## Getting Started
+
+>[!NOTE]
+Ensure go is installed [Install Golang](https://go.dev/doc/install)
 
 Clone repository
 
