@@ -10,8 +10,6 @@ import (
 	"github.com/omar0ali/spaceinvader-game-cli/window"
 )
 
-var previousLevel = 0
-
 type SpaceshipOpts struct {
 	SpaceShipHealth int
 	GunPower        int
@@ -20,13 +18,14 @@ type SpaceshipOpts struct {
 }
 
 type SpaceShip struct {
-	triangle core.Triangle
-	origin   core.Point
-	Gun      Gun // a spaceship has a gun
-	Health   int
-	Score    int
-	Kills    int
-	Level    int
+	triangle      core.Triangle
+	origin        core.Point
+	Gun           Gun // a spaceship has a gun
+	Health        int
+	Score         int
+	Kills         int
+	Level         int
+	previousLevel int
 }
 
 // init in the bottom center of the secreen by default
@@ -149,14 +148,14 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 }
 
 func (s *SpaceShip) LevelUp(levelit func()) {
-	if s.Level > previousLevel {
+	if s.Level > s.previousLevel {
 		levelit()
 		if s.Level%2 == 0 {
 			s.Gun.Power += 1
 			s.Gun.Cap += 1
 			s.Gun.Speed += 1
 		}
-		previousLevel = s.Level
+		s.previousLevel = s.Level
 	}
 }
 
