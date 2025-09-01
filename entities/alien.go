@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/gdamore/tcell/v2"
@@ -113,7 +114,20 @@ func (a *AlienProducer) DeployAliens(padding int) {
 	}
 }
 
-func (a *AlienProducer) UIAlienShipData(gc *core.GameContext) {}
+func (a *AlienProducer) UIAlienShipData(gc *core.GameContext) {
+	w, _ := window.GetSize()
+	startX, startY := w-18, 2
+	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	for i, r := range []rune(fmt.Sprintf("* Aliens : %d/%d", len(a.Aliens), a.limit)) {
+		window.SetContentWithStyle(startX+i, startY+1, r, whiteColor)
+	}
+	for i, r := range []rune(fmt.Sprintf("* Max SPD: %d", a.MaxSpeed)) {
+		window.SetContentWithStyle(startX+i, startY+2, r, whiteColor)
+	}
+	for i, r := range []rune(fmt.Sprintf("* Max HP: %d", a.Health)) {
+		window.SetContentWithStyle(startX+i, startY+3, r, whiteColor)
+	}
+}
 
 func (a *AlienProducer) MovementAndCollision(delta float64, gc *core.GameContext) *SpaceShip {
 	var activeAliens []*Alien
