@@ -46,7 +46,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 				window.GetCenterPoint(),
 				fmt.Sprintf(`
 				----------- PAUSED -----------
-
+				- HP: %d
 				- Score: %d
 				- Kills: %d
 				- Level: %d
@@ -54,7 +54,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 				[R] To restart the game.
 				[Q] To quit the game.
 				[P] To continue the game.
-			`, spaceship.Score, spaceship.Kills, spaceship.Kills),
+			`, spaceship.Health, spaceship.Score, spaceship.Kills, spaceship.Kills),
 				"Paused",
 			)
 			return
