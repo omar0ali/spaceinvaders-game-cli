@@ -14,12 +14,10 @@ type Alien struct {
 
 type AlienProducer struct {
 	Aliens   []*Alien
-	limit    int
+	limit    int // NOTE: always starts with 0 | its linked to the spaceship level up
 	MaxSpeed int
 	Health   int
 }
-
-// TODO: should create alines and place them in random positions on screen.
 
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	// limit amount of ships Falling (generate alien ships)
