@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/gdamore/tcell/v2"
@@ -9,8 +10,9 @@ import (
 )
 
 type UI struct {
-	MenuScreen  bool
-	PauseScreen bool
+	MenuScreen     bool
+	PauseScreen    bool
+	GameOverScreen bool
 }
 
 func (u *UI) Draw(gc *core.GameContext) {
@@ -38,26 +40,62 @@ func (u *UI) Draw(gc *core.GameContext) {
 	}
 	// pause ui
 	if u.PauseScreen {
-		u.MessageBox(
-			window.GetCenterPoint(),
-			`
+		if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+
+			u.MessageBox(
+				window.GetCenterPoint(),
+				fmt.Sprintf(`
+				----------- PAUSED -----------
+
+				- Score: %d
+				- Kills: %d
+				- Level: %d
+
 				[R] To restart the game.
 				[Q] To quit the game.
 				[P] To continue the game.
-			`,
-			"Paused",
-		)
-		return
+			`, spaceship.Score, spaceship.Kills, spaceship.Kills),
+				"Paused",
+			)
+			return
+		}
+	}
+	// game over ui
+	if u.GameOverScreen {
+		if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+			u.MessageBox(
+				window.GetCenterPoint(),
+				fmt.Sprintf(`
+				Thank you for playing :)
+
+				- Score: %d
+				- Kills: %d
+				- Level: %d
+
+				Would you like to play again?
+
+				[R] To restart the game.
+				[Q] To quit the game.
+
+			`, spaceship.Score, spaceship.Kills, spaceship.Level),
+				"Game Over",
+			)
+			return
+		}
 	}
 	// show controls at the bottom of the screen
 	_, h := window.GetSize()
 	for i, r := range []rune("[LM] Shoot Beams ◆ [Q] Quit ◆ [P] Pause Game ◆ [R] Restart Game") {
 		window.SetContentWithStyle(0+i, h-1, r, whiteColor)
 	}
+	// display spacehsip details
+	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+		spaceship.UISpaceshipData(gc)
+	}
 }
 
 func (u *UI) Update(gc *core.GameContext, delta float64) {
-	if u.MenuScreen || u.PauseScreen {
+	if u.MenuScreen || u.PauseScreen || u.GameOverScreen {
 		gc.Halt = true
 	} else {
 		gc.Halt = false
@@ -73,7 +111,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 			}
 		}
 		if ev.Rune() == 'p' || ev.Rune() == 'P' {
-			if u.MenuScreen { // skip
+			if u.MenuScreen || u.GameOverScreen { // skip
 				return
 			}
 			u.PauseScreen = !u.PauseScreen

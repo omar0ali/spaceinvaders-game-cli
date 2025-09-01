@@ -7,25 +7,24 @@ import (
 )
 
 type Beam struct {
-	speed    int
 	position core.Point
-	symbol   rune
-	power    int
+	Symbol   rune
 }
 
 type Gun struct {
 	Beams []*Beam
+	Cap   int
+	Power int
+	Speed int
 }
 
-func (g *Gun) initBeam(power, speed int, pos core.Point) {
+func (g *Gun) initBeam(pos core.Point) {
 	beam := Beam{
-		speed,
 		core.Point{
 			X: pos.X,
 			Y: pos.Y - 2,
 		},
 		tcell.RuneVLine,
-		power,
 	}
 	g.Beams = append(g.Beams, &beam)
 }
@@ -48,7 +47,7 @@ func (g *Gun) Update(gc *core.GameContext, delta float64) {
 	var activeBeams []*Beam
 
 	for _, beam := range g.Beams {
-		distance := int(float64(beam.speed) * delta)
+		distance := int(float64(g.Speed) * delta)
 		beam.position.Y -= distance
 
 		if beam.position.Y >= 0 {
@@ -65,24 +64,27 @@ func (g *Gun) Draw(gc *core.GameContext) {
 		return
 	}
 	for _, beam := range g.Beams {
-		window.SetContent(beam.position.X, beam.position.Y, beam.symbol)
+		window.SetContent(beam.position.X, beam.position.Y, beam.Symbol)
 	}
 }
 
 func (g *Gun) InputEvents(event tcell.Event, gc *core.GameContext) {
+	if len(g.Beams) > g.Cap {
+		return
+	}
 	// on click, will create a new beam
 	switch ev := event.(type) {
 	case *tcell.EventMouse:
 		if ev.Buttons() == tcell.Button1 {
-			// limit how many beams shot
-			// number of beams can't exceed 10
-			// TODO: this can be changed later when implementing config file.
-			if len(g.Beams) > 10 {
-				return
-			}
-
+			// limit many beams shots
 			if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-				g.initBeam(20, 40, spaceship.origin)
+				g.initBeam(spaceship.origin)
+			}
+		}
+	case *tcell.EventKey:
+		if ev.Rune() == ' ' {
+			if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+				g.initBeam(spaceship.origin)
 			}
 		}
 	}

@@ -49,7 +49,8 @@ func (f *FallingObjectBase) isHit(point core.PointInterface, power int) bool {
 	return false
 }
 
-func (f *FallingObjectBase) move(distance float64) {
+func (f *FallingObjectBase) move(delta float64) {
+	distance := float64(f.Speed) * delta
 	f.OriginPoint.Y += distance
 	f.TrianglePoint.A.AppendY(distance)
 	f.TrianglePoint.B.AppendY(distance)
