@@ -113,16 +113,18 @@ func (a *AlienProducer) DeployAliens(padding int) {
 
 func (a *AlienProducer) UIAlienShipData(gc *core.GameContext) {
 	w, _ := window.GetSize()
-	startX, startY := w-18, 2
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
-	for i, r := range []rune(fmt.Sprintf("* Aliens : %d/%d", len(a.Aliens), a.limit)) {
-		window.SetContentWithStyle(startX+i, startY+1, r, whiteColor)
+	aliensStr := []rune(fmt.Sprintf("Aliens: %d * ", a.limit))
+	for i, r := range aliensStr {
+		window.SetContentWithStyle(w+i-len(aliensStr), 2, r, whiteColor)
 	}
-	for i, r := range []rune(fmt.Sprintf("* Max SPD: %d", a.MaxSpeed)) {
-		window.SetContentWithStyle(startX+i, startY+2, r, whiteColor)
+	alienMSPD := []rune(fmt.Sprintf("Max SPD: %d * ", a.MaxSpeed))
+	for i, r := range alienMSPD {
+		window.SetContentWithStyle(w+i-len(alienMSPD), 3, r, whiteColor)
 	}
-	for i, r := range []rune(fmt.Sprintf("* Max HP: %d", a.Health)) {
-		window.SetContentWithStyle(startX+i, startY+3, r, whiteColor)
+	aliensHP := []rune(fmt.Sprintf("Max HP: %d * ", a.Health))
+	for i, r := range aliensHP {
+		window.SetContentWithStyle(w+i-len(aliensHP), 4, r, whiteColor)
 	}
 }
 

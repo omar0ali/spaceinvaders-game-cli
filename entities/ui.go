@@ -40,6 +40,31 @@ func (u *UI) Draw(gc *core.GameContext) {
 			"Space Invaders Game")
 		return
 	}
+
+	// show controls at the bottom of the screen
+	_, h := window.GetSize()
+	for i, r := range []rune("[LM] Shoot Beams ◆ [Q] Quit ◆ [P] Pause Game ◆ [R] Restart Game") {
+		window.SetContentWithStyle(0+i, h-1, r, whiteColor)
+	}
+	// timer
+	minutes := int(timeElapsed) / 60
+	seconds := int(timeElapsed) % 60
+
+	w, _ := window.GetSize()
+	timeStr := []rune(fmt.Sprintf("Time: %02d:%02d", minutes, seconds))
+	// display objects details
+	for i, r := range timeStr {
+		window.SetContent((w-len(timeStr))+i, 0, r)
+	}
+	// display spacehsip details
+	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+		spaceship.UISpaceshipData(gc)
+	}
+	// display aliens details
+	if aliens, ok := gc.FindEntity("alien").(*AlienProducer); ok {
+		aliens.UIAlienShipData(gc)
+	}
+
 	// pause ui
 	if u.PauseScreen {
 		if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -84,28 +109,6 @@ func (u *UI) Draw(gc *core.GameContext) {
 			)
 			return
 		}
-	}
-	// timer
-	minutes := int(timeElapsed) / 60
-	seconds := int(timeElapsed) % 60
-
-	w, _ := window.GetSize()
-	timeStr := []rune(fmt.Sprintf("Time: %02d:%02d", minutes, seconds))
-	for i, r := range timeStr {
-		window.SetContent((w-len(timeStr))+i, 0, r)
-	}
-	// show controls at the bottom of the screen
-	_, h := window.GetSize()
-	for i, r := range []rune("[LM] Shoot Beams ◆ [Q] Quit ◆ [P] Pause Game ◆ [R] Restart Game") {
-		window.SetContentWithStyle(0+i, h-1, r, whiteColor)
-	}
-	// display spacehsip details
-	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-		spaceship.UISpaceshipData(gc)
-	}
-	// display aliens details
-	if aliens, ok := gc.FindEntity("alien").(*AlienProducer); ok {
-		aliens.UIAlienShipData(gc)
 	}
 }
 
