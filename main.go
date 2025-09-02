@@ -70,13 +70,13 @@ func main() {
 
 			// only let ui to be displayed
 			if gameContext.Halt {
-				if ui, ok := gameContext.FindEntity("ui").(*entities.UI); ok {
-					ui.Update(&gameContext, delta)
-					ui.Draw(&gameContext)
-				}
 				if star, ok := gameContext.FindEntity("star").(*entities.StarProducer); ok {
 					star.Update(&gameContext, delta)
 					star.Draw(&gameContext)
+				}
+				if ui, ok := gameContext.FindEntity("ui").(*entities.UI); ok {
+					ui.Update(&gameContext, delta)
+					ui.Draw(&gameContext)
 				}
 			} else { // update everything
 				for _, entity := range gameContext.GetEntities() {
