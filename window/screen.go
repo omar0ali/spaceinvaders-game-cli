@@ -139,8 +139,7 @@ func Update(exitCha chan struct{}, updates func(delta float64)) {
 
 				screen.Clear()
 
-				lenStr := []rune(fmt.Sprintf("FPS: %.2f", (1 / Delta)))
-				for i, r := range lenStr {
+				for i, r := range []rune(fmt.Sprintf("FPS: %.2f", (1 / Delta))) {
 					screen.SetContent(i, 0, r, nil, style)
 				}
 
