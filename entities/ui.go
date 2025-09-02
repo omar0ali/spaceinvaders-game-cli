@@ -9,6 +9,8 @@ import (
 	"github.com/omar0ali/spaceinvader-game-cli/window"
 )
 
+var timeElapsed = 0.0
+
 type UI struct {
 	MenuScreen     bool
 	PauseScreen    bool
@@ -83,6 +85,15 @@ func (u *UI) Draw(gc *core.GameContext) {
 			return
 		}
 	}
+	// timer
+	minutes := int(timeElapsed) / 60
+	seconds := int(timeElapsed) % 60
+
+	w, _ := window.GetSize()
+	timeStr := []rune(fmt.Sprintf("Time: %02d:%02d", minutes, seconds))
+	for i, r := range timeStr {
+		window.SetContent((w-len(timeStr))+i, 0, r)
+	}
 	// show controls at the bottom of the screen
 	_, h := window.GetSize()
 	for i, r := range []rune("[LM] Shoot Beams ◆ [Q] Quit ◆ [P] Pause Game ◆ [R] Restart Game") {
@@ -92,6 +103,10 @@ func (u *UI) Draw(gc *core.GameContext) {
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		spaceship.UISpaceshipData(gc)
 	}
+	// display aliens details
+	if aliens, ok := gc.FindEntity("alien").(*AlienProducer); ok {
+		aliens.UIAlienShipData(gc)
+	}
 }
 
 func (u *UI) Update(gc *core.GameContext, delta float64) {
@@ -99,6 +114,7 @@ func (u *UI) Update(gc *core.GameContext, delta float64) {
 		gc.Halt = true
 	} else {
 		gc.Halt = false
+		timeElapsed += delta
 	}
 }
 

@@ -68,9 +68,6 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 		// lines right
 		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+1), int(alien.TrianglePoint.B.GetY()+1), '\\', color)
 		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+2), int(alien.TrianglePoint.B.GetY()+2), '\\', color)
-
-		// draw alien ship details
-		a.UIAlienShipData(gc)
 	}
 }
 
