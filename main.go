@@ -74,6 +74,10 @@ func main() {
 					ui.Update(&gameContext, delta)
 					ui.Draw(&gameContext)
 				}
+				if star, ok := gameContext.FindEntity("star").(*entities.StarProducer); ok {
+					star.Update(&gameContext, delta)
+					star.Draw(&gameContext)
+				}
 			} else { // update everything
 				for _, entity := range gameContext.GetEntities() {
 					entity.Draw(&gameContext)
