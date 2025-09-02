@@ -37,7 +37,7 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 - [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
 - [ ] Logs Window, to keep track whats being rendered in the current window.
 - [ ] Implement a configuration file.
-- [ ] Timer
+- [X] Timer
 - [X] Spaceship stats on the left of screen.
 - [X] Alien Ship Stats on the right of the screen.
 
