@@ -22,7 +22,7 @@ type AlienProducer struct {
 
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	// limit amount of ships Falling (generate alien ships)
-	a.DeployAliens(18)
+	a.DeployAliens()
 
 	// -------- this will ensure to clean up dead aliens and beams --------
 	spaceship := a.MovementAndCollision(delta, gc)
@@ -31,6 +31,7 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	spaceship.LevelUp(func() { // on every spaceship level up, deployed alien health increases
 		a.limit += 1
 		a.Health += 1
+		a.MaxSpeed += 1
 	})
 }
 
@@ -93,14 +94,14 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 	}
 }
 
-func (a *AlienProducer) DeployAliens(padding int) {
+func (a *AlienProducer) DeployAliens() {
 	if len(a.Aliens) < a.limit {
 		w, _ := window.GetSize()
 		// pick a random X position to place the alien ship on screen
 		// ----from----------------------------to----// example
 		//      15                             85
 		// distance = from 15 to width-15 = high - low (85 - 15) = 70
-		padding := padding
+		const padding = 18
 		distance := (w - (padding * 2))
 		xPos := rand.Intn(distance) + padding // starting from 18
 		randSpeed := rand.Intn(a.MaxSpeed) + 3
