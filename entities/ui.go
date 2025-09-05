@@ -81,7 +81,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 				[R] To restart the game.
 				[Q] To quit the game.
 				[P] To continue the game.
-			`, spaceship.Health, spaceship.Score, spaceship.Kills, spaceship.Kills),
+			`, spaceship.Health, spaceship.Score, spaceship.Kills, spaceship.Level),
 				"Paused",
 			)
 			return
