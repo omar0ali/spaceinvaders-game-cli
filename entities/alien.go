@@ -115,7 +115,7 @@ func (a *AlienProducer) DeployAliens() {
 func (a *AlienProducer) UIAlienShipData(gc *core.GameContext) {
 	w, _ := window.GetSize()
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
-	aliensStr := []rune(fmt.Sprintf("Aliens: %d * ", a.limit))
+	aliensStr := []rune(fmt.Sprintf("Aliens Limit: %d * ", a.limit))
 	for i, r := range aliensStr {
 		window.SetContentWithStyle(w+i-len(aliensStr), 2, r, whiteColor)
 	}

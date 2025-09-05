@@ -28,52 +28,104 @@ func (h *HealthProducer) Update(gc *core.GameContext, delta float64) {
 		health.move(delta)
 	}
 
-	var activeHealthPacks []*Health
+	spaceship := h.MovementAndCollision(delta, gc)
 
-	for _, health := range h.HealthPacks {
-		// check the star height position
-		// clear
-		_, h := window.GetSize()
-		if !health.isOffScreen(h) {
-			activeHealthPacks = append(activeHealthPacks, health)
-		}
-	}
-	h.HealthPacks = activeHealthPacks
+	spaceship.LevelUp(func() {
+		h.Health += 1
+	})
 }
 
 func (h *HealthProducer) Draw(gc *core.GameContext) {
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
-	width, height := 10, 5
+	width, height := 6, 1
 	for _, health := range h.HealthPacks {
 		// corners
-		window.SetContentWithStyle(int(health.OriginPoint.X)-width, int(health.OriginPoint.Y)-height, '*', whiteColor) // left top
-		window.SetContentWithStyle(int(health.OriginPoint.X)+width, int(health.OriginPoint.Y)-height, '*', whiteColor) // right top
-		window.SetContentWithStyle(int(health.OriginPoint.X)+width, int(health.OriginPoint.Y)+height, '*', whiteColor) // bottom right
-		window.SetContentWithStyle(int(health.OriginPoint.X)-width, int(health.OriginPoint.Y)+height, '*', whiteColor) // bottom left
-
+		window.SetContentWithStyle(int(health.OriginPoint.X)-width, int(health.OriginPoint.Y)-height, tcell.RuneULCorner, whiteColor) // left top
+		window.SetContentWithStyle(int(health.OriginPoint.X)+width, int(health.OriginPoint.Y)-height, tcell.RuneURCorner, whiteColor) // right top
+		window.SetContentWithStyle(int(health.OriginPoint.X)+width, int(health.OriginPoint.Y)+height, tcell.RuneLRCorner, whiteColor) // bottom right
+		window.SetContentWithStyle(int(health.OriginPoint.X)-width, int(health.OriginPoint.Y)+height, tcell.RuneLLCorner, whiteColor) // bottom left
 		// lines
-		// left and right lines
+		// top line
+		for i := range (width * 2) - 1 {
+			window.SetContentWithStyle((int(health.OriginPoint.X)-width)+i+1, int(health.OriginPoint.Y)-height, tcell.RuneHLine, whiteColor) // left top
+		}
+		// sides | height will be changing
+		for j := range (height * 2) - 1 {
+			for i := range (width * 2) + 1 {
+				switch i {
+				case 0, (width * 2):
+					window.SetContentWithStyle(int(health.OriginPoint.X)-width+i, int(health.OriginPoint.Y)-height+j+1, tcell.RuneVLine, whiteColor) // left top
+				default:
+					window.SetContentWithStyle(int(health.OriginPoint.X)-width+i, int(health.OriginPoint.Y)-height+j+1, ' ', whiteColor) // left top
+				}
+			}
+		}
+		// bottom line
+		for i := range (width * 2) - 1 {
+			window.SetContentWithStyle((int(health.OriginPoint.X)-width)+i+1, int(health.OriginPoint.Y)+height, tcell.RuneHLine, whiteColor) // left top
+		}
 
+		// writing text in the middle of the box
+		hpStr := []rune("Health+1")
+		for i, r := range hpStr {
+			window.SetContentWithStyle(int(health.OriginPoint.X)-width+i+1, int(health.OriginPoint.Y)-(height/2), r, whiteColor) // left top
+		}
 	}
+}
+
+func (h *HealthProducer) DeployHealthPack() {
+	w, _ := window.GetSize()
+	const padding = 18
+	distance := (w - (padding * 2))
+	xPos := rand.Intn(distance) + padding
+	randSpeed := rand.Intn(10) + 3
+	h.HealthPacks = append(h.HealthPacks, &Health{
+		FallingObjectBase: *NewObject(h.Health, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
+	})
+}
+
+func (h *HealthProducer) MovementAndCollision(delta float64, gc *core.GameContext) *SpaceShip {
+	var activeHealthPacks []*Health
+	var gun *Gun
+	var spaceship *SpaceShip
+	// similar example in alien.go
+	if ship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+		spaceship = ship
+		gun = &spaceship.Gun
+	}
+
+	for _, health := range h.HealthPacks {
+		health.move(delta)
+		for _, beam := range gun.Beams {
+			if health.isHit(&beam.position, gun.Power) {
+				spaceship.ScoreHit()
+				gun.RemoveBeam(beam)
+			}
+		}
+
+		_, h := window.GetSize()
+		if health.isDead() {
+			spaceship.Health += health.HealSize
+		}
+		if !health.isDead() && !health.isOffScreen(h) {
+			activeHealthPacks = append(activeHealthPacks, health)
+		}
+	}
+	h.HealthPacks = activeHealthPacks
+	return spaceship
 }
 
 func (h *HealthProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 	switch ev := event.(type) {
 	case *tcell.EventKey:
 		if ev.Rune() == 'h' { // dev mode
-			// testing spawn an alinen
 			w, _ := window.GetSize()
-			// pick a random X position to place the alien ship on screen
-			// ----from----------------------------to----// example
-			//      15                             85
-			// distance = from 15 to width-15 = high - low (85 - 15) = 70
 			distance := (w - (15 * 2))
-			xPos := rand.Intn(distance) + 15 // starting from 15
-			randSpeed := rand.Intn(10) + 2   // start at 2
-
-			// create alien
+			xPos := rand.Intn(distance) + 15
+			randSpeed := rand.Intn(10) + 2
 			h.HealthPacks = append(h.HealthPacks, &Health{
 				FallingObjectBase: *NewObject(10, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
+				HealSize:          1,
 			})
 		}
 	}
