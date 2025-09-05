@@ -29,6 +29,10 @@ func DeployEntities(gc *core.GameContext) {
 			MenuScreen:  true,
 			PauseScreen: false,
 		},
+		&entities.HealthProducer{
+			HealthPacks: []*entities.Health{},
+			Health:      10,
+		},
 	)
 }
 
