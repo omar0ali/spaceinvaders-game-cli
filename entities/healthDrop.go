@@ -80,7 +80,14 @@ func (h *HealthProducer) DeployHealthPack() {
 	xPos := rand.Intn(distance) + padding
 	randSpeed := rand.Intn(10) + 3
 	h.HealthPacks = append(h.HealthPacks, &Health{
-		FallingObjectBase: *NewObject(h.Health, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
+		FallingObjectBase: *NewObject(ObjectOpts{
+			Speed:       randSpeed,
+			Health:      10,
+			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
+			Width:       6,
+			Height:      1,
+		}),
+		HealSize: 1,
 	})
 }
 
@@ -124,8 +131,14 @@ func (h *HealthProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 			xPos := rand.Intn(distance) + 15
 			randSpeed := rand.Intn(10) + 2
 			h.HealthPacks = append(h.HealthPacks, &Health{
-				FallingObjectBase: *NewObject(10, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
-				HealSize:          1,
+				FallingObjectBase: *NewObject(ObjectOpts{
+					Speed:       randSpeed,
+					Health:      10,
+					OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
+					Width:       6,
+					Height:      1,
+				}),
+				HealSize: 1,
 			})
 		}
 	}
