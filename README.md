@@ -10,9 +10,7 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 
 ![Space Invaders Game (Start Menu)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-startmenu.png)
 
-![Space Invaders Game (Gameplay 1)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-gameplay0.png)
-
-![Space Invaders Game (Gameplay 2)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-gameplay1.png)
+![Space Invaders Game (Gameplay 1)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-gameplay.png)
 
 ![Space Invaders Game (Pause)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-pause.png)
 
