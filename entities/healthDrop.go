@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/gdamore/tcell/v2"
@@ -8,18 +9,28 @@ import (
 	"github.com/omar0ali/spaceinvader-game-cli/window"
 )
 
+const MaxHealthPack = 5
+
 type Health struct {
 	FallingObjectBase
 	HealSize int
 }
 
 type HealthProducer struct {
-	HealthPacks []*Health
-	Health      int
+	HealthPacks     []*Health
+	Health          int
+	MaxSpeed        int
+	totalHealthPack int
 }
 
 func (h *HealthProducer) GetType() string {
 	return "health"
+}
+
+func (h *HealthProducer) GenerateHealthPack() {
+	if h.totalHealthPack < MaxHealthPack {
+		h.totalHealthPack++
+	}
 }
 
 func (h *HealthProducer) Update(gc *core.GameContext, delta float64) {
@@ -31,60 +42,58 @@ func (h *HealthProducer) Update(gc *core.GameContext, delta float64) {
 	spaceship := h.MovementAndCollision(delta, gc)
 
 	spaceship.LevelUp(func() {
-		h.Health += 1
+		h.Health += 1 // increase difficulty to destroy a health pack
 	})
 }
 
 func (h *HealthProducer) Draw(gc *core.GameContext) {
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
-	width, height := 6, 1
 	for _, health := range h.HealthPacks {
 		// corners
-		window.SetContentWithStyle(int(health.OriginPoint.X)-width, int(health.OriginPoint.Y)-height, tcell.RuneULCorner, whiteColor) // left top
-		window.SetContentWithStyle(int(health.OriginPoint.X)+width, int(health.OriginPoint.Y)-height, tcell.RuneURCorner, whiteColor) // right top
-		window.SetContentWithStyle(int(health.OriginPoint.X)+width, int(health.OriginPoint.Y)+height, tcell.RuneLRCorner, whiteColor) // bottom right
-		window.SetContentWithStyle(int(health.OriginPoint.X)-width, int(health.OriginPoint.Y)+height, tcell.RuneLLCorner, whiteColor) // bottom left
+		window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width, int(health.OriginPoint.Y)-health.Height, tcell.RuneULCorner, whiteColor) // left top
+		window.SetContentWithStyle(int(health.OriginPoint.X)+health.Width, int(health.OriginPoint.Y)-health.Height, tcell.RuneURCorner, whiteColor) // right top
+		window.SetContentWithStyle(int(health.OriginPoint.X)+health.Width, int(health.OriginPoint.Y)+health.Height, tcell.RuneLRCorner, whiteColor) // bottom right
+		window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width, int(health.OriginPoint.Y)+health.Height, tcell.RuneLLCorner, whiteColor) // bottom left
 		// lines
 		// top line
-		for i := range (width * 2) - 1 {
-			window.SetContentWithStyle((int(health.OriginPoint.X)-width)+i+1, int(health.OriginPoint.Y)-height, tcell.RuneHLine, whiteColor) // left top
+		for i := range (health.Width * 2) - 1 {
+			window.SetContentWithStyle((int(health.OriginPoint.X)-health.Width)+i+1, int(health.OriginPoint.Y)-health.Height, tcell.RuneHLine, whiteColor) // left top
 		}
-		// sides | height will be changing
-		for j := range (height * 2) - 1 {
-			for i := range (width * 2) + 1 {
+		// sides | health.Height will be changing
+		for j := range (health.Height * 2) - 1 {
+			for i := range (health.Width * 2) + 1 {
 				switch i {
-				case 0, (width * 2):
-					window.SetContentWithStyle(int(health.OriginPoint.X)-width+i, int(health.OriginPoint.Y)-height+j+1, tcell.RuneVLine, whiteColor) // left top
+				case 0, (health.Width * 2):
+					window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width+i, int(health.OriginPoint.Y)-health.Height+j+1, tcell.RuneVLine, whiteColor) // left top
 				default:
-					window.SetContentWithStyle(int(health.OriginPoint.X)-width+i, int(health.OriginPoint.Y)-height+j+1, ' ', whiteColor) // left top
+					window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width+i, int(health.OriginPoint.Y)-health.Height+j+1, ' ', whiteColor) // left top
 				}
 			}
 		}
 		// bottom line
-		for i := range (width * 2) - 1 {
-			window.SetContentWithStyle((int(health.OriginPoint.X)-width)+i+1, int(health.OriginPoint.Y)+height, tcell.RuneHLine, whiteColor) // left top
+		for i := range (health.Width * 2) - 1 {
+			window.SetContentWithStyle((int(health.OriginPoint.X)-health.Width)+i+1, int(health.OriginPoint.Y)+health.Height, tcell.RuneHLine, whiteColor) // left top
 		}
 
 		// writing text in the middle of the box
 		hpStr := []rune("Health+1")
 		for i, r := range hpStr {
-			window.SetContentWithStyle(int(health.OriginPoint.X)-width+i+1, int(health.OriginPoint.Y)-(height/2), r, whiteColor) // left top
+			window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width+i+1, int(health.OriginPoint.Y)-(health.Height/2), r, whiteColor) // left top
 		}
 	}
 }
 
 func (h *HealthProducer) DeployHealthPack() {
 	w, _ := window.GetSize()
-	const padding = 18
-	distance := (w - (padding * 2))
-	xPos := rand.Intn(distance) + padding
-	randSpeed := rand.Intn(10) + 3
+	distance := (w - (15 * 2))
+	xPos := rand.Intn(distance) + 15
+	randSpeed := rand.Intn(h.MaxSpeed) + 2
 	h.HealthPacks = append(h.HealthPacks, &Health{
 		FallingObjectBase: *NewObject(ObjectOpts{
 			Speed:       randSpeed,
-			Health:      10,
+			Health:      h.Health,
 			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-			Width:       6,
+			Width:       5,
 			Height:      1,
 		}),
 		HealSize: 1,
@@ -122,24 +131,22 @@ func (h *HealthProducer) MovementAndCollision(delta float64, gc *core.GameContex
 	return spaceship
 }
 
+func (h *HealthProducer) UIHealthPackData(gc *core.GameContext) {
+	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	healthStr := []rune(fmt.Sprintf("* Health Packs : %d/%d", h.totalHealthPack, MaxHealthPack))
+	for i, r := range healthStr {
+		window.SetContentWithStyle(2+i, 10, r, whiteColor)
+	}
+}
+
 func (h *HealthProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 	switch ev := event.(type) {
 	case *tcell.EventKey:
-		if ev.Rune() == 'h' { // dev mode
-			w, _ := window.GetSize()
-			distance := (w - (15 * 2))
-			xPos := rand.Intn(distance) + 15
-			randSpeed := rand.Intn(10) + 2
-			h.HealthPacks = append(h.HealthPacks, &Health{
-				FallingObjectBase: *NewObject(ObjectOpts{
-					Speed:       randSpeed,
-					Health:      10,
-					OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-					Width:       6,
-					Height:      1,
-				}),
-				HealSize: 1,
-			})
+		if ev.Rune() == 'h' || ev.Rune() == 'H' {
+			if h.totalHealthPack > 0 {
+				h.DeployHealthPack()
+				h.totalHealthPack--
+			}
 		}
 	}
 }
