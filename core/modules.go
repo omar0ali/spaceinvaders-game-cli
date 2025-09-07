@@ -64,7 +64,3 @@ func (p *PointFloat) AppendX(x float64) {
 func (p *PointFloat) AppendY(y float64) {
 	p.Y += y
 }
-
-type Triangle struct {
-	A, B, C PointInterface
-}
