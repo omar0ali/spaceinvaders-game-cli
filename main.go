@@ -14,12 +14,12 @@ func DeployEntities(gc *core.GameContext) {
 		entities.InitSpaceShip(entities.SpaceshipOpts{
 			SpaceShipHealth: 4,
 			GunPower:        2,
-			GunCapacity:     5,
+			GunCapacity:     6,
 			GunSpeed:        40,
 		}),
 		&entities.AlienProducer{
 			Aliens:   []*entities.Alien{},
-			MaxSpeed: 8,
+			MaxSpeed: 3,
 			Health:   10,
 		},
 		&entities.StarProducer{
@@ -31,7 +31,8 @@ func DeployEntities(gc *core.GameContext) {
 		},
 		&entities.HealthProducer{
 			HealthPacks: []*entities.Health{},
-			Health:      10,
+			Health:      6,
+			MaxSpeed:    4,
 		},
 	)
 }
