@@ -9,7 +9,10 @@ import (
 	"github.com/omar0ali/spaceinvader-game-cli/window"
 )
 
-var timeElapsed = 0.0
+var (
+	timeElapsed = 0.0
+	nextMinute  int
+)
 
 type UI struct {
 	MenuScreen     bool
@@ -30,8 +33,12 @@ func (u *UI) Draw(gc *core.GameContext) {
 				health or enhance the power of your beams, allowing you to destroy the alien ships
 				more quickly.
 
+				+ Health Pack increases by one every minute.
+				- + Using Health Pack will increase health by one.
+
 				[Controls]
 				[LM] Click to shoot coming alienships.
+				[H] Drop Health Pack.
 				[P] To pause the game.
 				[Q] To quit the game.
 
@@ -43,7 +50,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 
 	// show controls at the bottom of the screen
 	_, h := window.GetSize()
-	for i, r := range []rune("[LM] Shoot Beams ◆ [Q] Quit ◆ [P] Pause Game ◆ [R] Restart Game") {
+	for i, r := range []rune("[LM] Shoot Beams ◆ [H] Drop Health Pack ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit ◆") {
 		window.SetContentWithStyle(0+i, h-1, r, whiteColor)
 	}
 	// timer
@@ -64,7 +71,14 @@ func (u *UI) Draw(gc *core.GameContext) {
 	if aliens, ok := gc.FindEntity("alien").(*AlienProducer); ok {
 		aliens.UIAlienShipData(gc)
 	}
-
+	// display health pack
+	if healthPack, ok := gc.FindEntity("health").(*HealthProducer); ok {
+		if nextMinute < minutes {
+			healthPack.GenerateHealthPack()
+			nextMinute++
+		}
+		healthPack.UIHealthPackData(gc)
+	}
 	// pause ui
 	if u.PauseScreen {
 		if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
