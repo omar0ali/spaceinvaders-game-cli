@@ -22,7 +22,9 @@ type AlienProducer struct {
 
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	// limit amount of ships Falling (generate alien ships)
-	a.DeployAliens()
+	if len(a.Aliens) < a.limit {
+		a.DeployAliens()
+	}
 
 	// -------- this will ensure to clean up dead aliens and beams --------
 	spaceship := a.MovementAndCollision(delta, gc)
@@ -42,33 +44,46 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 		// drawing the points
 		// header
 		window.SetContentWithStyle(
-			int(alien.TrianglePoint.A.GetX()), int(alien.TrianglePoint.A.GetY()+1), 'v', brownColor) // top
-		window.SetContentWithStyle(
-			int(alien.TrianglePoint.A.GetX()+1), int(alien.TrianglePoint.A.GetY()+1), '>', brownColor)
-		window.SetContentWithStyle(
-			int(alien.TrianglePoint.A.GetX()+2), int(alien.TrianglePoint.A.GetY()+1), ']', brownColor)
-		window.SetContentWithStyle(
-			int(alien.TrianglePoint.A.GetX()-1), int(alien.TrianglePoint.A.GetY()+1), '<', brownColor)
-		window.SetContentWithStyle(
-			int(alien.TrianglePoint.A.GetX()-2), int(alien.TrianglePoint.A.GetY()+1), '[', brownColor)
+			int(alien.OriginPoint.GetX()), int(alien.OriginPoint.GetY())+alien.Height+1, 'v', color,
+		)
 
+		// draw the left lines
 		window.SetContentWithStyle(
-			int(alien.TrianglePoint.B.GetX()), int(alien.TrianglePoint.B.GetY()), ']', brownColor) // right
+			int(alien.OriginPoint.GetX())-1, int(alien.OriginPoint.GetY())+alien.Height, '\\', brownColor,
+		)
 		window.SetContentWithStyle(
-			int(alien.TrianglePoint.C.GetX()), int(alien.TrianglePoint.C.GetY()), '[', brownColor) // left
+			int(alien.OriginPoint.GetX())-2, int(alien.OriginPoint.GetY())+alien.Height-1, '\\', brownColor,
+		)
+		// draw the right lines
+		window.SetContentWithStyle(
+			int(alien.OriginPoint.GetX())+1, int(alien.OriginPoint.GetY())+alien.Height, '/', brownColor,
+		)
+		window.SetContentWithStyle(
+			int(alien.OriginPoint.GetX())+2, int(alien.OriginPoint.GetY())+alien.Height-1, '/', brownColor,
+		)
+		// draw the bottom lines
+		window.SetContentWithStyle(
+			int(alien.OriginPoint.GetX()), int(alien.OriginPoint.GetY())+alien.Height-2, '^', brownColor,
+		)
+		window.SetContentWithStyle(
+			int(alien.OriginPoint.GetX())+1, int(alien.OriginPoint.GetY())+alien.Height-2, '-', brownColor,
+		)
+		window.SetContentWithStyle(
+			int(alien.OriginPoint.GetX())-1, int(alien.OriginPoint.GetY())+alien.Height-2, '-', brownColor,
+		)
+		window.SetContentWithStyle(
+			int(alien.OriginPoint.GetX())+2, int(alien.OriginPoint.GetY())+alien.Height-2, '-', brownColor,
+		)
+		window.SetContentWithStyle(
+			int(alien.OriginPoint.GetX())-2, int(alien.OriginPoint.GetY())+alien.Height-2, '-', brownColor,
+		)
+		window.SetContentWithStyle(
+			int(alien.OriginPoint.GetX())+3, int(alien.OriginPoint.GetY())+alien.Height-2, ']', color,
+		)
+		window.SetContentWithStyle(
+			int(alien.OriginPoint.GetX())-3, int(alien.OriginPoint.GetY())+alien.Height-2, '[', color,
+		)
 
-		// lines bellow
-		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+1), int(alien.TrianglePoint.C.GetY()), '-', brownColor)
-		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+2), int(alien.TrianglePoint.C.GetY()), '-', brownColor)
-		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+3), int(alien.TrianglePoint.C.GetY()), '^', brownColor)
-		window.SetContentWithStyle(int(alien.TrianglePoint.B.GetX()-1), int(alien.TrianglePoint.C.GetY()), '-', brownColor)
-		window.SetContentWithStyle(int(alien.TrianglePoint.B.GetX()-2), int(alien.TrianglePoint.C.GetY()), '-', brownColor)
-		// lines left
-		window.SetContentWithStyle(int(alien.TrianglePoint.B.GetX()-1), int(alien.TrianglePoint.B.GetY()+1), '/', color)
-		window.SetContentWithStyle(int(alien.TrianglePoint.B.GetX()-2), int(alien.TrianglePoint.B.GetY()+2), '/', color)
-		// lines right
-		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+1), int(alien.TrianglePoint.B.GetY()+1), '\\', color)
-		window.SetContentWithStyle(int(alien.TrianglePoint.C.GetX()+2), int(alien.TrianglePoint.B.GetY()+2), '\\', color)
 	}
 }
 
@@ -76,40 +91,32 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 	switch ev := event.(type) {
 	case *tcell.EventKey:
 		if ev.Rune() == 'm' { // dev mode
-			// testing spawn an alinen
-			w, _ := window.GetSize()
-			// pick a random X position to place the alien ship on screen
-			// ----from----------------------------to----// example
-			//      15                             85
-			// distance = from 15 to width-15 = high - low (85 - 15) = 70
-			distance := (w - (15 * 2))
-			xPos := rand.Intn(distance) + 15 // starting from 15
-			randSpeed := rand.Intn(10) + 2   // start at 2
-
-			// create alien
-			a.Aliens = append(a.Aliens, &Alien{
-				FallingObjectBase: *NewObject(10, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
-			})
+			a.DeployAliens()
 		}
 	}
 }
 
 func (a *AlienProducer) DeployAliens() {
-	if len(a.Aliens) < a.limit {
-		w, _ := window.GetSize()
-		// pick a random X position to place the alien ship on screen
-		// ----from----------------------------to----// example
-		//      15                             85
-		// distance = from 15 to width-15 = high - low (85 - 15) = 70
-		const padding = 18
-		distance := (w - (padding * 2))
-		xPos := rand.Intn(distance) + padding // starting from 18
-		randSpeed := rand.Intn(a.MaxSpeed) + 3
-		// spawn alien
-		a.Aliens = append(a.Aliens, &Alien{
-			FallingObjectBase: *NewObject(a.Health, randSpeed, core.PointFloat{X: float64(xPos), Y: -5}),
-		})
-	}
+	w, _ := window.GetSize()
+	// pick a random X position to place the alien ship on screen
+	// ----from----------------------------to----// example
+	//      15                             85
+	// distance = from 15 to width-15 = high - low (85 - 15) = 70
+	const padding = 18
+	distance := (w - (padding * 2))
+	xPos := rand.Intn(distance) + padding // starting from 18
+	randSpeed := rand.Intn(a.MaxSpeed) + 3
+	// spawn alien
+	a.Aliens = append(a.Aliens, &Alien{
+		FallingObjectBase: *NewObject(
+			ObjectOpts{
+				Health:      8,
+				Speed:       randSpeed,
+				OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
+				Width:       3,
+				Height:      5,
+			}),
+	})
 }
 
 func (a *AlienProducer) UIAlienShipData(gc *core.GameContext) {
