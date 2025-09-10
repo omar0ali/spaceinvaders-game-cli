@@ -64,42 +64,26 @@ func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 
 func (s *SpaceShip) Draw(gc *core.GameContext) {
 	color := window.StyleIt(tcell.ColorReset, tcell.ColorRoyalBlue)
-
 	defer s.Gun.Draw(gc)
 
-	// draw the top corner
-	window.SetContentWithStyle(
-		int(s.origin.GetX()), int(s.origin.GetY())-s.Height, '^', color,
-	)
-
-	// draw left and right corners
-	window.SetContentWithStyle(
-		int(s.origin.GetX())-s.Width+1, int(s.origin.GetY())+s.Height, 'O', color,
-	)
-
-	// right
-	window.SetContentWithStyle(
-		int(s.origin.GetX())+s.Width-1, int(s.origin.GetY())+s.Height, 'O', color,
-	)
-
-	// left line
-	window.SetContentWithStyle(
-		int(s.origin.GetX())-1, int(s.origin.GetY()), '/', color,
-	)
-
-	// right line
-	window.SetContentWithStyle(
-		int(s.origin.GetX())+1, int(s.origin.GetY()), '\\', color)
-	// bottom line
-	window.SetContentWithStyle(
-		int(s.origin.GetX()-1), int(s.origin.GetY()+1), ')', color,
-	)
-	window.SetContentWithStyle(
-		int(s.origin.GetX()+1), int(s.origin.GetY()+1), '(', color,
-	)
-	window.SetContentWithStyle(
-		int(s.origin.GetX()), int(s.origin.GetY()+1), '=', color,
-	)
+	spaceshipPattern := []struct {
+		dx, dy int
+		symbol rune
+		color  tcell.Style
+	}{
+		{s.origin.X, s.origin.Y - 1, '^', color},                      // top corner
+		{s.origin.X - s.Width + 1, s.origin.Y + s.Height, 'O', color}, // left corner
+		{s.origin.X + s.Width - 1, s.origin.Y + s.Height, 'O', color}, // right corner
+		// lines
+		{int(s.origin.GetX()) - 1, int(s.origin.GetY()), '/', color},     // left line
+		{int(s.origin.GetX()) + 1, int(s.origin.GetY()), '\\', color},    // right line
+		{int(s.origin.GetX() - 1), int(s.origin.GetY() + 1), ')', color}, // bottom right
+		{int(s.origin.GetX() + 1), int(s.origin.GetY() + 1), '(', color}, // bottom right
+		{int(s.origin.GetX()), int(s.origin.GetY() + 1), '=', color},     // bottom middle
+	}
+	for _, line := range spaceshipPattern {
+		window.SetContentWithStyle(line.dx, line.dy, line.symbol, line.color)
+	}
 }
 
 func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
