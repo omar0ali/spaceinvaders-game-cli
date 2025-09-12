@@ -35,7 +35,7 @@ The game will start at wave 1, so it will be waves were each wave will increase 
     - [X] Health Drop Packs will increase every minute by one and to use a health pack need to press `[H]` key to deploy and must destroy the health box to obtain.
 - [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
 - [ ] Logs Window, to keep track whats being rendered in the current window.
-- [ ] Implement a configuration file.
+- [X] Implement a configuration file.
 - [X] Timer
 - [X] Spaceship stats on the left of screen.
 - [X] Alien Ship Stats on the right of the screen.
