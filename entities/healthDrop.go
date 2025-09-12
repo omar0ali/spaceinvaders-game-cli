@@ -9,26 +9,28 @@ import (
 	"github.com/omar0ali/spaceinvader-game-cli/window"
 )
 
-const MaxHealthPack = 5
-
 type Health struct {
 	FallingObjectBase
-	HealSize int
 }
 
 type HealthProducer struct {
 	HealthPacks     []*Health
-	Health          int
-	MaxSpeed        int
+	health          int
 	totalHealthPack int
+	Cfg             core.GameConfig
 }
 
-func (h *HealthProducer) GetType() string {
-	return "health"
+func NewHealthProducer(cfg core.GameConfig) *HealthProducer {
+	return &HealthProducer{
+		HealthPacks:     []*Health{},
+		health:          cfg.HealthDropConfig.Health,
+		totalHealthPack: cfg.HealthDropConfig.Start,
+		Cfg:             cfg,
+	}
 }
 
 func (h *HealthProducer) GenerateHealthPack() {
-	if h.totalHealthPack < MaxHealthPack {
+	if h.totalHealthPack < h.Cfg.HealthDropConfig.MaxDrop {
 		h.totalHealthPack++
 	}
 }
@@ -39,21 +41,30 @@ func (h *HealthProducer) Update(gc *core.GameContext, delta float64) {
 		health.move(delta)
 	}
 
-	spaceship := h.MovementAndCollision(delta, gc)
+	spacehsip := h.MovementAndCollision(delta, gc)
 
-	spaceship.LevelUp(func() {
-		h.Health += 1 // increase difficulty to destroy a health pack
+	spacehsip.LevelUp(func() {
+		h.health += 1
 	})
 }
 
 func (h *HealthProducer) Draw(gc *core.GameContext) {
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	for _, health := range h.HealthPacks {
-		// corners
-		window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width, int(health.OriginPoint.Y)-health.Height, tcell.RuneULCorner, whiteColor) // left top
-		window.SetContentWithStyle(int(health.OriginPoint.X)+health.Width, int(health.OriginPoint.Y)-health.Height, tcell.RuneURCorner, whiteColor) // right top
-		window.SetContentWithStyle(int(health.OriginPoint.X)+health.Width, int(health.OriginPoint.Y)+health.Height, tcell.RuneLRCorner, whiteColor) // bottom right
-		window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width, int(health.OriginPoint.Y)+health.Height, tcell.RuneLLCorner, whiteColor) // bottom left
+		healthDropPattern := []struct {
+			dx, dy int
+			symbol rune
+			color  tcell.Style
+		}{
+			// corners
+			{int(health.OriginPoint.X) - health.Width, int(health.OriginPoint.Y) - health.Height, tcell.RuneULCorner, whiteColor},
+			{int(health.OriginPoint.X) + health.Width, int(health.OriginPoint.Y) - health.Height, tcell.RuneURCorner, whiteColor},
+			{int(health.OriginPoint.X) + health.Width, int(health.OriginPoint.Y) + health.Height, tcell.RuneLRCorner, whiteColor},
+			{int(health.OriginPoint.X) - health.Width, int(health.OriginPoint.Y) + health.Height, tcell.RuneLLCorner, whiteColor},
+		}
+		for _, corner := range healthDropPattern {
+			window.SetContentWithStyle(corner.dx, corner.dy, corner.symbol, corner.color)
+		}
 		// lines
 		// top line
 		for i := range (health.Width * 2) - 1 {
@@ -87,16 +98,15 @@ func (h *HealthProducer) DeployHealthPack() {
 	w, _ := window.GetSize()
 	distance := (w - (15 * 2))
 	xPos := rand.Intn(distance) + 15
-	randSpeed := rand.Intn(h.MaxSpeed) + 2
+	randSpeed := rand.Intn(max(h.Cfg.HealthDropConfig.Speed, 3)) + 2
 	h.HealthPacks = append(h.HealthPacks, &Health{
-		FallingObjectBase: *NewObject(ObjectOpts{
+		FallingObjectBase: FallingObjectBase{
 			Speed:       randSpeed,
-			Health:      h.Health,
+			Health:      h.health,
 			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
 			Width:       5,
 			Height:      1,
-		}),
-		HealSize: 1,
+		},
 	})
 }
 
@@ -121,7 +131,7 @@ func (h *HealthProducer) MovementAndCollision(delta float64, gc *core.GameContex
 
 		_, h := window.GetSize()
 		if health.isDead() {
-			spaceship.Health += health.HealSize
+			spaceship.Health += 1 // increase spaceship health by one.
 		}
 		if !health.isDead() && !health.isOffScreen(h) {
 			activeHealthPacks = append(activeHealthPacks, health)
@@ -133,7 +143,7 @@ func (h *HealthProducer) MovementAndCollision(delta float64, gc *core.GameContex
 
 func (h *HealthProducer) UIHealthPackData(gc *core.GameContext) {
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
-	healthStr := []rune(fmt.Sprintf("* Health Packs : %d/%d", h.totalHealthPack, MaxHealthPack))
+	healthStr := []rune(fmt.Sprintf("* Health Packs: %d/%d", h.totalHealthPack, h.Cfg.HealthDropConfig.MaxDrop))
 	for i, r := range healthStr {
 		window.SetContentWithStyle(2+i, 10, r, whiteColor)
 	}
@@ -149,4 +159,8 @@ func (h *HealthProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 			}
 		}
 	}
+}
+
+func (h *HealthProducer) GetType() string {
+	return "health"
 }

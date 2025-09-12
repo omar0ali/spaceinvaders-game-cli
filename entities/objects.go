@@ -75,16 +75,6 @@ type ObjectOpts struct {
 	Width, Height int
 }
 
-func NewObject(opts ObjectOpts) *FallingObjectBase {
-	return &FallingObjectBase{
-		Health:      opts.Health,
-		Speed:       opts.Speed,
-		OriginPoint: opts.OriginPoint,
-		Height:      opts.Height,
-		Width:       opts.Width,
-	}
-}
-
 type FallingObjects interface {
 	move(distance float64)
 	isHit(point core.PointInterface)

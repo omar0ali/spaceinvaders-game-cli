@@ -10,27 +10,21 @@ import (
 	"github.com/omar0ali/spaceinvader-game-cli/window"
 )
 
-type SpaceshipOpts struct {
-	SpaceShipHealth int
-	GunPower        int
-	GunCapacity     int
-	GunSpeed        int
-}
-
 type SpaceShip struct {
-	origin        core.Point
 	Gun           Gun // a spaceship has a gun
+	OriginPoint   core.Point
 	Health        int
 	Score         int
 	Kills         int
 	Level         int
 	previousLevel int
 	Width, Height int
+	cfg           core.GameConfig
 }
 
 // init in the bottom center of the secreen by default
 
-func InitSpaceShip(opts SpaceshipOpts) *SpaceShip {
+func NewSpaceShip(cfg core.GameConfig) *SpaceShip {
 	w, h := window.GetSize()
 	origin := core.Point{
 		X: w / 2,
@@ -38,17 +32,18 @@ func InitSpaceShip(opts SpaceshipOpts) *SpaceShip {
 	}
 
 	return &SpaceShip{
-		origin: origin,
+		OriginPoint: origin,
 
 		Gun: Gun{
 			Beams: []*Beam{},
-			Cap:   opts.GunCapacity,
-			Power: opts.GunPower,
-			Speed: opts.GunSpeed,
+			Cap:   cfg.GunConfig.Limit,
+			Power: cfg.GunConfig.Power,
+			Speed: cfg.GunConfig.Speed,
 		},
-		Health: opts.SpaceShipHealth,
+		Health: cfg.SpaceShipConfig.Health,
 		Width:  3,
 		Height: 1,
+		cfg:    cfg,
 	}
 }
 
@@ -71,15 +66,15 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 		symbol rune
 		color  tcell.Style
 	}{
-		{s.origin.X, s.origin.Y - 1, '^', color},                      // top corner
-		{s.origin.X - s.Width + 1, s.origin.Y + s.Height, 'O', color}, // left corner
-		{s.origin.X + s.Width - 1, s.origin.Y + s.Height, 'O', color}, // right corner
+		{s.OriginPoint.X, s.OriginPoint.Y - 1, '^', color},                      // top corner
+		{s.OriginPoint.X - s.Width + 1, s.OriginPoint.Y + s.Height, 'O', color}, // left corner
+		{s.OriginPoint.X + s.Width - 1, s.OriginPoint.Y + s.Height, 'O', color}, // right corner
 		// lines
-		{int(s.origin.GetX()) - 1, int(s.origin.GetY()), '/', color},     // left line
-		{int(s.origin.GetX()) + 1, int(s.origin.GetY()), '\\', color},    // right line
-		{int(s.origin.GetX() - 1), int(s.origin.GetY() + 1), ')', color}, // bottom right
-		{int(s.origin.GetX() + 1), int(s.origin.GetY() + 1), '(', color}, // bottom right
-		{int(s.origin.GetX()), int(s.origin.GetY() + 1), '=', color},     // bottom middle
+		{int(s.OriginPoint.GetX()) - 1, int(s.OriginPoint.GetY()), '/', color},     // left line
+		{int(s.OriginPoint.GetX()) + 1, int(s.OriginPoint.GetY()), '\\', color},    // right line
+		{int(s.OriginPoint.GetX() - 1), int(s.OriginPoint.GetY() + 1), ')', color}, // bottom right
+		{int(s.OriginPoint.GetX() + 1), int(s.OriginPoint.GetY() + 1), '(', color}, // bottom right
+		{int(s.OriginPoint.GetX()), int(s.OriginPoint.GetY() + 1), '=', color},     // bottom middle
 	}
 	for _, line := range spaceshipPattern {
 		window.SetContentWithStyle(line.dx, line.dy, line.symbol, line.color)
@@ -89,10 +84,10 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 	defer s.Gun.InputEvents(event, gc)
 	moveMouse := func(x int) {
-		s.origin.X = x
-		s.origin.SetX(float64(x))
-		s.origin.SetX(float64(x + 2))
-		s.origin.SetX(float64(x - 2))
+		s.OriginPoint.X = x
+		s.OriginPoint.SetX(float64(x))
+		s.OriginPoint.SetX(float64(x + 2))
+		s.OriginPoint.SetX(float64(x - 2))
 	}
 	switch ev := event.(type) {
 	case *tcell.EventMouse:
@@ -149,6 +144,9 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 
 func (s *SpaceShip) LevelUp(levelit func()) {
 	if s.Level > s.previousLevel {
+		if s.cfg.SpaceShipConfig.MaxLevel <= s.Level {
+			return // skip when reaching max level, will not increase any elements of other objects
+		}
 		levelit()
 		if s.Level%2 == 0 {
 			s.Gun.Power += 1

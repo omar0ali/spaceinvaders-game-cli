@@ -14,15 +14,23 @@ type Alien struct {
 }
 
 type AlienProducer struct {
-	Aliens   []*Alien
-	limit    int // NOTE: always starts with 0 | its linked to the spaceship level up
-	MaxSpeed int
-	Health   int
+	Aliens []*Alien
+	limit  int // NOTE: always starts with 0 | its linked to the spaceship level up
+	health int
+	Cfg    core.GameConfig
+}
+
+func NewAlienProducer(cfg core.GameConfig) *AlienProducer {
+	return &AlienProducer{
+		limit:  cfg.AliensConfig.Limit, // start limit
+		health: cfg.AliensConfig.Health,
+		Cfg:    cfg,
+	}
 }
 
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	// limit amount of ships Falling (generate alien ships)
-	if len(a.Aliens) < a.limit {
+	if len(a.Aliens) < a.limit-1 {
 		a.DeployAliens()
 	}
 
@@ -32,8 +40,7 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	// -------- progression ---------
 	spaceship.LevelUp(func() { // on every spaceship level up, deployed alien health increases
 		a.limit += 1
-		a.Health += 1
-		a.MaxSpeed += 1
+		a.health += 1
 	})
 }
 
@@ -98,24 +105,19 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 
 func (a *AlienProducer) DeployAliens() {
 	w, _ := window.GetSize()
-	// pick a random X position to place the alien ship on screen
-	// ----from----------------------------to----// example
-	//      15                             85
-	// distance = from 15 to width-15 = high - low (85 - 15) = 70
 	const padding = 18
 	distance := (w - (padding * 2))
 	xPos := rand.Intn(distance) + padding // starting from 18
-	randSpeed := rand.Intn(a.MaxSpeed) + 3
+	randSpeed := rand.Intn(a.Cfg.AliensConfig.Speed) + 2
 	// spawn alien
 	a.Aliens = append(a.Aliens, &Alien{
-		FallingObjectBase: *NewObject(
-			ObjectOpts{
-				Health:      8,
-				Speed:       randSpeed,
-				OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-				Width:       3,
-				Height:      5,
-			}),
+		FallingObjectBase: FallingObjectBase{
+			Health:      a.health,
+			Speed:       randSpeed,
+			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
+			Width:       3,
+			Height:      5,
+		},
 	})
 }
 
@@ -126,11 +128,11 @@ func (a *AlienProducer) UIAlienShipData(gc *core.GameContext) {
 	for i, r := range aliensStr {
 		window.SetContentWithStyle(w+i-len(aliensStr), 2, r, whiteColor)
 	}
-	alienMSPD := []rune(fmt.Sprintf("Max SPD: %d * ", a.MaxSpeed))
+	alienMSPD := []rune(fmt.Sprintf("Max SPD: %d * ", a.Cfg.AliensConfig.Speed))
 	for i, r := range alienMSPD {
 		window.SetContentWithStyle(w+i-len(alienMSPD), 3, r, whiteColor)
 	}
-	aliensHP := []rune(fmt.Sprintf("Max HP: %d * ", a.Health))
+	aliensHP := []rune(fmt.Sprintf("Max HP: %d * ", a.health))
 	for i, r := range aliensHP {
 		window.SetContentWithStyle(w+i-len(aliensHP), 4, r, whiteColor)
 	}

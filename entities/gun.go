@@ -78,13 +78,13 @@ func (g *Gun) InputEvents(event tcell.Event, gc *core.GameContext) {
 		if ev.Buttons() == tcell.Button1 {
 			// limit many beams shots
 			if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-				g.initBeam(spaceship.origin)
+				g.initBeam(spaceship.OriginPoint)
 			}
 		}
 	case *tcell.EventKey:
 		if ev.Rune() == ' ' {
 			if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-				g.initBeam(spaceship.origin)
+				g.initBeam(spaceship.OriginPoint)
 			}
 		}
 	}

@@ -8,40 +8,44 @@ import (
 	"github.com/omar0ali/spaceinvader-game-cli/window"
 )
 
-const (
-	StarHealth = 1
-	StarWidth  = 1
-	StarHeight = 1
-)
-
 type Star struct {
 	FallingObjectBase
 }
 
 type StarProducer struct {
 	Stars []*Star
+	Limit int
+	Cfg   core.GameConfig
 }
 
-func (s *StarProducer) Deployment(MaxSpeed int) {
+func NewStarsProducer(cfg core.GameConfig) *StarProducer {
+	return &StarProducer{
+		Stars: []*Star{},
+		Limit: max(cfg.StarsConfig.Limit, 15),
+		Cfg:   cfg,
+	}
+}
+
+func (s *StarProducer) Deployment() {
 	w, _ := window.GetSize()
 	xPos := rand.Intn(w)
-	randSpeed := rand.Intn(MaxSpeed) + 10
-	// create star
+
+	randSpeed := rand.Intn(max(s.Cfg.StarsConfig.Speed, 30)) + 10 // ensure the speed its always high < 30 larger than 30
 	s.Stars = append(s.Stars, &Star{
-		FallingObjectBase: *NewObject(ObjectOpts{
-			Health:      StarHealth,
+		FallingObjectBase: FallingObjectBase{
+			Health:      1,
 			Speed:       randSpeed,
 			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-			Width:       StarWidth,
-			Height:      StarHeight,
-		}),
+			Width:       1,
+			Height:      1,
+		},
 	})
 }
 
 func (s *StarProducer) Update(gc *core.GameContext, delta float64) {
 	// create stars at least 15
-	if len(s.Stars) < 15 {
-		s.Deployment(50)
+	if len(s.Stars) < s.Limit {
+		s.Deployment()
 	}
 
 	// Update the coordinates of the stars.
@@ -88,7 +92,7 @@ func (s *StarProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 	switch ev := event.(type) {
 	case *tcell.EventKey:
 		if ev.Rune() == 'n' { // dev mode to create a star
-			s.Deployment(50)
+			s.Deployment()
 		}
 	}
 }
