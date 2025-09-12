@@ -40,6 +40,37 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 ### Controls
 For now mouse `[LM] left click` to shoot beams, and moving the mouse left and right will move the spaceship. `[H]` key will drop health kit to increase spaceship health. `[P]` key to pause the game.
 
+### Default Configuration File
+Configuration file added for the player to freely change/update entity's attributes.
+
+```toml
+[spaceship]
+health = 5
+max_level = 10
+
+[gun]
+limit = 7
+speed = 40
+power = 3
+
+[aliens]
+limit = 1
+health = 7
+speed = 4
+
+[stars]
+limit = 15
+speed = 50
+
+[health_drop]
+health = 6
+speed = 3
+limit = 1
+max_drop = 5
+start = 1
+
+```
+
 ## Getting Started
 
 >[!NOTE]
