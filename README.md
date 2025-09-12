@@ -2,9 +2,6 @@
 
 A terminal-based implementation of the classic space invaders game written in Go, using the [tcell](https://github.com/gdamore/tcell) library for handling terminal graphics and input. A simple game where the player controls spaceship with a laser, and shoots and destroy descending waves of alien invaders before they reach the bottom of the screen.
 
-### Game Status
-Currently the game is endless, only alien ship can be destroyed. And 3 ships can be spawned at a time.
-
 #### Objective
 The game will start at wave 1, so it will be waves were each wave will increase the number of alien ships and power. Number of waves is endless, the higher it gets the higher the score. Also can loot boxes to get extra health or increase power of the beams to destroy the alien ships quicker.
 
@@ -41,7 +38,7 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 - [X] Alien Ship Stats on the right of the screen.
 
 ### Controls
-For now mouse `[LM] left click` to shoot beams, and moving the mouse left and right will move the spaceship.
+For now mouse `[LM] left click` to shoot beams, and moving the mouse left and right will move the spaceship. `[H]` key will drop health kit to increase spaceship health. `[P]` key to pause the game.
 
 ## Getting Started
 
