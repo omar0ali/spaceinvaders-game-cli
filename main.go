@@ -8,33 +8,13 @@ import (
 	"github.com/omar0ali/spaceinvader-game-cli/window"
 )
 
-func DeployEntities(gc *core.GameContext) {
+func DeployEntities(gc *core.GameContext, cfg core.GameConfig) {
 	// order is important since some objects might overlap others
-	gc.AddEntity(
-		entities.InitSpaceShip(entities.SpaceshipOpts{
-			SpaceShipHealth: 4,
-			GunPower:        2,
-			GunCapacity:     6,
-			GunSpeed:        40,
-		}),
-		&entities.AlienProducer{
-			Aliens:   []*entities.Alien{},
-			MaxSpeed: 3,
-			Health:   10,
-		},
-		&entities.StarProducer{
-			Stars: []*entities.Star{},
-		},
-		&entities.UI{
-			MenuScreen:  true,
-			PauseScreen: false,
-		},
-		&entities.HealthProducer{
-			HealthPacks: []*entities.Health{},
-			Health:      6,
-			MaxSpeed:    4,
-		},
-	)
+	gc.AddEntity(entities.NewSpaceShip(cfg))
+	gc.AddEntity(entities.NewAlienProducer(cfg))
+	gc.AddEntity(entities.NewHealthProducer(cfg))
+	gc.AddEntity(entities.NewStarsProducer(cfg))
+	gc.AddEntity(&entities.UI{MenuScreen: true, PauseScreen: false})
 }
 
 func main() {
@@ -45,13 +25,15 @@ func main() {
 	// ------------------------------- Setup ------------------------------------
 	screen := window.InitScreen(window.EnableMouse)
 	screen.SetTitle("Space Invader Game")
+	cfg := core.LoadConfig()
+
 	// ------------------------------------- Objects ----------------------------------
 	gameContext := core.GameContext{
 		Screen: screen,
 	}
 	// ---------------------------------- entities --------------------------------------
 
-	DeployEntities(&gameContext)
+	DeployEntities(&gameContext, cfg)
 
 	// ----------------------------------------- window ------------------------------------
 	window.InputEvent(exit,
@@ -60,7 +42,7 @@ func main() {
 			case *tcell.EventKey:
 				if ev.Rune() == 'r' || ev.Rune() == 'R' {
 					gameContext.RemoveAllEntities()
-					DeployEntities(&gameContext)
+					DeployEntities(&gameContext, cfg)
 				}
 			}
 			for _, entity := range gameContext.GetEntities() {

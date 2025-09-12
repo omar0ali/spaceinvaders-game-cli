@@ -6,42 +6,31 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-const (
-	// Aliens Objects
-	MaxLimitAliens  = 1
-	MaxSpeedAliens  = 7
-	MaxHealthAliens = 8
-	// Health Objects
-	MaxLimitHealthDrops = 1
-	MaxSpeedHealthDrops = 4
-	MaxHealthPack       = 5
-	// Stars
-	MaxLimitStars = 15
-	MaxSpeedStars = 50
-)
-
 type GameConfig struct {
 	SpaceShipConfig struct {
-		Health    int `toml:"health"`
-		MaxHealth int `toml:"max_health"`
-		MaxLevel  int `toml:"max_level"`
+		Health   int `toml:"health"`
+		MaxLevel int `toml:"max_level"`
 	} `toml:"spaceship"`
 	GunConfig struct {
 		Speed int `toml:"speed"`
 		Limit int `toml:"limit"`
+		Power int `toml:"power"`
 	} `toml:"gun"`
 	AliensConfig struct {
-		Limit int `toml:"limit"`
+		Limit  int `toml:"limit"`
+		Health int `toml:"health"`
+		Speed  int `toml:"speed"`
 	} `toml:"aliens"`
 	StarsConfig struct {
-		Speed int `toml:"speed"`
 		Limit int `toml:"limit"`
+		Speed int `toml:"speed"`
 	} `toml:"stars"`
 	HealthDropConfig struct {
-		Limit int `toml:"limit"`
-		Speed int `toml:"speed"`
-		Max   int `toml:"max"`
-		Start int `toml:"start"`
+		Health  int `tom:"health"`
+		Limit   int `toml:"limit"`
+		Speed   int `toml:"speed"`
+		MaxDrop int `toml:"max_drop"`
+		Start   int `toml:"start"`
 	} `toml:"health_drop"`
 }
 
