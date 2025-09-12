@@ -2,8 +2,8 @@ package entities
 
 import (
 	"github.com/gdamore/tcell/v2"
-	"github.com/omar0ali/spaceinvader-game-cli/core"
-	"github.com/omar0ali/spaceinvader-game-cli/window"
+	"github.com/omar0ali/spaceinvaders-game-cli/core"
+	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
 type Beam struct {

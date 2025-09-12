@@ -1,4 +1,4 @@
-module github.com/omar0ali/spaceinvader-game-cli
+module github.com/omar0ali/spaceinvaders-game-cli
 
 go 1.24.4
 
