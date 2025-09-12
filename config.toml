@@ -1,0 +1,24 @@
+[spaceship]
+health = 5
+max_health = 10
+max_level = 10
+
+[gun]
+speed = 40
+limit = 5
+max_speed = 70
+max_limit = 25
+
+[aliens]
+limit = 5
+max_limit = 10
+
+[stars] 
+limit = 15
+speed = 50
+
+[health_drop]
+limit = 1
+speed = 2
+max_limit = 5
+max_speed = 6
