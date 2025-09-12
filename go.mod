@@ -3,6 +3,7 @@ module github.com/omar0ali/spaceinvader-game-cli
 go 1.24.4
 
 require (
+	github.com/BurntSushi/toml v1.5.0
 	github.com/gdamore/tcell/v2 v2.9.0
 )
 
