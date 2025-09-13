@@ -4,6 +4,9 @@ A terminal-based implementation of the classic space invaders game written in Go
 
 ## Install
 
+> [!IMPORTANT]
+> The game looks for `config.toml` in the **current working directory**. If you want, you must always run the game from the folder containing your config. Will fix this issue later once the game is finished. Another option would be just by cloning this [Repository]((#getting-started)).
+
 ```bash
 go install github.com/omar0ali/spaceinvaders-game-cli@latest
 ```
@@ -38,12 +41,14 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 - [X] Show control info at the bottom of the screen.
 - [X] Loot boxes to increase health.
     - [X] Health Drop Packs will increase every minute by one and to use a health pack need to press `[H]` key to deploy and must destroy the health box to obtain.
-- [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
-- [ ] Logs Window, to keep track whats being rendered in the current window.
 - [X] Implement a configuration file.
 - [X] Timer
 - [X] Spaceship stats on the left of screen.
 - [X] Alien Ship Stats on the right of the screen.
+- [ ] Must find a way to run the game without config file. Using default values.
+- [ ] Better way to level up the player.
+- [ ] Final Boss fight when reaching either time limit or a given score. After that the game will repeat but with higher difficulty.
+- [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
 
 ### Controls
 For now mouse `[LM] left click` to shoot beams, and moving the mouse left and right will move the spaceship. `[H]` key will drop health kit to increase spaceship health. `[P]` key to pause the game.
