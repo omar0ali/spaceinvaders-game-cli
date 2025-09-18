@@ -11,7 +11,7 @@ power = 3
 limit = 1
 health = 7
 speed = 4
-gun_speed = 50
+gun_speed = 40
 gun_power = 1
 
 [stars] 
