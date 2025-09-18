@@ -170,6 +170,12 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *core.GameContext
 
 	// on each alien avaiable check its position and check if the beam is at the same position
 	for _, alien := range a.Aliens {
+		// check alien shooting the spaceship
+		for _, alienBeam := range alien.Gun.Beams {
+			if spaceship.isHit(&alienBeam.position, alien.Gun.Power) {
+				alien.Gun.RemoveBeam(alienBeam) // removing the beam hitting spaceship
+			}
+		}
 		// Update the coordinates of the aliens.
 		alien.move(delta)
 		for _, beam := range gun.Beams {

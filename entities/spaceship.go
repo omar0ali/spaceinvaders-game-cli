@@ -153,6 +153,47 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 	}
 }
 
+func (s *SpaceShip) isHit(pointBeam core.PointInterface, power int) bool {
+	grayColor := window.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
+	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
+	yellowColor := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
+
+	// draw flash when hitting
+	pattern := []struct {
+		dx, dy int
+		r      rune
+		style  tcell.Style
+	}{
+		{-1, 0, tcell.RuneBoard, yellowColor},
+		{1, 0, tcell.RuneBoard, yellowColor},
+		{0, -1, tcell.RuneBoard, grayColor},
+		{0, 1, tcell.RuneBoard, grayColor},
+		{-1, -1, tcell.RuneCkBoard, grayColor},
+		{1, -1, tcell.RuneCkBoard, grayColor},
+		{-1, 1, tcell.RuneCkBoard, redColor},
+		{1, 1, tcell.RuneBoard, grayColor},
+	}
+
+	if int(pointBeam.GetX()) >= s.OriginPoint.X-s.Width &&
+		int(pointBeam.GetX()) <= s.OriginPoint.X+s.Width &&
+		int(pointBeam.GetY()) >= s.OriginPoint.Y-s.Height &&
+		int(pointBeam.GetY()) <= s.OriginPoint.Y+s.Height {
+
+		s.Health -= power // update health of the falling object
+
+		for _, p := range pattern {
+			window.SetContentWithStyle(
+				int(pointBeam.GetX())+p.dx,
+				int(pointBeam.GetY())+p.dy,
+				p.r, p.style,
+			)
+		}
+
+		return true
+	}
+	return false
+}
+
 func (s *SpaceShip) LevelUp(levelit func()) {
 	if s.Level > s.previousLevel {
 		if s.cfg.SpaceShipConfig.MaxLevel <= s.Level {
