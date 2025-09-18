@@ -17,9 +17,11 @@ type GameConfig struct {
 		Power int `toml:"power"`
 	} `toml:"gun"`
 	AliensConfig struct {
-		Limit  int `toml:"limit"`
-		Health int `toml:"health"`
-		Speed  int `toml:"speed"`
+		Limit    int `toml:"limit"`
+		Health   int `toml:"health"`
+		Speed    int `toml:"speed"`
+		GunSpeed int `toml:"gun_speed"`
+		GunPower int `toml"gun_power"`
 	} `toml:"aliens"`
 	StarsConfig struct {
 		Limit int `toml:"limit"`

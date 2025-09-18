@@ -134,8 +134,8 @@ func (a *AlienProducer) DeployAliens() {
 		Gun: Gun{
 			Beams: []*Beam{},
 			Cap:   1,
-			Power: 1,
-			Speed: 50,
+			Power: a.Cfg.AliensConfig.GunPower,
+			Speed: a.Cfg.AliensConfig.GunSpeed,
 		},
 	})
 }

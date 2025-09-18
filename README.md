@@ -45,10 +45,10 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 - [X] Timer
 - [X] Spaceship stats on the left of screen.
 - [X] Alien Ship Stats on the right of the screen.
+- [X] Alien ships can shoot the player's spaceship.
 - [ ] Must find a way to run the game without config file. Using default values.
 - [ ] Better way to level up the player.
 - [ ] Final Boss fight when reaching either time limit or a given score. After that the game will repeat but with higher difficulty.
-- [ ] Alien ship should shoot the player with laser beam as well. *(will implement later)
 
 ### Controls
 For now mouse `[LM] left click` to shoot beams, and moving the mouse left and right will move the spaceship. `[H]` key will drop health kit to increase spaceship health. `[P]` key to pause the game.
