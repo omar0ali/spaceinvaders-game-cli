@@ -75,11 +75,18 @@ func (g *Gun) Update(gc *core.GameContext, delta float64) {
 
 func (g *Gun) Draw(gc *core.GameContext) {
 	// draw the beam new position
+	color := window.StyleIt(tcell.ColorReset, tcell.ColorBlueViolet)
+
 	if len(g.Beams) < 1 {
 		return
 	}
+
 	for _, beam := range g.Beams {
-		window.SetContent(beam.position.X, beam.position.Y, beam.Symbol)
+		if beam.Direction == Down {
+			window.SetContentWithStyle(beam.position.X, beam.position.Y, beam.Symbol, color)
+		} else {
+			window.SetContent(beam.position.X, beam.position.Y, beam.Symbol)
+		}
 	}
 }
 
