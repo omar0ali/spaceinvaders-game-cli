@@ -93,6 +93,17 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 	case *tcell.EventMouse:
 		x, _ := ev.Position()
 		moveMouse(x)
+		if len(s.Gun.Beams) > s.Gun.Cap {
+			return
+		}
+
+		if ev.Buttons() == tcell.Button1 {
+			s.Gun.initBeam(s.OriginPoint, Up)
+		}
+	case *tcell.EventKey:
+		if ev.Rune() == ' ' {
+			s.Gun.initBeam(s.OriginPoint, Up)
+		}
 	}
 }
 

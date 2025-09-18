@@ -6,9 +6,17 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
+type Direction int
+
+const (
+	Up Direction = iota
+	Down
+)
+
 type Beam struct {
-	position core.Point
-	Symbol   rune
+	position  core.Point
+	Symbol    rune
+	Direction Direction
 }
 
 type Gun struct {
@@ -18,13 +26,14 @@ type Gun struct {
 	Speed int
 }
 
-func (g *Gun) initBeam(pos core.Point) {
+func (g *Gun) initBeam(pos core.Point, dir Direction) {
 	beam := Beam{
 		core.Point{
 			X: pos.X,
 			Y: pos.Y - 2,
 		},
 		tcell.RuneVLine,
+		dir,
 	}
 	g.Beams = append(g.Beams, &beam)
 }
@@ -48,8 +57,12 @@ func (g *Gun) Update(gc *core.GameContext, delta float64) {
 
 	for _, beam := range g.Beams {
 		distance := int(float64(g.Speed) * delta)
-		beam.position.Y -= distance
-
+		switch beam.Direction {
+		case Up:
+			beam.position.Y -= distance
+		case Down:
+			beam.position.Y += distance
+		}
 		if beam.position.Y >= 0 {
 			activeBeams = append(activeBeams, beam)
 		}
@@ -68,27 +81,7 @@ func (g *Gun) Draw(gc *core.GameContext) {
 	}
 }
 
-func (g *Gun) InputEvents(event tcell.Event, gc *core.GameContext) {
-	if len(g.Beams) > g.Cap {
-		return
-	}
-	// on click, will create a new beam
-	switch ev := event.(type) {
-	case *tcell.EventMouse:
-		if ev.Buttons() == tcell.Button1 {
-			// limit many beams shots
-			if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-				g.initBeam(spaceship.OriginPoint)
-			}
-		}
-	case *tcell.EventKey:
-		if ev.Rune() == ' ' {
-			if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-				g.initBeam(spaceship.OriginPoint)
-			}
-		}
-	}
-}
+func (g *Gun) InputEvents(event tcell.Event, gc *core.GameContext) {}
 
 func (g *Gun) GetType() string {
 	return "gun"
