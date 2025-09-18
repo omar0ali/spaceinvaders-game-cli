@@ -11,6 +11,7 @@ import (
 
 type Alien struct {
 	FallingObjectBase
+	Gun Gun
 }
 
 type AlienProducer struct {
@@ -34,6 +35,17 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 		a.DeployAliens()
 	}
 
+	// go through each alien's gun and shoot
+	for _, alien := range a.Aliens {
+		alien.Gun.Update(gc, delta)
+		if len(alien.Gun.Beams) < alien.Gun.Cap {
+			alien.Gun.initBeam(core.Point{
+				X: int(alien.OriginPoint.X),
+				Y: int(alien.OriginPoint.Y + 8),
+			}, Down)
+		}
+	}
+
 	// -------- this will ensure to clean up dead aliens and beams --------
 	spaceship := a.MovementAndCollision(delta, gc)
 
@@ -48,6 +60,7 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 	brownColor := window.StyleIt(tcell.ColorReset, tcell.ColorBrown)
 	color := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
 	for _, alien := range a.Aliens {
+		alien.Gun.Draw(gc)
 		// drawing the points
 		// header
 		window.SetContentWithStyle(
@@ -117,6 +130,12 @@ func (a *AlienProducer) DeployAliens() {
 			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
 			Width:       3,
 			Height:      5,
+		},
+		Gun: Gun{
+			Beams: []*Beam{},
+			Cap:   1,
+			Power: 1,
+			Speed: 50,
 		},
 	})
 }

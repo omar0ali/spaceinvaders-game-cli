@@ -53,6 +53,8 @@ func (g *Gun) Update(gc *core.GameContext, delta float64) {
 		return
 	}
 
+	_, h := window.GetSize()
+
 	var activeBeams []*Beam
 
 	for _, beam := range g.Beams {
@@ -63,7 +65,7 @@ func (g *Gun) Update(gc *core.GameContext, delta float64) {
 		case Down:
 			beam.position.Y += distance
 		}
-		if beam.position.Y >= 0 {
+		if beam.position.Y >= 0 && beam.position.Y <= h {
 			activeBeams = append(activeBeams, beam)
 		}
 	}
