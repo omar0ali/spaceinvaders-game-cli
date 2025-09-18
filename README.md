@@ -5,7 +5,7 @@ A terminal-based implementation of the classic space invaders game written in Go
 ## Install
 
 > [!IMPORTANT]
-> The game looks for `config.toml` in the **current working directory**. If you want, you must always run the game from the folder containing your config. Will fix this issue later once the game is finished. Another option would be just by cloning this [Repository](#getting-started).
+> The game looks for `config.toml`, make sure that both the game executable and config.toml are located in the same folder and that you run the game from that folder. Will fix this issue later once the game is finished. Another option would be just by cloning this [Repository](#getting-started).
 
 ```bash
 go install github.com/omar0ali/spaceinvaders-game-cli@latest
