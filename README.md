@@ -86,8 +86,8 @@ start = 1
 
 ## Getting Started
 
->[!NOTE]
-Ensure go is installed [Install Golang](https://go.dev/doc/install)
+> [!NOTE]
+> Ensure go is installed [Install Golang](https://go.dev/doc/install)
 
 Clone repository
 
