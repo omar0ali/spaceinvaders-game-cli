@@ -27,6 +27,10 @@ type Gun struct {
 }
 
 func (g *Gun) initBeam(pos core.Point, dir Direction) {
+	if len(g.Beams) >= g.Cap {
+		return
+	}
+
 	beam := Beam{
 		core.Point{
 			X: pos.X,
@@ -49,14 +53,8 @@ func (g *Gun) RemoveBeam(beam *Beam) {
 
 func (g *Gun) Update(gc *core.GameContext, delta float64) {
 	// update the coordinates of the beam
-	if len(g.Beams) < 1 {
-		return
-	}
-
 	_, h := window.GetSize()
-
 	var activeBeams []*Beam
-
 	for _, beam := range g.Beams {
 		distance := int(float64(g.Speed) * delta)
 		switch beam.Direction {
@@ -76,10 +74,6 @@ func (g *Gun) Update(gc *core.GameContext, delta float64) {
 func (g *Gun) Draw(gc *core.GameContext) {
 	// draw the beam new position
 	color := window.StyleIt(tcell.ColorReset, tcell.ColorBlueViolet)
-
-	if len(g.Beams) < 1 {
-		return
-	}
 
 	for _, beam := range g.Beams {
 		if beam.Direction == Down {

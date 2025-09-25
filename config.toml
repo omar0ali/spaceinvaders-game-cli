@@ -1,17 +1,18 @@
 [spaceship]
-health = 5
+health = 15
 max_level = 10
-
-[gun]
-limit = 7
-speed = 40
-power = 3
+next_level_score = 500
+gun_max_cap = 15
+gun_cap = 5
+gun_speed = 40
+gun_max_speed = 70
+gun_power = 2
 
 [aliens]
 limit = 1
-health = 7
-speed = 4
-gun_speed = 40
+health = 5
+speed = 3
+gun_speed = 35
 gun_power = 1
 
 [stars] 

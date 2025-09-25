@@ -16,14 +16,14 @@ type Alien struct {
 
 type AlienProducer struct {
 	Aliens []*Alien
-	limit  int // NOTE: always starts with 0 | its linked to the spaceship level up
+	limit  float64 // always starts with 0 | its linked to the spaceship level up
 	health int
 	Cfg    core.GameConfig
 }
 
 func NewAlienProducer(cfg core.GameConfig) *AlienProducer {
 	return &AlienProducer{
-		limit:  cfg.AliensConfig.Limit, // start limit
+		limit:  float64(cfg.AliensConfig.Limit), // start limit
 		health: cfg.AliensConfig.Health,
 		Cfg:    cfg,
 	}
@@ -31,7 +31,7 @@ func NewAlienProducer(cfg core.GameConfig) *AlienProducer {
 
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	// limit amount of ships Falling (generate alien ships)
-	if len(a.Aliens) < a.limit-1 {
+	if len(a.Aliens) < int(a.limit) {
 		a.DeployAliens()
 	}
 
@@ -51,7 +51,7 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 
 	// -------- progression ---------
 	spaceship.LevelUp(func() { // on every spaceship level up, deployed alien health increases
-		a.limit += 1
+		a.limit += 0.5
 		a.health += 1
 	})
 }
@@ -143,7 +143,7 @@ func (a *AlienProducer) DeployAliens() {
 func (a *AlienProducer) UIAlienShipData(gc *core.GameContext) {
 	w, _ := window.GetSize()
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
-	aliensStr := []rune(fmt.Sprintf("Aliens Limit: %d * ", a.limit-1))
+	aliensStr := []rune(fmt.Sprintf("Aliens Limit: %d * ", int(a.limit)))
 	for i, r := range aliensStr {
 		window.SetContentWithStyle(w+i-len(aliensStr), 2, r, whiteColor)
 	}

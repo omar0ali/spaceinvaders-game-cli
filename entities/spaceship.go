@@ -3,7 +3,6 @@ package entities
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/core"
@@ -11,18 +10,19 @@ import (
 )
 
 type SpaceShip struct {
-	Gun           Gun // a spaceship has a gun
-	OriginPoint   core.Point
-	Health        int
-	Score         int
-	Kills         int
-	Level         int
-	previousLevel int
-	Width, Height int
-	cfg           core.GameConfig
+	Gun            Gun // a spaceship has a gun
+	OriginPoint    core.Point
+	Health         int
+	Kills          int
+	Level          int
+	Score          int
+	NextLevelScore int
+	previousLevel  int
+	Width, Height  int
+	cfg            core.GameConfig
 }
 
-// init in the bottom center of the secreen by default
+// player initialized in the bottom center of the secreen by default
 
 func NewSpaceShip(cfg core.GameConfig) *SpaceShip {
 	w, h := window.GetSize()
@@ -36,14 +36,15 @@ func NewSpaceShip(cfg core.GameConfig) *SpaceShip {
 
 		Gun: Gun{
 			Beams: []*Beam{},
-			Cap:   cfg.GunConfig.Limit,
-			Power: cfg.GunConfig.Power,
-			Speed: cfg.GunConfig.Speed,
+			Cap:   cfg.SpaceShipConfig.GunCap,
+			Power: cfg.SpaceShipConfig.GunPower,
+			Speed: cfg.SpaceShipConfig.GunSpeed,
 		},
-		Health: cfg.SpaceShipConfig.Health,
-		Width:  3,
-		Height: 1,
-		cfg:    cfg,
+		Health:         cfg.SpaceShipConfig.Health,
+		Width:          3,
+		Height:         1,
+		cfg:            cfg,
+		NextLevelScore: cfg.SpaceShipConfig.NextLevelScore,
 	}
 }
 
@@ -54,7 +55,10 @@ func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 			ui.GameOverScreen = true
 		}
 	}
-	s.Level = int(math.Pow(float64(s.Score+1), 0.1))
+	if s.Score >= s.NextLevelScore {
+		s.Level++
+		s.NextLevelScore *= 2
+	}
 }
 
 func (s *SpaceShip) Draw(gc *core.GameContext) {
@@ -93,9 +97,6 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 	case *tcell.EventMouse:
 		x, _ := ev.Position()
 		moveMouse(x)
-		if len(s.Gun.Beams) > s.Gun.Cap {
-			return
-		}
 
 		if ev.Buttons() == tcell.Button1 {
 			s.Gun.initBeam(s.OriginPoint, Up)
@@ -128,7 +129,7 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 		window.SetContentWithStyle(startX+i, startY, ch, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Score: %d", s.Score)) {
+	for i, r := range []rune(fmt.Sprintf("* Score: %d/%d", s.Score, s.NextLevelScore)) {
 		window.SetContentWithStyle(startX+i, startY+1, r, whiteColor)
 	}
 
@@ -136,7 +137,7 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 		window.SetContentWithStyle(startX+i, startY+2, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Gun CAP: %d/%d", len(s.Gun.Beams), s.Gun.Cap+1)) {
+	for i, r := range []rune(fmt.Sprintf("* Gun CAP: %d/%d", len(s.Gun.Beams), s.Gun.Cap)) {
 		window.SetContentWithStyle(startX+i, startY+3, r, whiteColor)
 	}
 
@@ -200,10 +201,12 @@ func (s *SpaceShip) LevelUp(levelit func()) {
 			return // skip when reaching max level, will not increase any elements of other objects
 		}
 		levelit()
-		if s.Level%2 == 0 {
-			s.Gun.Power += 1
-			s.Gun.Cap += 1
-			s.Gun.Speed += 1
+		s.Gun.Power += 1
+		if s.Gun.Cap <= s.cfg.SpaceShipConfig.GunMaxCap {
+			s.Gun.Cap += 3
+		}
+		if s.Gun.Speed <= s.cfg.SpaceShipConfig.GunMaxSpeed {
+			s.Gun.Speed += 5
 		}
 		s.previousLevel = s.Level
 	}
@@ -211,11 +214,11 @@ func (s *SpaceShip) LevelUp(levelit func()) {
 
 func (s *SpaceShip) ScoreKill() {
 	s.Kills += 1
-	s.Score += s.Kills * s.Kills
+	s.Score += 50
 }
 
 func (s *SpaceShip) ScoreHit() {
-	s.Score += s.Gun.Power
+	s.Score += (s.Gun.Power * 2)
 }
 
 func (s *SpaceShip) GetType() string {

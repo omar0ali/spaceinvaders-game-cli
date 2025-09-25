@@ -8,14 +8,15 @@ import (
 
 type GameConfig struct {
 	SpaceShipConfig struct {
-		Health   int `toml:"health"`
-		MaxLevel int `toml:"max_level"`
+		Health         int `toml:"health"`
+		MaxLevel       int `toml:"max_level"`
+		NextLevelScore int `toml:"next_level_score"`
+		GunMaxCap      int `toml:"gun_max_cap"`
+		GunCap         int `toml:"gun_cap"`
+		GunPower       int `toml:"gun_power"`
+		GunMaxSpeed    int `toml:"gun_max_speed"`
+		GunSpeed       int `toml:"gun_speed"`
 	} `toml:"spaceship"`
-	GunConfig struct {
-		Speed int `toml:"speed"`
-		Limit int `toml:"limit"`
-		Power int `toml:"power"`
-	} `toml:"gun"`
 	AliensConfig struct {
 		Limit    int `toml:"limit"`
 		Health   int `toml:"health"`
