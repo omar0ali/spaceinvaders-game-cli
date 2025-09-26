@@ -115,7 +115,7 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 	const startX, startY = 2, 2
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
-
+	endPositionOfHealth := 0
 	for i := 0; i < s.Health+2; i++ {
 		var ch rune
 		switch i {
@@ -127,10 +127,15 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 			ch = tcell.RuneCkBoard
 		case s.Health + 1:
 			ch = tcell.RuneBoard
+			endPositionOfHealth = i + 4 // more padding
 		default:
 			ch = tcell.RuneBlock
 		}
 		window.SetContentWithStyle(startX+i, startY, ch, whiteColor)
+	}
+
+	for i, r := range []rune(fmt.Sprintf("%d/%d", s.Health, s.cfg.SpaceShipConfig.Health)) {
+		window.SetContentWithStyle(endPositionOfHealth+i, startY, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("* Score: %d/%d", s.Score, s.NextLevelScore)) {
