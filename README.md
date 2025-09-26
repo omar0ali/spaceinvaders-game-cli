@@ -71,7 +71,7 @@ Configuration file added for the player to freely change/update entity's attribu
 [spaceship]
 health = 15
 max_level = 10
-next_level_score = 500
+next_level_score = 300
 gun_max_cap = 6
 gun_cap = 3
 gun_speed = 40
