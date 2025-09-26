@@ -18,6 +18,17 @@ type UI struct {
 	MenuScreen     bool
 	PauseScreen    bool
 	GameOverScreen bool
+	LevelUpScreen  bool
+}
+
+func NewUI(menu, pause, gameover, levelup bool, gc *core.GameContext) *UI {
+	u := &UI{menu, pause, gameover, levelup}
+	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+		s.AddOnLevelUp(func(newLevel int) {
+			u.LevelUpScreen = true
+		})
+	}
+	return u
 }
 
 func (u *UI) Draw(gc *core.GameContext) {
@@ -45,12 +56,28 @@ func (u *UI) Draw(gc *core.GameContext) {
 				Press [S] to start
 			`,
 			"Space Invaders Game")
-		return
+	}
+
+	if u.LevelUpScreen {
+		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+			u.MessageBox(window.GetCenterPoint(),
+				fmt.Sprintf(`
+				** Level Up **
+				Current Level: %d
+				Choose what do you want to increase:
+
+				[A] Increase Gun Power by 2
+				[S] Increase Gun Speed by 10
+				[D] Increase Gun Capacity by 2
+
+				`, s.Level),
+				"Level Up")
+		}
 	}
 
 	// show controls at the bottom of the screen
 	_, h := window.GetSize()
-	for i, r := range []rune("[LM] Shoot Beams ◆ [H] Drop Health Pack ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit ◆") {
+	for i, r := range []rune("[LM] Shoot Beams ◆ [F] Drop Health Pack ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit ◆") {
 		window.SetContentWithStyle(0+i, h-1, r, whiteColor)
 	}
 	// timer
@@ -127,7 +154,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 }
 
 func (u *UI) Update(gc *core.GameContext, delta float64) {
-	if u.MenuScreen || u.PauseScreen || u.GameOverScreen {
+	if u.MenuScreen || u.PauseScreen || u.GameOverScreen || u.LevelUpScreen {
 		gc.Halt = true
 	} else {
 		gc.Halt = false
@@ -148,6 +175,24 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 				return
 			}
 			u.PauseScreen = !u.PauseScreen
+		}
+		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok && u.LevelUpScreen {
+			if ev.Rune() == 'A' || ev.Rune() == 'a' {
+				s.Gun.Power += 2
+				u.LevelUpScreen = false
+			}
+			if ev.Rune() == 'S' || ev.Rune() == 's' {
+				if s.Gun.Speed <= s.cfg.SpaceShipConfig.GunMaxSpeed {
+					s.Gun.Speed += 10
+				}
+				u.LevelUpScreen = false
+			}
+			if ev.Rune() == 'D' || ev.Rune() == 'd' {
+				if s.Gun.Cap <= s.cfg.SpaceShipConfig.GunMaxCap {
+					s.Gun.Cap += 2
+				}
+				u.LevelUpScreen = false
+			}
 		}
 	}
 }

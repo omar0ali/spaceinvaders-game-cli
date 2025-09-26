@@ -21,12 +21,19 @@ type AlienProducer struct {
 	Cfg    core.GameConfig
 }
 
-func NewAlienProducer(cfg core.GameConfig) *AlienProducer {
-	return &AlienProducer{
+func NewAlienProducer(cfg core.GameConfig, gc *core.GameContext) *AlienProducer {
+	a := &AlienProducer{
 		limit:  float64(cfg.AliensConfig.Limit),
 		health: float64(cfg.AliensConfig.Health),
 		Cfg:    cfg,
 	}
+	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+		s.AddOnLevelUp(func(newLevel int) {
+			a.limit += 0.5
+			a.health += 0.5
+		})
+	}
+	return a
 }
 
 func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
@@ -47,13 +54,7 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	}
 
 	// -------- this will ensure to clean up dead aliens and beams --------
-	spaceship := a.MovementAndCollision(delta, gc)
-
-	// -------- progression ---------
-	spaceship.LevelUp(func() { // on every spaceship level up, deployed alien health increases
-		a.limit += 0.5
-		a.health += 0.5
-	})
+	a.MovementAndCollision(delta, gc)
 }
 
 func (a *AlienProducer) Draw(gc *core.GameContext) {

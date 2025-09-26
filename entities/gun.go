@@ -6,7 +6,7 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
-type Direction int
+type Direction = int
 
 const (
 	Up Direction = iota

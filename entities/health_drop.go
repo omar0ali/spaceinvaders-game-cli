@@ -20,13 +20,21 @@ type HealthProducer struct {
 	Cfg             core.GameConfig
 }
 
-func NewHealthProducer(cfg core.GameConfig) *HealthProducer {
-	return &HealthProducer{
+func NewHealthProducer(cfg core.GameConfig, gc *core.GameContext) *HealthProducer {
+	h := &HealthProducer{
 		HealthPacks:     []*Health{},
 		health:          cfg.HealthDropConfig.Health,
 		totalHealthPack: cfg.HealthDropConfig.Start,
 		Cfg:             cfg,
 	}
+
+	if s, ok := gc.FindEntity("spacehsip").(*SpaceShip); ok {
+		s.AddOnLevelUp(func(newLevel int) {
+			h.health += 1
+		})
+	}
+
+	return h
 }
 
 func (h *HealthProducer) GenerateHealthPack() {
@@ -41,11 +49,7 @@ func (h *HealthProducer) Update(gc *core.GameContext, delta float64) {
 		health.move(delta)
 	}
 
-	spacehsip := h.MovementAndCollision(delta, gc)
-
-	spacehsip.LevelUp(func() {
-		h.health += 1
-	})
+	h.MovementAndCollision(delta, gc)
 }
 
 func (h *HealthProducer) Draw(gc *core.GameContext) {
@@ -152,7 +156,7 @@ func (h *HealthProducer) UIHealthPackData(gc *core.GameContext) {
 func (h *HealthProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 	switch ev := event.(type) {
 	case *tcell.EventKey:
-		if ev.Rune() == 'h' || ev.Rune() == 'H' {
+		if ev.Rune() == 'f' || ev.Rune() == 'F' {
 			if h.totalHealthPack > 0 {
 				h.DeployHealthPack()
 				h.totalHealthPack--

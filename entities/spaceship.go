@@ -20,6 +20,11 @@ type SpaceShip struct {
 	previousLevel  int
 	Width, Height  int
 	cfg            core.GameConfig
+	OnLevelUp      []func(newLevel int)
+}
+
+func (s *SpaceShip) AddOnLevelUp(fn func(newLevel int)) {
+	s.OnLevelUp = append(s.OnLevelUp, fn)
 }
 
 // player initialized in the bottom center of the secreen by default
@@ -59,6 +64,7 @@ func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 		s.Level++
 		s.NextLevelScore *= 2
 	}
+	s.LevelUp()
 }
 
 func (s *SpaceShip) Draw(gc *core.GameContext) {
@@ -193,18 +199,13 @@ func (s *SpaceShip) isHit(pointBeam core.PointInterface, power int) bool {
 	return false
 }
 
-func (s *SpaceShip) LevelUp(levelit func()) {
+func (s *SpaceShip) LevelUp() {
 	if s.Level > s.previousLevel {
 		if s.cfg.SpaceShipConfig.MaxLevel <= s.Level {
 			return // skip when reaching max level, will not increase any elements of other objects
 		}
-		levelit()
-		s.Gun.Power += 1
-		if s.Gun.Cap <= s.cfg.SpaceShipConfig.GunMaxCap {
-			s.Gun.Cap += 2
-		}
-		if s.Gun.Speed <= s.cfg.SpaceShipConfig.GunMaxSpeed {
-			s.Gun.Speed += 5
+		for _, fn := range s.OnLevelUp {
+			fn(s.Level)
 		}
 		s.previousLevel = s.Level
 	}
