@@ -47,12 +47,22 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 - [X] Alien Ship Stats on the right of the screen.
 - [X] Alien ships can shoot the player's spaceship.
 - [X] Spaceship now can move around the whole screen using the mouse.
-- [ ] Must find a way to run the game without config file. Using default values.
-- [ ] Better way to level up the player.
+- [X] Better way to level up the player.
+    - [X] With upgrade choice /  stat selection. Player can choose to upgrade either (gun power, speed or capacity).
+- [ ] Must find a way to run the game without `config` file. Using default values.
 - [ ] Final Boss fight when reaching either time limit or a given score. After that the game will repeat but with higher difficulty.
 
 ### Controls
-For now mouse `[LM] left click` or `[Space bar]` to shoot beams, and moving the mouse around the screen will move the spaceship. `[H]` key will drop health kit to increase spaceship health. `[P]` key to pause the game.
+
+| Control            | Action                                |
+|-------------------|----------------------------------------|
+| Left Mouse Click / Space Bar | Shoot beams                 |
+| Mouse Movement     | Move the spaceship                    |
+| F                  | Drop health kit (increase spaceship health) |
+| P                  | Pause the game                        |
+| S                  | Start the game | Upgrade Gun Speed    |
+| A                  | Upgrade Gun Power
+| D                  | Upgrade Gun Capacity
 
 ### Default Configuration File
 Configuration file added for the player to freely change/update entity's attributes. The config file saved as `config.toml`.
