@@ -2,10 +2,10 @@
 health = 15
 max_level = 10
 next_level_score = 500
-gun_max_cap = 15
-gun_cap = 5
+gun_max_cap = 6
+gun_cap = 3
 gun_speed = 40
-gun_max_speed = 70
+gun_max_speed = 80
 gun_power = 2
 
 [aliens]

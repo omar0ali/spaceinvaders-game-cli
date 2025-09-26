@@ -87,16 +87,14 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 
 func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 	defer s.Gun.InputEvents(event, gc)
-	moveMouse := func(x int) {
+	moveMouse := func(x int, y int) {
 		s.OriginPoint.X = x
-		s.OriginPoint.SetX(float64(x))
-		s.OriginPoint.SetX(float64(x + 2))
-		s.OriginPoint.SetX(float64(x - 2))
+		s.OriginPoint.Y = y
 	}
 	switch ev := event.(type) {
 	case *tcell.EventMouse:
-		x, _ := ev.Position()
-		moveMouse(x)
+		x, y := ev.Position()
+		moveMouse(x, y)
 
 		if ev.Buttons() == tcell.Button1 {
 			s.Gun.initBeam(s.OriginPoint, Up)
@@ -203,7 +201,7 @@ func (s *SpaceShip) LevelUp(levelit func()) {
 		levelit()
 		s.Gun.Power += 1
 		if s.Gun.Cap <= s.cfg.SpaceShipConfig.GunMaxCap {
-			s.Gun.Cap += 3
+			s.Gun.Cap += 2
 		}
 		if s.Gun.Speed <= s.cfg.SpaceShipConfig.GunMaxSpeed {
 			s.Gun.Speed += 5
