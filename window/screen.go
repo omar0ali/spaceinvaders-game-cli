@@ -111,7 +111,7 @@ func InputEvent(exitCha chan struct{}, keys func(tcell.Event)) {
 			case *tcell.EventResize:
 				screen.Clear()
 			case *tcell.EventKey:
-				if ev.Key() == tcell.KeyESC || ev.Rune() == 'q' || ev.Rune() == 'Q' {
+				if ev.Rune() == 'q' || ev.Rune() == 'Q' {
 					cleanupOnce.Do(func() {
 						screen.Fini()
 					})
