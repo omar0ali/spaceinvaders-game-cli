@@ -64,16 +64,14 @@ func (u *UI) Draw(gc *core.GameContext) {
 				fmt.Sprintf(`
 				*************** Level Up ***************
 
-				Current Level: %d
+				[Player] Current Level: %d
 
-				-[Player]
+				(*) Choose a stat to upgrade:
 
-				Choose what do you want to increase
-
-				[A] Increase Gun Power by 2 | (%d)
-				[S] Increase Gun Speed by 10 | (%d/%d)
-				[D] Increase Gun Capacity by 2 | (%d/%d)
-				[C] Increase Health by 2 | (%d)
+				[A] (%d) Increase Gun Power by 2
+				[S] (%d/%d) Increase Gun Speed by 10
+				[D] (%d/%d) Increase Gun Capacity by 2
+				[C] (%d) Increase Health by 2
 
 				`, s.Level,
 					s.Gun.Power,
