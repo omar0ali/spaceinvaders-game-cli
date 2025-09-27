@@ -93,7 +93,7 @@ func (h *HealthProducer) Draw(gc *core.GameContext) {
 		}
 
 		// writing text in the middle of the box
-		hpStr := []rune(fmt.Sprintf("Health++ [%d]", h.healthIncreaseBy))
+		hpStr := []rune(fmt.Sprintf("Health+%d", h.healthIncreaseBy))
 		for i, r := range hpStr {
 			window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width+i+1, int(health.OriginPoint.Y)-(health.Height/2), r, whiteColor) // left top
 		}
