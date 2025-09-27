@@ -63,6 +63,7 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 | S                  | Start the game or Upgrade Gun Speed   |
 | A                  | Upgrade Gun Power                     |
 | D                  | Upgrade Gun Capacity                  |
+| C                  | Increase heatlh
 
 ### Default Configuration File
 Configuration file added for the player to freely change/update entity's attributes. The config file saved as `config.toml`.
