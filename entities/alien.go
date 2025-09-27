@@ -190,7 +190,7 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *core.GameContext
 		// check the health of each alien
 		_, h := window.GetSize()
 		if alien.isOffScreen(h) {
-			spaceship.Health -= 1
+			spaceship.health -= 1
 		}
 		if alien.isDead() {
 			spaceship.ScoreKill()

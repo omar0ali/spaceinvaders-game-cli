@@ -62,22 +62,31 @@ func (u *UI) Draw(gc *core.GameContext) {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 			u.MessageBox(window.GetCenterPoint(),
 				fmt.Sprintf(`
-				** Level Up **
+				*************** Level Up ***************
+
 				Current Level: %d
-				Choose what do you want to increase:
 
-				[A] Increase Gun Power by 2
-				[S] Increase Gun Speed by 10
-				[D] Increase Gun Capacity by 2
+				-[Player]
 
-				`, s.Level),
+				Choose what do you want to increase
+
+				[A] Increase Gun Power by 2 | (%d)
+				[S] Increase Gun Speed by 10 | (%d/%d)
+				[D] Increase Gun Capacity by 2 | (%d/%d)
+				[C] Increase Health by 2 | (%d)
+
+				`, s.Level,
+					s.Gun.Power,
+					s.Gun.Speed,
+					s.cfg.SpaceShipConfig.GunMaxSpeed,
+					s.Gun.Cap, s.cfg.SpaceShipConfig.GunMaxCap, s.health),
 				"Level Up")
 		}
 	}
 
 	// show controls at the bottom of the screen
 	_, h := window.GetSize()
-	for i, r := range []rune("[LM] Shoot Beams ◆ [F] Drop Health Pack ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit ◆") {
+	for i, r := range []rune("[LM] Shoot Beams ◆ [F] Drop Health Pack ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit") {
 		window.SetContentWithStyle(0+i, h-1, r, whiteColor)
 	}
 	// timer
@@ -122,7 +131,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 				[R] To restart the game.
 				[Q] To quit the game.
 				[P] To continue the game.
-			`, spaceship.Health, spaceship.Score, spaceship.Kills, spaceship.Level),
+			`, spaceship.health, spaceship.Score, spaceship.Kills, spaceship.Level),
 				"Paused",
 			)
 			return
@@ -163,6 +172,11 @@ func (u *UI) Update(gc *core.GameContext, delta float64) {
 }
 
 func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
+	upgrade := func(up func() bool) {
+		if up() {
+			u.LevelUpScreen = false
+		}
+	}
 	switch ev := events.(type) {
 	case *tcell.EventKey:
 		if ev.Rune() == 's' || ev.Rune() == 'S' {
@@ -178,20 +192,33 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 		}
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok && u.LevelUpScreen {
 			if ev.Rune() == 'A' || ev.Rune() == 'a' {
-				s.Gun.Power += 2
-				u.LevelUpScreen = false
+				upgrade(func() bool {
+					s.Gun.Power += 2
+					return true
+				})
 			}
 			if ev.Rune() == 'S' || ev.Rune() == 's' {
-				if s.Gun.Speed <= s.cfg.SpaceShipConfig.GunMaxSpeed {
-					s.Gun.Speed += 10
-				}
-				u.LevelUpScreen = false
+				upgrade(func() bool {
+					if s.Gun.Speed < s.cfg.SpaceShipConfig.GunMaxSpeed {
+						s.Gun.Speed += 10
+						return true
+					}
+					return false
+				})
 			}
 			if ev.Rune() == 'D' || ev.Rune() == 'd' {
-				if s.Gun.Cap <= s.cfg.SpaceShipConfig.GunMaxCap {
-					s.Gun.Cap += 2
-				}
-				u.LevelUpScreen = false
+				upgrade(func() bool {
+					if s.Gun.Cap < s.cfg.SpaceShipConfig.GunMaxCap {
+						s.Gun.Cap += 2
+						return true
+					}
+					return false
+				})
+			}
+			if ev.Rune() == 'C' || ev.Rune() == 'c' {
+				upgrade(func() bool {
+					return s.IncreaseHealth(1)
+				})
 			}
 		}
 	}

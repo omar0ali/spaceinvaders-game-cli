@@ -133,11 +133,14 @@ func (h *HealthProducer) MovementAndCollision(delta float64, gc *core.GameContex
 			}
 		}
 
-		_, h := window.GetSize()
+		_, hight := window.GetSize()
 		if health.isDead() {
-			spaceship.Health += 1 // increase spaceship health by one.
+			if !spaceship.IncreaseHealth(1) {
+				// if spacehsip already full, will return the health pack
+				h.totalHealthPack += 1
+			}
 		}
-		if !health.isDead() && !health.isOffScreen(h) {
+		if !health.isDead() && !health.isOffScreen(hight) {
 			activeHealthPacks = append(activeHealthPacks, health)
 		}
 	}

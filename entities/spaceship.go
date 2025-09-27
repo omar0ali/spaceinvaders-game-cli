@@ -12,7 +12,7 @@ import (
 type SpaceShip struct {
 	Gun            Gun // a spaceship has a gun
 	OriginPoint    core.Point
-	Health         int
+	health         int
 	Kills          int
 	Level          int
 	Score          int
@@ -21,6 +21,14 @@ type SpaceShip struct {
 	Width, Height  int
 	cfg            core.GameConfig
 	OnLevelUp      []func(newLevel int)
+}
+
+func (s *SpaceShip) IncreaseHealth(i int) bool {
+	if s.health < s.cfg.SpaceShipConfig.Health {
+		s.health += i
+		return true
+	}
+	return false
 }
 
 func (s *SpaceShip) AddOnLevelUp(fn func(newLevel int)) {
@@ -45,7 +53,7 @@ func NewSpaceShip(cfg core.GameConfig) *SpaceShip {
 			Power: cfg.SpaceShipConfig.GunPower,
 			Speed: cfg.SpaceShipConfig.GunSpeed,
 		},
-		Health:         cfg.SpaceShipConfig.Health,
+		health:         cfg.SpaceShipConfig.Health,
 		Width:          3,
 		Height:         1,
 		cfg:            cfg,
@@ -55,7 +63,7 @@ func NewSpaceShip(cfg core.GameConfig) *SpaceShip {
 
 func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 	defer s.Gun.Update(gc, delta)
-	if s.Health <= 0 {
+	if s.health <= 0 {
 		if ui, ok := gc.FindEntity("ui").(*UI); ok {
 			ui.GameOverScreen = true
 		}
@@ -116,16 +124,16 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 	const startX, startY = 2, 2
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	endPositionOfHealth := 0
-	for i := 0; i < s.Health+2; i++ {
+	for i := 0; i < s.health+2; i++ {
 		var ch rune
 		switch i {
 		case 0:
 			ch = '*'
 		case 1:
 			ch = ' '
-		case s.Health:
+		case s.health:
 			ch = tcell.RuneCkBoard
-		case s.Health + 1:
+		case s.health + 1:
 			ch = tcell.RuneBoard
 			endPositionOfHealth = i + 4 // more padding
 		default:
@@ -134,7 +142,7 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 		window.SetContentWithStyle(startX+i, startY, ch, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("%d/%d", s.Health, s.cfg.SpaceShipConfig.Health)) {
+	for i, r := range []rune(fmt.Sprintf("%d/%d", s.health, s.cfg.SpaceShipConfig.Health)) {
 		window.SetContentWithStyle(endPositionOfHealth+i, startY, r, whiteColor)
 	}
 
@@ -189,7 +197,7 @@ func (s *SpaceShip) isHit(pointBeam core.PointInterface, power int) bool {
 		int(pointBeam.GetY()) >= s.OriginPoint.Y-s.Height &&
 		int(pointBeam.GetY()) <= s.OriginPoint.Y+s.Height {
 
-		s.Health -= power // update health of the falling object
+		s.health -= power // update health of the falling object
 
 		for _, p := range pattern {
 			window.SetContentWithStyle(
