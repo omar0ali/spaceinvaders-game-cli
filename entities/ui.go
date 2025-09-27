@@ -193,26 +193,17 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok && u.LevelUpScreen {
 			if ev.Rune() == 'A' || ev.Rune() == 'a' {
 				upgrade(func() bool {
-					s.Gun.Power += 2
-					return true
+					return s.IncreaseGunPower(2)
 				})
 			}
 			if ev.Rune() == 'S' || ev.Rune() == 's' {
 				upgrade(func() bool {
-					if s.Gun.Speed < s.cfg.SpaceShipConfig.GunMaxSpeed {
-						s.Gun.Speed += 10
-						return true
-					}
-					return false
+					return s.IncreaseGunSpeed(10)
 				})
 			}
 			if ev.Rune() == 'D' || ev.Rune() == 'd' {
 				upgrade(func() bool {
-					if s.Gun.Cap < s.cfg.SpaceShipConfig.GunMaxCap {
-						s.Gun.Cap += 2
-						return true
-					}
-					return false
+					return s.IncreaseGunCap(2)
 				})
 			}
 			if ev.Rune() == 'C' || ev.Rune() == 'c' {

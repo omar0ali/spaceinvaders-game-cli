@@ -23,6 +23,27 @@ type SpaceShip struct {
 	OnLevelUp      []func(newLevel int)
 }
 
+func (s *SpaceShip) IncreaseGunPower(i int) bool {
+	s.Gun.Power += 2
+	return true
+}
+
+func (s *SpaceShip) IncreaseGunSpeed(i int) bool {
+	if s.Gun.Speed < s.cfg.SpaceShipConfig.GunMaxSpeed {
+		s.Gun.Speed += i
+		return true
+	}
+	return false
+}
+
+func (s *SpaceShip) IncreaseGunCap(i int) bool {
+	if s.Gun.Cap < s.cfg.SpaceShipConfig.GunMaxCap {
+		s.Gun.Cap += i
+		return true
+	}
+	return false
+}
+
 func (s *SpaceShip) IncreaseHealth(i int) bool {
 	if s.health < s.cfg.SpaceShipConfig.Health {
 		s.health += i
