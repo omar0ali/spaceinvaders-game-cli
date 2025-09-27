@@ -4,8 +4,11 @@ A terminal-based implementation of the classic space invaders game written in Go
 
 ## Install
 
-> [!IMPORTANT]
-> The game looks for `config.toml`, make sure that both the game executable and config.toml are located in the same folder and that you run the game from that folder. Will fix this issue later once the game is finished. Another option would be just by cloning this [Repository](#getting-started).
+> [!NOTE]
+> The game looks for `config.toml`, make sure that both the game executable and config.toml are located in the same folder and that you run the game from that folder. 
+>
+> Note: Game can run without `config` file. Will use default configuration.
+> Another option would be just by cloning this [Repository](#getting-started).
 
 ```bash
 go install github.com/omar0ali/spaceinvaders-game-cli@latest
@@ -49,7 +52,7 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 - [X] Spaceship now can move around the whole screen using the mouse.
 - [X] Better way to level up the player.
     - [X] With upgrade choice /  stat selection. Player can choose to upgrade either (gun power, speed or capacity).
-- [ ] Must find a way to run the game without `config` file. Using default values.
+- [X] The game runs without a `config` file. If the file dose not exist, the default configuration will be used.
 - [ ] Final Boss fight when reaching either time limit or a given score. After that the game will repeat but with higher difficulty.
 
 ### Controls

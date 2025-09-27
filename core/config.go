@@ -6,6 +6,36 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+const defaultConfig = `
+[spaceship]
+health = 20
+max_level = 10
+next_level_score = 300
+gun_max_cap = 6
+gun_cap = 3
+gun_speed = 40
+gun_max_speed = 80
+gun_power = 2
+
+[aliens]
+limit = 1
+health = 5
+speed = 3
+gun_speed = 35
+gun_power = 1
+
+[stars] 
+limit = 15
+speed = 50
+
+[health_drop]
+health = 6
+speed = 3
+limit = 1
+max_drop = 5
+start = 1
+`
+
 type GameConfig struct {
 	SpaceShipConfig struct {
 		Health         int `toml:"health"`
@@ -39,9 +69,12 @@ type GameConfig struct {
 
 func LoadConfig() GameConfig {
 	var cfg GameConfig
-	_, err := toml.DecodeFile("config.toml", &cfg)
-	if err != nil {
-		log.Fatal(err)
+	if _, err := toml.DecodeFile("config.toml", &cfg); err == nil {
+		return cfg
 	}
-	return cfg
+	if _, err := toml.Decode(defaultConfig, &cfg); err == nil {
+		return cfg
+	}
+	log.Fatal("Failed to load configuration or invalid defaultConfig")
+	return GameConfig{}
 }
