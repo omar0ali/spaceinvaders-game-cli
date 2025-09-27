@@ -14,18 +14,20 @@ type Health struct {
 }
 
 type HealthProducer struct {
-	HealthPacks     []*Health
-	health          int
-	totalHealthPack int
-	Cfg             core.GameConfig
+	HealthPacks      []*Health
+	health           int
+	totalHealthPack  int
+	Cfg              core.GameConfig
+	healthIncreaseBy int
 }
 
-func NewHealthProducer(cfg core.GameConfig, gc *core.GameContext) *HealthProducer {
+func NewHealthProducer(cfg core.GameConfig, gc *core.GameContext, healthIncreaseBy int) *HealthProducer {
 	h := &HealthProducer{
-		HealthPacks:     []*Health{},
-		health:          cfg.HealthDropConfig.Health,
-		totalHealthPack: cfg.HealthDropConfig.Start,
-		Cfg:             cfg,
+		HealthPacks:      []*Health{},
+		health:           cfg.HealthDropConfig.Health,
+		totalHealthPack:  cfg.HealthDropConfig.Start,
+		Cfg:              cfg,
+		healthIncreaseBy: healthIncreaseBy,
 	}
 
 	if s, ok := gc.FindEntity("spacehsip").(*SpaceShip); ok {
@@ -91,7 +93,7 @@ func (h *HealthProducer) Draw(gc *core.GameContext) {
 		}
 
 		// writing text in the middle of the box
-		hpStr := []rune("Health++")
+		hpStr := []rune(fmt.Sprintf("Health++ [%d]", h.healthIncreaseBy))
 		for i, r := range hpStr {
 			window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width+i+1, int(health.OriginPoint.Y)-(health.Height/2), r, whiteColor) // left top
 		}
@@ -135,7 +137,7 @@ func (h *HealthProducer) MovementAndCollision(delta float64, gc *core.GameContex
 
 		_, hight := window.GetSize()
 		if health.isDead() {
-			if !spaceship.IncreaseHealth(1) {
+			if !spaceship.IncreaseHealth(h.healthIncreaseBy) {
 				// if spacehsip already full, will return the health pack
 				h.totalHealthPack += 1
 			}
