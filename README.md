@@ -19,7 +19,7 @@ To install go or clone this repository follow the [steps](#getting-started).
 #### Objective
 The game will start at wave 1, so it will be waves were each wave will increase the number of alien ships and power. Number of waves is endless, the higher it gets the higher the score. Also can loot boxes to get extra health or increase power of the beams to destroy the alien ships quicker.
 
-#### Gameplay 
+#### Youtube - Gameplay Video
 
 [![Watch the video](https://img.youtube.com/vi/DSeU1Lnglsg/0.jpg)](https://www.youtube.com/watch?v=DSeU1Lnglsg)
 
