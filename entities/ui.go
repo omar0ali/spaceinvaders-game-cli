@@ -14,6 +14,12 @@ var (
 	nextMinute  int
 )
 
+const (
+	IncreaseGunCapBy   = 1
+	IncreaseGunPowerBy = 1
+	IncreaseGunSpeedBy = 5
+)
+
 type UI struct {
 	MenuScreen     bool
 	PauseScreen    bool
@@ -37,7 +43,6 @@ func (u *UI) Draw(gc *core.GameContext) {
 	if u.MenuScreen {
 		u.MessageBox(window.GetCenterPoint(),
 			`
-				[Introduction]
 				The game starts at wave 1, and each subsequent wave will increase the number of 
 				alien ships and their power. The number of waves is endless, and as the waves 
 				progress, your score will increase. You can also collect loot boxes to gain extra
@@ -45,7 +50,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 				more quickly.
 
 				[Controls]
-				[LM] or [Space] Click to shoot coming alienships.
+				[LM] Or [Space] click to shoot coming alien-ships.
 				[F] Drop Health Pack.
 				[P] To pause the game.
 				[Q] To quit the game.
@@ -59,22 +64,25 @@ func (u *UI) Draw(gc *core.GameContext) {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 			u.MessageBox(window.GetCenterPoint(),
 				fmt.Sprintf(`
-				*************** Level Up ***************
-
 				[Player] Current Level: %d
 
 				(*) Choose a stat to upgrade:
 
-				[A] (%d) Increase Gun Power by 2
-				[S] (%d/%d) Increase Gun Speed by 10
-				[D] (%d/%d) Increase Gun Capacity by 2
-				[C] (%d) Increase Health by 2
-
+				[A] (%d) Increase Gun Power by %d
+				[S] (%d/%d) Increase Gun Speed by %d
+				[D] (%d/%d) Increase Gun Capacity by %d
+				[C] (%d/%d) Restore Full Health
 				`, s.Level,
 					s.Power,
+					IncreaseGunPowerBy,
 					s.Speed,
 					s.cfg.SpaceShipConfig.GunMaxSpeed,
-					s.Cap, s.cfg.SpaceShipConfig.GunMaxCap, s.health),
+					IncreaseGunSpeedBy,
+					s.Cap,
+					s.cfg.SpaceShipConfig.GunMaxCap,
+					IncreaseGunCapBy,
+					s.health,
+					s.cfg.SpaceShipConfig.Health),
 				"Level Up")
 		}
 	}
@@ -188,22 +196,22 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok && u.LevelUpScreen {
 			if ev.Rune() == 'A' || ev.Rune() == 'a' {
 				upgrade(func() bool {
-					return s.IncreaseGunPower(2)
+					return s.IncreaseGunPower(IncreaseGunPowerBy)
 				})
 			}
 			if ev.Rune() == 'S' || ev.Rune() == 's' {
 				upgrade(func() bool {
-					return s.IncreaseGunSpeed(10)
+					return s.IncreaseGunSpeed(IncreaseGunSpeedBy)
 				})
 			}
 			if ev.Rune() == 'D' || ev.Rune() == 'd' {
 				upgrade(func() bool {
-					return s.IncreaseGunCap(2)
+					return s.IncreaseGunCap(IncreaseGunCapBy)
 				})
 			}
 			if ev.Rune() == 'C' || ev.Rune() == 'c' {
 				upgrade(func() bool {
-					return s.IncreaseHealth(1)
+					return s.RestoreFullHealth()
 				})
 			}
 		}
