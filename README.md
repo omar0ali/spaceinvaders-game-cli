@@ -80,19 +80,19 @@ Configuration file added for the player to freely change/update entity's attribu
 
 ```toml
 [spaceship]
-health = 15
-max_level = 10
-next_level_score = 300
-gun_max_cap = 6
-gun_cap = 3
-gun_speed = 40
+health = 20
+max_level = 50
+next_level_score = 50
+gun_max_cap = 17
+gun_cap = 2
+gun_speed = 35
 gun_max_speed = 80
-gun_power = 2
+gun_power = 1
 
 [aliens]
 limit = 1
-health = 5
-speed = 3
+health = 2
+speed = 4
 gun_speed = 35
 gun_power = 1
 
@@ -101,7 +101,7 @@ limit = 15
 speed = 50
 
 [health_drop]
-health = 6
+health = 2
 speed = 3
 limit = 1
 max_drop = 5
