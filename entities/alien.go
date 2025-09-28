@@ -9,9 +9,23 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
+type AlienDesign struct {
+	Name  string   `json:"name"`
+	Shape []string `json:"shape"`
+}
+
+func (ad *AlienDesign) GetName() string {
+	return ad.Name
+}
+
+func (ad *AlienDesign) GetShape() []string {
+	return ad.Shape
+}
+
 type Alien struct {
 	FallingObjectBase
-	Gun Gun
+	Gun   Gun
+	Shape core.Design
 }
 
 type AlienProducer struct {
@@ -47,8 +61,8 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 		alien.Gun.Update(gc, delta)
 		if len(alien.Gun.Beams) < alien.Gun.Cap {
 			alien.Gun.initBeam(core.Point{
-				X: int(alien.OriginPoint.X),
-				Y: int(alien.OriginPoint.Y + 8),
+				X: int(alien.OriginPoint.X) + (alien.Width / 2),
+				Y: int(alien.OriginPoint.Y) + (alien.Height) + 1,
 			}, Down)
 		}
 	}
@@ -58,52 +72,21 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 }
 
 func (a *AlienProducer) Draw(gc *core.GameContext) {
-	brownColor := window.StyleIt(tcell.ColorReset, tcell.ColorBrown)
+	// brownColor := window.StyleIt(tcell.ColorReset, tcell.ColorBrown)
 	color := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
 	for _, alien := range a.Aliens {
 		alien.Gun.Draw(gc)
-		// drawing the points
-		// header
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX()), int(alien.OriginPoint.GetY())+alien.Height+1, 'v', color,
-		)
 
-		// draw the left lines
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX())-1, int(alien.OriginPoint.GetY())+alien.Height, '\\', brownColor,
-		)
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX())-2, int(alien.OriginPoint.GetY())+alien.Height-1, '\\', brownColor,
-		)
-		// draw the right lines
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX())+1, int(alien.OriginPoint.GetY())+alien.Height, '/', brownColor,
-		)
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX())+2, int(alien.OriginPoint.GetY())+alien.Height-1, '/', brownColor,
-		)
-		// draw the bottom lines
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX()), int(alien.OriginPoint.GetY())+alien.Height-2, '^', brownColor,
-		)
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX())+1, int(alien.OriginPoint.GetY())+alien.Height-2, '-', brownColor,
-		)
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX())-1, int(alien.OriginPoint.GetY())+alien.Height-2, '-', brownColor,
-		)
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX())+2, int(alien.OriginPoint.GetY())+alien.Height-2, '-', brownColor,
-		)
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX())-2, int(alien.OriginPoint.GetY())+alien.Height-2, '-', brownColor,
-		)
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX())+3, int(alien.OriginPoint.GetY())+alien.Height-2, ']', color,
-		)
-		window.SetContentWithStyle(
-			int(alien.OriginPoint.GetX())-3, int(alien.OriginPoint.GetY())+alien.Height-2, '[', color,
-		)
+		// draw shape
+		for rowIndex, line := range alien.Shape.GetShape() {
+			for colIndex, char := range line {
+				if char != ' ' {
+					x := int(alien.OriginPoint.GetX()) + colIndex
+					y := int(alien.OriginPoint.GetY()) + rowIndex
+					window.SetContentWithStyle(x, y, char, color)
+				}
+			}
+		}
 
 	}
 }
@@ -119,18 +102,26 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
 
 func (a *AlienProducer) DeployAliens() {
 	w, _ := window.GetSize()
-	const padding = 18
+	const padding = 20
 	distance := (w - (padding * 2))
 	xPos := rand.Intn(distance) + padding // starting from 18
 	randSpeed := rand.Intn(a.Cfg.AliensConfig.Speed) + 2
 	// spawn alien
+	designs, err := core.LoadAssetDesign[*AlienDesign]("assets/alienship.json")
+	if err != nil {
+		panic(err)
+	}
+	// pick random design
+	randDesign := designs[rand.Intn(len(designs))]
+	width := len(randDesign.GetShape()[0])
+	height := len(randDesign.GetShape())
 	a.Aliens = append(a.Aliens, &Alien{
 		FallingObjectBase: FallingObjectBase{
 			Health:      int(a.health),
 			Speed:       randSpeed,
+			Width:       width,
+			Height:      height,
 			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-			Width:       3,
-			Height:      5,
 		},
 		Gun: Gun{
 			Beams: []*Beam{},
@@ -138,6 +129,7 @@ func (a *AlienProducer) DeployAliens() {
 			Power: a.Cfg.AliensConfig.GunPower,
 			Speed: a.Cfg.AliensConfig.GunSpeed,
 		},
+		Shape: randDesign,
 	})
 }
 

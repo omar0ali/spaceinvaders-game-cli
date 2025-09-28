@@ -42,10 +42,10 @@ func (f *FallingObjectBase) isHit(pointBeam core.PointInterface, power int) bool
 		{1, 1, tcell.RuneBoard, grayColor},
 	}
 
-	if pointBeam.GetX() >= f.OriginPoint.X-float64(f.Width) &&
+	if pointBeam.GetX() >= f.OriginPoint.X &&
 		pointBeam.GetX() <= f.OriginPoint.X+float64(f.Width) &&
-		pointBeam.GetY() >= f.OriginPoint.Y-float64(f.Height) &&
-		pointBeam.GetY() <= f.OriginPoint.Y+float64(f.Height) {
+		pointBeam.GetY() >= f.OriginPoint.Y &&
+		pointBeam.GetY() <= f.OriginPoint.Y+float64(f.Height-2) {
 
 		f.Health -= power // update health of the falling object
 

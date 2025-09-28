@@ -144,6 +144,15 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 	const padding, startY = 2, 2
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+
+	for i, r := range []rune(fmt.Sprintf("* Score: %d/%d", s.Score, s.NextLevelScore)) {
+		window.SetContentWithStyle(padding+i, startY, r, whiteColor)
+	}
+
+	for i, r := range []rune(fmt.Sprintf("* Kills: %d", s.Kills)) {
+		window.SetContentWithStyle(padding+i, startY+1, r, whiteColor)
+	}
+
 	endPositionOfHealth := 4
 	for i := padding; i < s.health+(padding*2); i++ {
 		var ch rune
@@ -156,35 +165,27 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 			endPositionOfHealth = i + (padding * 2) // more padding
 			ch = tcell.RuneBlock
 		}
-		window.SetContentWithStyle(i, startY, ch, whiteColor)
+		window.SetContentWithStyle(i, startY+3, ch, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("%d/%d", s.health, s.cfg.SpaceShipConfig.Health)) {
-		window.SetContentWithStyle(endPositionOfHealth+i, startY, r, whiteColor)
-	}
-
-	for i, r := range []rune(fmt.Sprintf("* Score: %d/%d", s.Score, s.NextLevelScore)) {
-		window.SetContentWithStyle(padding+i, startY+1, r, whiteColor)
-	}
-
-	for i, r := range []rune(fmt.Sprintf("* Kills: %d", s.Kills)) {
-		window.SetContentWithStyle(padding+i, startY+2, r, whiteColor)
+		window.SetContentWithStyle(endPositionOfHealth+i, startY+3, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("* Gun CAP: %d/%d", len(s.Beams), s.Cap)) {
-		window.SetContentWithStyle(padding+i, startY+3, r, whiteColor)
-	}
-
-	for i, r := range []rune(fmt.Sprintf("* Gun POW: %d", s.Power)) {
 		window.SetContentWithStyle(padding+i, startY+4, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Gun SPD: %d", s.Speed)) {
+	for i, r := range []rune(fmt.Sprintf("* Gun POW: %d", s.Power)) {
 		window.SetContentWithStyle(padding+i, startY+5, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Level: %d", s.Level)) {
+	for i, r := range []rune(fmt.Sprintf("* Gun SPD: %d", s.Speed)) {
 		window.SetContentWithStyle(padding+i, startY+6, r, whiteColor)
+	}
+
+	for i, r := range []rune(fmt.Sprintf("* Level: %d", s.Level)) {
+		window.SetContentWithStyle(padding+i, startY+7, r, whiteColor)
 	}
 }
 

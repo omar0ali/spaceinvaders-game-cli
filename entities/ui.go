@@ -44,9 +44,6 @@ func (u *UI) Draw(gc *core.GameContext) {
 				health or enhance the power of your beams, allowing you to destroy the alien ships
 				more quickly.
 
-				+ Health Pack increases by one every minute.
-				- + Using Health Pack will increase health by one.
-
 				[Controls]
 				[LM] or [Space] Click to shoot coming alienships.
 				[F] Drop Health Pack.

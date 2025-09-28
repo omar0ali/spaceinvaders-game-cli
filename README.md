@@ -60,6 +60,7 @@ The game will start at wave 1, so it will be waves were each wave will increase 
 - [X] Better way to level up the player.
     - [X] With upgrade choice /  stat selection. Player can choose to upgrade either (gun power, speed or capacity).
 - [X] The game runs without a `config` file. If the file dose not exist, the default configuration will be used.
+- [X] Adding variety designs of alien ships attacking. Using json file to load all alien ships designs.
 - [ ] Final Boss fight when reaching either time limit or a given score. After that the game will repeat but with higher difficulty.
 
 ### Controls
