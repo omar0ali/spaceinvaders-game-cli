@@ -5,13 +5,21 @@ A terminal-based implementation of the classic space invaders game written in Go
 ## Install
 
 > [!NOTE]
-> The game looks for `config.toml`, make sure that both the game executable and config.toml are located in the same folder and that you run the game from that folder. 
+> The game looks for `config.toml`, make sure that both the game executable and `config.toml` are located in the same folder and that you run the game from that folder. 
 >
 > Note: Game can run without `config` file. Will use default configuration.
 > Another option would be just by cloning this [Repository](#getting-started).
+>
+> There is an executable can be downloaded from [releases](https://github.com/omar0ali/spaceinvaders-game-cli/releases).
 
 ```bash
 go install github.com/omar0ali/spaceinvaders-game-cli@latest
+```
+
+Run the game after installation
+
+```bash
+spaceinvaders-game-cli
 ```
 
 To install go or clone this repository follow the [steps](#getting-started).
@@ -19,7 +27,7 @@ To install go or clone this repository follow the [steps](#getting-started).
 #### Objective
 The game will start at wave 1, so it will be waves were each wave will increase the number of alien ships and power. Number of waves is endless, the higher it gets the higher the score. Also can loot boxes to get extra health or increase power of the beams to destroy the alien ships quicker.
 
-#### Youtube - Gameplay Video
+#### Youtube - Gameplay Demo - v1.0.0
 
 [![Watch the video](https://img.youtube.com/vi/DSeU1Lnglsg/0.jpg)](https://www.youtube.com/watch?v=DSeU1Lnglsg)
 
