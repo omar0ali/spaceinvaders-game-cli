@@ -1,6 +1,6 @@
 [spaceship]
 health = 20
-max_level = 10
+max_level = 25
 next_level_score = 300
 gun_max_cap = 6
 gun_cap = 3
