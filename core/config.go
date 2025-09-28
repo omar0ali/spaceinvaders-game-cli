@@ -87,6 +87,23 @@ type Design interface {
 	GetHealth() int
 }
 
+func LoadSingleAssetDesign[T Design](filePath string) (T, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		var zero T
+		return zero, err
+	}
+	defer file.Close()
+
+	var rawDesign T
+	if err := json.NewDecoder(file).Decode(&rawDesign); err != nil {
+		var zero T
+		return zero, err
+	}
+
+	return rawDesign, nil
+}
+
 func LoadAssetDesign[T Design](filePath string) ([]T, error) {
 	file, err := os.Open(filePath)
 	if err != nil {

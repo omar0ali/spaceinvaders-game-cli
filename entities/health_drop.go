@@ -9,8 +9,27 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
+type HealthDesign struct {
+	Name   string   `json:"name"`
+	Shape  []string `json:"shape"`
+	Health int      `json:"health"`
+}
+
+func (hd *HealthDesign) GetName() string {
+	return hd.Name
+}
+
+func (hd *HealthDesign) GetShape() []string {
+	return hd.Shape
+}
+
+func (hd *HealthDesign) GetHealth() int {
+	return hd.Health
+}
+
 type Health struct {
 	FallingObjectBase
+	Shape core.Design
 }
 
 type HealthProducer struct {
@@ -55,47 +74,16 @@ func (h *HealthProducer) Update(gc *core.GameContext, delta float64) {
 }
 
 func (h *HealthProducer) Draw(gc *core.GameContext) {
-	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	color := window.StyleIt(tcell.ColorReset, tcell.ColorGreen)
 	for _, health := range h.HealthPacks {
-		healthDropPattern := []struct {
-			dx, dy int
-			symbol rune
-			color  tcell.Style
-		}{
-			// corners
-			{int(health.OriginPoint.X) - health.Width, int(health.OriginPoint.Y) - health.Height, tcell.RuneULCorner, whiteColor},
-			{int(health.OriginPoint.X) + health.Width, int(health.OriginPoint.Y) - health.Height, tcell.RuneURCorner, whiteColor},
-			{int(health.OriginPoint.X) + health.Width, int(health.OriginPoint.Y) + health.Height, tcell.RuneLRCorner, whiteColor},
-			{int(health.OriginPoint.X) - health.Width, int(health.OriginPoint.Y) + health.Height, tcell.RuneLLCorner, whiteColor},
-		}
-		for _, corner := range healthDropPattern {
-			window.SetContentWithStyle(corner.dx, corner.dy, corner.symbol, corner.color)
-		}
-		// lines
-		// top line
-		for i := range (health.Width * 2) - 1 {
-			window.SetContentWithStyle((int(health.OriginPoint.X)-health.Width)+i+1, int(health.OriginPoint.Y)-health.Height, tcell.RuneHLine, whiteColor) // left top
-		}
-		// sides | health.Height will be changing
-		for j := range (health.Height * 2) - 1 {
-			for i := range (health.Width * 2) + 1 {
-				switch i {
-				case 0, (health.Width * 2):
-					window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width+i, int(health.OriginPoint.Y)-health.Height+j+1, tcell.RuneVLine, whiteColor) // left top
-				default:
-					window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width+i, int(health.OriginPoint.Y)-health.Height+j+1, ' ', whiteColor) // left top
+		for rowIndex, line := range health.Shape.GetShape() {
+			for colIndex, char := range line {
+				if char != ' ' {
+					x := int(health.OriginPoint.GetX()) + colIndex
+					y := int(health.OriginPoint.GetY()) + rowIndex
+					window.SetContentWithStyle(x, y, char, color)
 				}
 			}
-		}
-		// bottom line
-		for i := range (health.Width * 2) - 1 {
-			window.SetContentWithStyle((int(health.OriginPoint.X)-health.Width)+i+1, int(health.OriginPoint.Y)+health.Height, tcell.RuneHLine, whiteColor) // left top
-		}
-
-		// writing text in the middle of the box
-		hpStr := []rune(fmt.Sprintf("Health+%d", h.healthIncreaseBy))
-		for i, r := range hpStr {
-			window.SetContentWithStyle(int(health.OriginPoint.X)-health.Width+i+1, int(health.OriginPoint.Y)-(health.Height/2), r, whiteColor) // left top
 		}
 	}
 }
@@ -105,14 +93,22 @@ func (h *HealthProducer) DeployHealthPack() {
 	distance := (w - (15 * 2))
 	xPos := rand.Intn(distance) + 15
 	randSpeed := rand.Intn(max(h.Cfg.HealthDropConfig.Speed, 3)) + 2
+	design, err := core.LoadSingleAssetDesign[*HealthDesign]("assets/health_pack.json")
+	if err != nil {
+		panic(err)
+	}
+	width := len(design.GetShape()[0])
+	height := len(design.GetShape())
+
 	h.HealthPacks = append(h.HealthPacks, &Health{
 		FallingObjectBase: FallingObjectBase{
 			Speed:       randSpeed,
-			Health:      h.health,
+			Health:      design.Health + h.health,
 			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-			Width:       5,
-			Height:      1,
+			Width:       width,
+			Height:      height,
 		},
+		Shape: design,
 	})
 }
 
