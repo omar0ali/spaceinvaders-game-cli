@@ -10,8 +10,9 @@ import (
 )
 
 type AlienDesign struct {
-	Name  string   `json:"name"`
-	Shape []string `json:"shape"`
+	Name   string   `json:"name"`
+	Shape  []string `json:"shape"`
+	Health int      `json:"health"`
 }
 
 func (ad *AlienDesign) GetName() string {
@@ -20,6 +21,10 @@ func (ad *AlienDesign) GetName() string {
 
 func (ad *AlienDesign) GetShape() []string {
 	return ad.Shape
+}
+
+func (ad *AlienDesign) GetHealth() int {
+	return ad.Health
 }
 
 type Alien struct {
@@ -112,12 +117,12 @@ func (a *AlienProducer) DeployAliens() {
 		panic(err)
 	}
 	// pick random design
-	randDesign := designs[rand.Intn(len(designs))]
+	randDesign := designs[rand.Intn(int(a.health))]
 	width := len(randDesign.GetShape()[0])
 	height := len(randDesign.GetShape())
 	a.Aliens = append(a.Aliens, &Alien{
 		FallingObjectBase: FallingObjectBase{
-			Health:      int(a.health),
+			Health:      int(a.health) + randDesign.GetHealth(),
 			Speed:       randSpeed,
 			Width:       width,
 			Height:      height,

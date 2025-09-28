@@ -84,6 +84,7 @@ func LoadConfig() GameConfig {
 type Design interface {
 	GetShape() []string
 	GetName() string
+	GetHealth() int
 }
 
 func LoadAssetDesign[T Design](filePath string) ([]T, error) {
