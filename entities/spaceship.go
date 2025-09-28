@@ -24,7 +24,7 @@ type SpaceShip struct {
 }
 
 func (s *SpaceShip) IncreaseGunPower(i int) bool {
-	s.Power += 2
+	s.Power += i
 	return true
 }
 
@@ -42,6 +42,14 @@ func (s *SpaceShip) IncreaseGunCap(i int) bool {
 		return true
 	}
 	return false
+}
+
+func (s *SpaceShip) RestoreFullHealth() bool {
+	if s.health >= s.cfg.SpaceShipConfig.Health {
+		return false
+	}
+	s.health = s.cfg.SpaceShipConfig.Health
+	return true
 }
 
 func (s *SpaceShip) IncreaseHealth(i int) bool {
