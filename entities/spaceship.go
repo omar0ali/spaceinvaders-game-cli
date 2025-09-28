@@ -252,11 +252,11 @@ func (s *SpaceShip) LevelUp() {
 
 func (s *SpaceShip) ScoreKill() {
 	s.Kills += 1
-	s.Score += 50
+	s.Score += s.Kills
 }
 
 func (s *SpaceShip) ScoreHit() {
-	s.Score += (s.Power * 2)
+	s.Score += s.Power * 2
 }
 
 func (s *SpaceShip) GetType() string {
