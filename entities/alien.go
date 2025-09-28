@@ -77,11 +77,15 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 }
 
 func (a *AlienProducer) Draw(gc *core.GameContext) {
-	// brownColor := window.StyleIt(tcell.ColorReset, tcell.ColorBrown)
+	colorHealth := window.StyleIt(tcell.ColorReset, tcell.ColorIndianRed)
 	color := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
 	for _, alien := range a.Aliens {
 		alien.Gun.Draw(gc)
-
+		for i := range alien.Health {
+			x := int(alien.OriginPoint.GetX()) + (alien.Width / 2) - alien.Health/2
+			y := int(alien.OriginPoint.GetY())
+			window.SetContentWithStyle(x+i, y-1, tcell.RuneBoard, colorHealth)
+		}
 		// draw shape
 		for rowIndex, line := range alien.Shape.GetShape() {
 			for colIndex, char := range line {
@@ -148,10 +152,6 @@ func (a *AlienProducer) UIAlienShipData(gc *core.GameContext) {
 	alienMSPD := []rune(fmt.Sprintf("Max SPD: %d * ", a.Cfg.AliensConfig.Speed))
 	for i, r := range alienMSPD {
 		window.SetContentWithStyle(w+i-len(alienMSPD), 3, r, whiteColor)
-	}
-	aliensHP := []rune(fmt.Sprintf("Max HP: %d * ", int(a.health)))
-	for i, r := range aliensHP {
-		window.SetContentWithStyle(w+i-len(aliensHP), 4, r, whiteColor)
 	}
 }
 
