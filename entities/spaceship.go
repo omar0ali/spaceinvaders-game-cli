@@ -142,25 +142,21 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 }
 
 func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
-	const startX, startY = 2, 2
+	const padding, startY = 2, 2
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
-	endPositionOfHealth := 0
-	for i := 0; i < s.health+2; i++ {
+	endPositionOfHealth := 4
+	for i := padding; i < s.health+(padding*2); i++ {
 		var ch rune
 		switch i {
-		case 0:
+		case padding:
 			ch = '*'
-		case 1:
+		case padding + 1:
 			ch = ' '
-		case s.health:
-			ch = tcell.RuneCkBoard
-		case s.health + 1:
-			ch = tcell.RuneBoard
-			endPositionOfHealth = i + 4 // more padding
 		default:
+			endPositionOfHealth = i + (padding * 2) // more padding
 			ch = tcell.RuneBlock
 		}
-		window.SetContentWithStyle(startX+i, startY, ch, whiteColor)
+		window.SetContentWithStyle(i, startY, ch, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("%d/%d", s.health, s.cfg.SpaceShipConfig.Health)) {
@@ -168,27 +164,27 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 	}
 
 	for i, r := range []rune(fmt.Sprintf("* Score: %d/%d", s.Score, s.NextLevelScore)) {
-		window.SetContentWithStyle(startX+i, startY+1, r, whiteColor)
+		window.SetContentWithStyle(padding+i, startY+1, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("* Kills: %d", s.Kills)) {
-		window.SetContentWithStyle(startX+i, startY+2, r, whiteColor)
+		window.SetContentWithStyle(padding+i, startY+2, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("* Gun CAP: %d/%d", len(s.Gun.Beams), s.Gun.Cap)) {
-		window.SetContentWithStyle(startX+i, startY+3, r, whiteColor)
+		window.SetContentWithStyle(padding+i, startY+3, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("* Gun POW: %d", s.Gun.Power)) {
-		window.SetContentWithStyle(startX+i, startY+4, r, whiteColor)
+		window.SetContentWithStyle(padding+i, startY+4, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("* Gun SPD: %d", s.Gun.Speed)) {
-		window.SetContentWithStyle(startX+i, startY+5, r, whiteColor)
+		window.SetContentWithStyle(padding+i, startY+5, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("* Level: %d", s.Level)) {
-		window.SetContentWithStyle(startX+i, startY+6, r, whiteColor)
+		window.SetContentWithStyle(padding+i, startY+6, r, whiteColor)
 	}
 }
 
