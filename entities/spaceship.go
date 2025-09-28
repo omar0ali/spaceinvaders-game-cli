@@ -10,7 +10,7 @@ import (
 )
 
 type SpaceShip struct {
-	Gun            Gun // a spaceship has a gun
+	Gun
 	OriginPoint    core.Point
 	health         int
 	Kills          int
@@ -24,21 +24,21 @@ type SpaceShip struct {
 }
 
 func (s *SpaceShip) IncreaseGunPower(i int) bool {
-	s.Gun.Power += 2
+	s.Power += 2
 	return true
 }
 
 func (s *SpaceShip) IncreaseGunSpeed(i int) bool {
-	if s.Gun.Speed < s.cfg.SpaceShipConfig.GunMaxSpeed {
-		s.Gun.Speed += i
+	if s.Speed < s.cfg.SpaceShipConfig.GunMaxSpeed {
+		s.Speed += i
 		return true
 	}
 	return false
 }
 
 func (s *SpaceShip) IncreaseGunCap(i int) bool {
-	if s.Gun.Cap < s.cfg.SpaceShipConfig.GunMaxCap {
-		s.Gun.Cap += i
+	if s.Cap < s.cfg.SpaceShipConfig.GunMaxCap {
+		s.Cap += i
 		return true
 	}
 	return false
@@ -132,11 +132,11 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 		moveMouse(x, y)
 
 		if ev.Buttons() == tcell.Button1 {
-			s.Gun.initBeam(s.OriginPoint, Up)
+			s.initBeam(s.OriginPoint, Up)
 		}
 	case *tcell.EventKey:
 		if ev.Rune() == ' ' {
-			s.Gun.initBeam(s.OriginPoint, Up)
+			s.initBeam(s.OriginPoint, Up)
 		}
 	}
 }
@@ -171,15 +171,15 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 		window.SetContentWithStyle(padding+i, startY+2, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Gun CAP: %d/%d", len(s.Gun.Beams), s.Gun.Cap)) {
+	for i, r := range []rune(fmt.Sprintf("* Gun CAP: %d/%d", len(s.Beams), s.Cap)) {
 		window.SetContentWithStyle(padding+i, startY+3, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Gun POW: %d", s.Gun.Power)) {
+	for i, r := range []rune(fmt.Sprintf("* Gun POW: %d", s.Power)) {
 		window.SetContentWithStyle(padding+i, startY+4, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Gun SPD: %d", s.Gun.Speed)) {
+	for i, r := range []rune(fmt.Sprintf("* Gun SPD: %d", s.Speed)) {
 		window.SetContentWithStyle(padding+i, startY+5, r, whiteColor)
 	}
 
@@ -247,7 +247,7 @@ func (s *SpaceShip) ScoreKill() {
 }
 
 func (s *SpaceShip) ScoreHit() {
-	s.Score += (s.Gun.Power * 2)
+	s.Score += (s.Power * 2)
 }
 
 func (s *SpaceShip) GetType() string {

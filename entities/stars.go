@@ -43,7 +43,6 @@ func (s *StarProducer) Deployment() {
 }
 
 func (s *StarProducer) Update(gc *core.GameContext, delta float64) {
-	// create stars at least 15
 	if len(s.Stars) < s.Limit {
 		s.Deployment()
 	}
