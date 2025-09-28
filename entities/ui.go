@@ -48,12 +48,12 @@ func (u *UI) Draw(gc *core.GameContext) {
 				- + Using Health Pack will increase health by one.
 
 				[Controls]
-				[LM] Click to shoot coming alienships.
-				[H] Drop Health Pack.
+				[LM] or [Space] Click to shoot coming alienships.
+				[F] Drop Health Pack.
 				[P] To pause the game.
 				[Q] To quit the game.
 
-				Press [S] to start
+				Press [S] to start the game
 			`,
 			"Space Invaders Game")
 	}
@@ -74,10 +74,10 @@ func (u *UI) Draw(gc *core.GameContext) {
 				[C] (%d) Increase Health by 2
 
 				`, s.Level,
-					s.Gun.Power,
-					s.Gun.Speed,
+					s.Power,
+					s.Speed,
 					s.cfg.SpaceShipConfig.GunMaxSpeed,
-					s.Gun.Cap, s.cfg.SpaceShipConfig.GunMaxCap, s.health),
+					s.Cap, s.cfg.SpaceShipConfig.GunMaxCap, s.health),
 				"Level Up")
 		}
 	}
