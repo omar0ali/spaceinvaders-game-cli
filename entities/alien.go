@@ -13,6 +13,7 @@ type AlienDesign struct {
 	Name   string   `json:"name"`
 	Shape  []string `json:"shape"`
 	Health int      `json:"health"`
+	Color  string   `json:"color"`
 }
 
 func (ad *AlienDesign) GetName() string {
@@ -25,6 +26,10 @@ func (ad *AlienDesign) GetShape() []string {
 
 func (ad *AlienDesign) GetHealth() int {
 	return ad.Health
+}
+
+func (ad *AlienDesign) GetColor() tcell.Color {
+	return window.HexToColor(ad.Color)
 }
 
 type Alien struct {
@@ -78,8 +83,8 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 
 func (a *AlienProducer) Draw(gc *core.GameContext) {
 	colorHealth := window.StyleIt(tcell.ColorReset, tcell.ColorIndianRed)
-	color := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
 	for _, alien := range a.Aliens {
+		color := window.StyleIt(tcell.ColorReset, alien.Shape.GetColor())
 		alien.Gun.Draw(gc)
 		for i := range alien.Health {
 			x := int(alien.OriginPoint.GetX()) + (alien.Width / 2) - alien.Health/2
@@ -116,7 +121,7 @@ func (a *AlienProducer) DeployAliens() {
 	xPos := rand.Intn(distance) + padding // starting from 18
 	randSpeed := rand.Intn(a.Cfg.AliensConfig.Speed) + 2
 	// spawn alien
-	designs, err := core.LoadAssetDesign[*AlienDesign]("assets/alienship.json")
+	designs, err := core.LoadListOfAssets[*AlienDesign]("assets/alienship.json")
 	if err != nil {
 		panic(err)
 	}

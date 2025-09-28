@@ -13,6 +13,7 @@ type HealthDesign struct {
 	Name   string   `json:"name"`
 	Shape  []string `json:"shape"`
 	Health int      `json:"health"`
+	Color  string   `json:"color"`
 }
 
 func (hd *HealthDesign) GetName() string {
@@ -25,6 +26,10 @@ func (hd *HealthDesign) GetShape() []string {
 
 func (hd *HealthDesign) GetHealth() int {
 	return hd.Health
+}
+
+func (hd *HealthDesign) GetColor() tcell.Color {
+	return window.HexToColor(hd.Color)
 }
 
 type Health struct {
@@ -74,8 +79,8 @@ func (h *HealthProducer) Update(gc *core.GameContext, delta float64) {
 }
 
 func (h *HealthProducer) Draw(gc *core.GameContext) {
-	color := window.StyleIt(tcell.ColorReset, tcell.ColorGreen)
 	for _, health := range h.HealthPacks {
+		color := window.StyleIt(tcell.ColorReset, health.Shape.GetColor())
 		for rowIndex, line := range health.Shape.GetShape() {
 			for colIndex, char := range line {
 				if char != ' ' {
@@ -93,7 +98,7 @@ func (h *HealthProducer) DeployHealthPack() {
 	distance := (w - (15 * 2))
 	xPos := rand.Intn(distance) + 15
 	randSpeed := rand.Intn(max(h.Cfg.HealthDropConfig.Speed, 3)) + 2
-	design, err := core.LoadSingleAssetDesign[*HealthDesign]("assets/health_pack.json")
+	design, err := core.LoadAsset[*HealthDesign]("assets/health_pack.json")
 	if err != nil {
 		panic(err)
 	}

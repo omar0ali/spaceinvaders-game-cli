@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/BurntSushi/toml"
+	"github.com/gdamore/tcell/v2"
 )
 
 const defaultConfig = `
@@ -85,9 +86,10 @@ type Design interface {
 	GetShape() []string
 	GetName() string
 	GetHealth() int
+	GetColor() tcell.Color
 }
 
-func LoadSingleAssetDesign[T Design](filePath string) (T, error) {
+func LoadAsset[T Design](filePath string) (T, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		var zero T
@@ -104,7 +106,7 @@ func LoadSingleAssetDesign[T Design](filePath string) (T, error) {
 	return rawDesign, nil
 }
 
-func LoadAssetDesign[T Design](filePath string) ([]T, error) {
+func LoadListOfAssets[T Design](filePath string) ([]T, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
