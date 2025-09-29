@@ -17,7 +17,7 @@ var (
 const (
 	IncreaseGunCapBy   = 1
 	IncreaseGunPowerBy = 1
-	IncreaseGunSpeedBy = 5
+	IncreaseGunSpeedBy = 2
 )
 
 type UI struct {
@@ -86,7 +86,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 					s.cfg.SpaceShipConfig.GunMaxCap,
 					IncreaseGunCapBy,
 					s.health,
-					s.cfg.SpaceShipConfig.Health),
+					s.SpaceshipDesign.EntityHealth),
 				"Level Up")
 		}
 	}

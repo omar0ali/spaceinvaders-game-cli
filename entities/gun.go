@@ -34,7 +34,7 @@ func (g *Gun) initBeam(pos core.Point, dir Direction) {
 	beam := Beam{
 		core.Point{
 			X: pos.X,
-			Y: pos.Y - 2,
+			Y: pos.Y,
 		},
 		'|',
 		dir,
