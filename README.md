@@ -31,17 +31,6 @@ The game is an endless space shooter where players face increasingly difficult w
 
 [![Watch the video](https://img.youtube.com/vi/DSeU1Lnglsg/0.jpg)](https://www.youtube.com/watch?v=DSeU1Lnglsg)
 
-
-#### Screenshots
-
-![Space Invaders Game (Start Menu)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-startmenu.png)
-
-![Space Invaders Game (Gameplay 1)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-gameplay.png)
-
-![Space Invaders Game (Pause)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-pause.png)
-
-![Space Invaders Game (Game Over)](https://raw.githubusercontent.com/omar0ali/spaceinvaders-game-cli/refs/heads/main/screenshots/spaceinvaders-game-cli-gameover.png)
-
 ### Checklist:
 - [X] Create a spaceship placed at the bottom of the screen.
     - [X] Add controls to the spaceship, `Mouse Motion` left and right. 
@@ -69,6 +58,8 @@ The game is an endless space shooter where players face increasingly difficult w
     - [X] With upgrade choice /  stat selection. Player can choose to upgrade either (gun power, speed or capacity).
 - [X] The game runs without a `config` file. If the file dose not exist, the default configuration will be used.
 - [X] Adding variety designs of alien ships attacking. Using json file to load all alien ships designs.
+- [ ] Will add variety of spaceship selection before starting the game. Currently added just five.
+    - Before the game starts, the player will be able to select a ship.
 
 ### Controls
 
@@ -88,14 +79,10 @@ Configuration file added for the player to freely change/update entity's attribu
 
 ```toml
 [spaceship]
-health = 20
 max_level = 50
 next_level_score = 50
-gun_max_cap = 17
-gun_cap = 2
-gun_speed = 35
-gun_max_speed = 80
-gun_power = 1
+gun_max_cap = 30
+gun_max_speed = 85
 
 [aliens]
 limit = 1
