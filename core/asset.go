@@ -15,38 +15,44 @@ type Design struct {
 	Color        string   `json:"color"`
 }
 
+type SpaceshipDesign struct {
+	Design
+	GunPower int `json:"gun_power"`
+	GunSpeed int `json:"gun_speed"`
+	GunCap   int `json:"gun_cap"`
+}
+
 func (d *Design) GetColor() tcell.Color {
 	return HexToColor(d.Color)
 }
 
-func LoadAsset(filePath string) (Design, error) {
+func LoadAsset[T any](filePath string) (T, error) {
 	file, err := os.Open(filePath)
+	var design T
 	if err != nil {
-		return Design{}, err
+		return design, err
 	}
 	defer file.Close()
 
-	var rawDesign Design
-	if err := json.NewDecoder(file).Decode(&rawDesign); err != nil {
-		return Design{}, err
+	if err := json.NewDecoder(file).Decode(&design); err != nil {
+		return design, err
 	}
 
-	return rawDesign, nil
+	return design, nil
 }
 
-func LoadListOfAssets(filePath string) ([]Design, error) {
+func LoadListOfAssets[T any](filePath string) ([]T, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	var rawDesigns []Design
-	if err := json.NewDecoder(file).Decode(&rawDesigns); err != nil {
+	var items []T
+	if err := json.NewDecoder(file).Decode(&items); err != nil {
 		return nil, err
 	}
-
-	return rawDesigns, nil
+	return items, nil
 }
 
 func HexToColor(hex string) tcell.Color {

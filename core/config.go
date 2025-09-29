@@ -8,14 +8,10 @@ import (
 
 const defaultConfig = `
 [spaceship]
-health = 15
 max_level = 10
 next_level_score = 300
 gun_max_cap = 6
-gun_cap = 3
-gun_speed = 40
 gun_max_speed = 80
-gun_power = 2
 
 [aliens]
 limit = 1
@@ -38,14 +34,10 @@ start = 1
 
 type GameConfig struct {
 	SpaceShipConfig struct {
-		Health         int `toml:"health"`
 		MaxLevel       int `toml:"max_level"`
 		NextLevelScore int `toml:"next_level_score"`
 		GunMaxCap      int `toml:"gun_max_cap"`
-		GunCap         int `toml:"gun_cap"`
-		GunPower       int `toml:"gun_power"`
 		GunMaxSpeed    int `toml:"gun_max_speed"`
-		GunSpeed       int `toml:"gun_speed"`
 	} `toml:"spaceship"`
 	AliensConfig struct {
 		Limit    int `toml:"limit"`
