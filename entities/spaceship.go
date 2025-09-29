@@ -31,6 +31,7 @@ func (s *SpaceShip) IncreaseGunPower(i int) bool {
 func (s *SpaceShip) IncreaseGunSpeed(i int) bool {
 	if s.Speed < s.cfg.SpaceShipConfig.GunMaxSpeed {
 		s.Speed += i
+		s.Speed = min(s.Speed, s.cfg.SpaceShipConfig.GunMaxSpeed)
 		return true
 	}
 	return false
@@ -39,6 +40,7 @@ func (s *SpaceShip) IncreaseGunSpeed(i int) bool {
 func (s *SpaceShip) IncreaseGunCap(i int) bool {
 	if s.Cap < s.cfg.SpaceShipConfig.GunMaxCap {
 		s.Cap += i
+		s.Cap = min(s.Cap, s.cfg.SpaceShipConfig.GunMaxCap)
 		return true
 	}
 	return false
@@ -55,6 +57,7 @@ func (s *SpaceShip) RestoreFullHealth() bool {
 func (s *SpaceShip) IncreaseHealth(i int) bool {
 	if s.health < s.cfg.SpaceShipConfig.Health {
 		s.health += i
+		s.health = min(s.health, s.cfg.SpaceShipConfig.Health)
 		return true
 	}
 	return false
