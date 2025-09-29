@@ -20,8 +20,6 @@ func DeployEntities(gc *core.GameContext, cfg core.GameConfig) {
 func main() {
 	exit := make(chan struct{})
 
-	// window by default is set to 30 FPS
-	// window.InitScreen(window.ChangeTickerDuration(16), window.EnableMouse) // this can update the framerate to 60
 	// ------------------------------- Setup ------------------------------------
 	screen := window.InitScreen(window.EnableMouse)
 	screen.SetTitle("Space Invader Game")

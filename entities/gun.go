@@ -36,7 +36,7 @@ func (g *Gun) initBeam(pos core.Point, dir Direction) {
 			X: pos.X,
 			Y: pos.Y - 2,
 		},
-		tcell.RuneVLine,
+		'|',
 		dir,
 	}
 	g.Beams = append(g.Beams, &beam)
