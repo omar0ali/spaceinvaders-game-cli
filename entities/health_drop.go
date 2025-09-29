@@ -9,32 +9,9 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
-type HealthDesign struct {
-	Name   string   `json:"name"`
-	Shape  []string `json:"shape"`
-	Health int      `json:"health"`
-	Color  string   `json:"color"`
-}
-
-func (hd *HealthDesign) GetName() string {
-	return hd.Name
-}
-
-func (hd *HealthDesign) GetShape() []string {
-	return hd.Shape
-}
-
-func (hd *HealthDesign) GetHealth() int {
-	return hd.Health
-}
-
-func (hd *HealthDesign) GetColor() tcell.Color {
-	return window.HexToColor(hd.Color)
-}
-
 type Health struct {
 	FallingObjectBase
-	Shape core.Design
+	core.Design
 }
 
 type HealthProducer struct {
@@ -80,8 +57,8 @@ func (h *HealthProducer) Update(gc *core.GameContext, delta float64) {
 
 func (h *HealthProducer) Draw(gc *core.GameContext) {
 	for _, health := range h.HealthPacks {
-		color := window.StyleIt(tcell.ColorReset, health.Shape.GetColor())
-		for rowIndex, line := range health.Shape.GetShape() {
+		color := window.StyleIt(tcell.ColorReset, health.GetColor())
+		for rowIndex, line := range health.Shape {
 			for colIndex, char := range line {
 				if char != ' ' {
 					x := int(health.OriginPoint.GetX()) + colIndex
@@ -98,22 +75,22 @@ func (h *HealthProducer) DeployHealthPack() {
 	distance := (w - (15 * 2))
 	xPos := rand.Intn(distance) + 15
 	randSpeed := rand.Intn(max(h.Cfg.HealthDropConfig.Speed, 3)) + 2
-	design, err := core.LoadAsset[*HealthDesign]("assets/health_pack.json")
+	design, err := core.LoadAsset("assets/health_pack.json")
 	if err != nil {
 		panic(err)
 	}
-	width := len(design.GetShape()[0])
-	height := len(design.GetShape())
+	width := len(design.Shape[0])
+	height := len(design.Shape)
 
 	h.HealthPacks = append(h.HealthPacks, &Health{
 		FallingObjectBase: FallingObjectBase{
 			Speed:       randSpeed,
-			Health:      design.Health + h.health,
+			Health:      design.EntityHealth + h.health,
 			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
 			Width:       width,
 			Height:      height,
 		},
-		Shape: design,
+		Design: design,
 	})
 }
 

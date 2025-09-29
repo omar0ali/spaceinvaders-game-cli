@@ -9,33 +9,10 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
-type AlienDesign struct {
-	Name   string   `json:"name"`
-	Shape  []string `json:"shape"`
-	Health int      `json:"health"`
-	Color  string   `json:"color"`
-}
-
-func (ad *AlienDesign) GetName() string {
-	return ad.Name
-}
-
-func (ad *AlienDesign) GetShape() []string {
-	return ad.Shape
-}
-
-func (ad *AlienDesign) GetHealth() int {
-	return ad.Health
-}
-
-func (ad *AlienDesign) GetColor() tcell.Color {
-	return window.HexToColor(ad.Color)
-}
-
 type Alien struct {
 	FallingObjectBase
-	Gun   Gun
-	Shape core.Design
+	Gun Gun
+	core.Design
 }
 
 type AlienProducer struct {
@@ -84,7 +61,7 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 func (a *AlienProducer) Draw(gc *core.GameContext) {
 	colorHealth := window.StyleIt(tcell.ColorReset, tcell.ColorIndianRed)
 	for _, alien := range a.Aliens {
-		color := window.StyleIt(tcell.ColorReset, alien.Shape.GetColor())
+		color := window.StyleIt(tcell.ColorReset, alien.GetColor())
 		alien.Gun.Draw(gc)
 		for i := range alien.Health {
 			x := int(alien.OriginPoint.GetX()) + (alien.Width / 2) - alien.Health/2
@@ -92,7 +69,7 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 			window.SetContentWithStyle(x+i, y-1, tcell.RuneBoard, colorHealth)
 		}
 		// draw shape
-		for rowIndex, line := range alien.Shape.GetShape() {
+		for rowIndex, line := range alien.Shape {
 			for colIndex, char := range line {
 				if char != ' ' {
 					x := int(alien.OriginPoint.GetX()) + colIndex
@@ -121,17 +98,17 @@ func (a *AlienProducer) DeployAliens() {
 	xPos := rand.Intn(distance) + padding // starting from 18
 	randSpeed := rand.Intn(a.Cfg.AliensConfig.Speed) + 2
 	// spawn alien
-	designs, err := core.LoadListOfAssets[*AlienDesign]("assets/alienship.json")
+	designs, err := core.LoadListOfAssets("assets/alienship.json")
 	if err != nil {
 		panic(err)
 	}
 	// pick random design
 	randDesign := designs[rand.Intn(int(a.health))]
-	width := len(randDesign.GetShape()[0])
-	height := len(randDesign.GetShape())
+	width := len(randDesign.Shape[0])
+	height := len(randDesign.Shape)
 	a.Aliens = append(a.Aliens, &Alien{
 		FallingObjectBase: FallingObjectBase{
-			Health:      int(a.health) + randDesign.GetHealth(),
+			Health:      int(a.health) + randDesign.EntityHealth,
 			Speed:       randSpeed,
 			Width:       width,
 			Height:      height,
@@ -143,7 +120,7 @@ func (a *AlienProducer) DeployAliens() {
 			Power: a.Cfg.AliensConfig.GunPower,
 			Speed: a.Cfg.AliensConfig.GunSpeed,
 		},
-		Shape: randDesign,
+		Design: randDesign,
 	})
 }
 

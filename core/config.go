@@ -1,12 +1,9 @@
 package core
 
 import (
-	"encoding/json"
 	"log"
-	"os"
 
 	"github.com/BurntSushi/toml"
-	"github.com/gdamore/tcell/v2"
 )
 
 const defaultConfig = `
@@ -80,43 +77,4 @@ func LoadConfig() GameConfig {
 	}
 	log.Fatal("Failed to load configuration or invalid defaultConfig")
 	return GameConfig{}
-}
-
-type Design interface {
-	GetShape() []string
-	GetName() string
-	GetHealth() int
-	GetColor() tcell.Color
-}
-
-func LoadAsset[T Design](filePath string) (T, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		var zero T
-		return zero, err
-	}
-	defer file.Close()
-
-	var rawDesign T
-	if err := json.NewDecoder(file).Decode(&rawDesign); err != nil {
-		var zero T
-		return zero, err
-	}
-
-	return rawDesign, nil
-}
-
-func LoadListOfAssets[T Design](filePath string) ([]T, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var rawDesigns []T
-	if err := json.NewDecoder(file).Decode(&rawDesigns); err != nil {
-		return nil, err
-	}
-
-	return rawDesigns, nil
 }
