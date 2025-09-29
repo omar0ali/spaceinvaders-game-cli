@@ -25,7 +25,7 @@ spaceinvaders-game-cli
 To install go or clone this repository follow the [steps](#getting-started).
 
 #### Objective
-The game will start at wave 1, so it will be waves were each wave will increase the number of alien ships and power. Number of waves is endless, the higher it gets the higher the score. Also can loot boxes to get extra health or increase power of the beams to destroy the alien ships quicker.
+The game is an endless space shooter where players face increasingly difficult waves of alien ships that scale with their level. Each time the player levels up, they can choose an upgrade to improve their spaceship, such as boosting firepower to handle tougher aliens with stronger armor. The objective is to survive as long as possible, destroy alien ships, and push for a higher score while managing health through occasional drop-down health packs that restore the spaceship health.
 
 #### Youtube - Gameplay Demo - v1.0.0
 

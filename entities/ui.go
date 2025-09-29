@@ -43,14 +43,18 @@ func (u *UI) Draw(gc *core.GameContext) {
 	if u.MenuScreen {
 		u.MessageBox(window.GetCenterPoint(),
 			`
-				The game starts at wave 1, and each subsequent wave will increase the number of 
-				alien ships and their power. The number of waves is endless, and as the waves 
-				progress, your score will increase. You can also collect loot boxes to gain extra
-				health or enhance the power of your beams, allowing you to destroy the alien ships
-				more quickly.
+				The game is an endless space shooter where players face increasingly difficult 
+				waves of alien ships that scale with their level.
+
+				Each time the player levels up, they can choose an upgrade to improve their spaceship,
+				such as boosting firepower to handle tougher aliens with stronger armor.
+
+				The objective is to survive as long as possible, destroy alien ships, and push for 
+				a higher score while managing health through occasional drop-down health packs that
+				restore the spaceship health.
 
 				[Controls]
-				[LM] Or [Space] click to shoot coming alien-ships.
+				[LM] Or [Space] to shoot coming alien-ships.
 				[F] Drop Health Pack.
 				[P] To pause the game.
 				[Q] To quit the game.
