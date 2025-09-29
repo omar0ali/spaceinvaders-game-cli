@@ -3,6 +3,7 @@ package entities
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/core"
@@ -11,16 +12,17 @@ import (
 
 type SpaceShip struct {
 	Gun
-	OriginPoint    core.Point
-	health         int
-	Kills          int
-	Level          int
-	Score          int
-	NextLevelScore int
-	previousLevel  int
-	Width, Height  int
-	cfg            core.GameConfig
-	OnLevelUp      []func(newLevel int)
+	OriginPoint     core.Point
+	health          int
+	Kills           int
+	Level           int
+	Score           int
+	NextLevelScore  int
+	previousLevel   int
+	Width, Height   int
+	cfg             core.GameConfig
+	OnLevelUp       []func(newLevel int)
+	SpaceshipDesign core.SpaceshipDesign
 }
 
 func (s *SpaceShip) IncreaseGunPower(i int) bool {
@@ -47,17 +49,17 @@ func (s *SpaceShip) IncreaseGunCap(i int) bool {
 }
 
 func (s *SpaceShip) RestoreFullHealth() bool {
-	if s.health >= s.cfg.SpaceShipConfig.Health {
+	if s.health >= s.SpaceshipDesign.EntityHealth {
 		return false
 	}
-	s.health = s.cfg.SpaceShipConfig.Health
+	s.health = s.SpaceshipDesign.EntityHealth
 	return true
 }
 
 func (s *SpaceShip) IncreaseHealth(i int) bool {
-	if s.health < s.cfg.SpaceShipConfig.Health {
+	if s.health < s.SpaceshipDesign.EntityHealth {
 		s.health += i
-		s.health = min(s.health, s.cfg.SpaceShipConfig.Health)
+		s.health = min(s.health, s.SpaceshipDesign.EntityHealth)
 		return true
 	}
 	return false
@@ -75,19 +77,26 @@ func NewSpaceShip(cfg core.GameConfig) *SpaceShip {
 		X: w / 2,
 		Y: h - 3,
 	}
+	designs, err := core.LoadListOfAssets[core.SpaceshipDesign]("assets/spaceship.json")
+	design := designs[rand.Intn(len(designs))]
+	if err != nil {
+		panic(err)
+	}
+	width := len(design.Shape[0])
+	height := len(design.Shape)
 
 	return &SpaceShip{
-		OriginPoint: origin,
-
+		OriginPoint:     origin,
+		SpaceshipDesign: design,
 		Gun: Gun{
 			Beams: []*Beam{},
-			Cap:   cfg.SpaceShipConfig.GunCap,
-			Power: cfg.SpaceShipConfig.GunPower,
-			Speed: cfg.SpaceShipConfig.GunSpeed,
+			Cap:   design.GunCap,
+			Power: design.GunPower,
+			Speed: design.GunSpeed,
 		},
-		health:         cfg.SpaceShipConfig.Health,
-		Width:          3,
-		Height:         1,
+		health:         design.EntityHealth,
+		Width:          width,
+		Height:         height,
 		cfg:            cfg,
 		NextLevelScore: cfg.SpaceShipConfig.NextLevelScore,
 	}
@@ -111,31 +120,22 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 	color := window.StyleIt(tcell.ColorReset, tcell.ColorRoyalBlue)
 	defer s.Gun.Draw(gc)
 
-	spaceshipPattern := []struct {
-		dx, dy int
-		symbol rune
-		color  tcell.Style
-	}{
-		{s.OriginPoint.X, s.OriginPoint.Y - 1, '^', color},                      // top corner
-		{s.OriginPoint.X - s.Width + 1, s.OriginPoint.Y + s.Height, 'O', color}, // left corner
-		{s.OriginPoint.X + s.Width - 1, s.OriginPoint.Y + s.Height, 'O', color}, // right corner
-		// lines
-		{int(s.OriginPoint.GetX()) - 1, int(s.OriginPoint.GetY()), '/', color},     // left line
-		{int(s.OriginPoint.GetX()) + 1, int(s.OriginPoint.GetY()), '\\', color},    // right line
-		{int(s.OriginPoint.GetX() - 1), int(s.OriginPoint.GetY() + 1), ')', color}, // bottom right
-		{int(s.OriginPoint.GetX() + 1), int(s.OriginPoint.GetY() + 1), '(', color}, // bottom right
-		{int(s.OriginPoint.GetX()), int(s.OriginPoint.GetY() + 1), '=', color},     // bottom middle
-	}
-	for _, line := range spaceshipPattern {
-		window.SetContentWithStyle(line.dx, line.dy, line.symbol, line.color)
+	for rowIndex, line := range s.SpaceshipDesign.Shape {
+		for colIndex, char := range line {
+			if char != ' ' {
+				x := int(s.OriginPoint.GetX()) + colIndex
+				y := int(s.OriginPoint.GetY()) + rowIndex
+				window.SetContentWithStyle(x, y, char, color)
+			}
+		}
 	}
 }
 
 func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 	defer s.Gun.InputEvents(event, gc)
 	moveMouse := func(x int, y int) {
-		s.OriginPoint.X = x
-		s.OriginPoint.Y = y
+		s.OriginPoint.X = x - (s.Width / 2)
+		s.OriginPoint.Y = y - (s.Height / 2)
 	}
 	switch ev := event.(type) {
 	case *tcell.EventMouse:
@@ -143,7 +143,9 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 		moveMouse(x, y)
 
 		if ev.Buttons() == tcell.Button1 {
-			s.initBeam(s.OriginPoint, Up)
+			x := s.OriginPoint.X + s.Width/2
+			y := s.OriginPoint.Y
+			s.initBeam(core.Point{X: x, Y: y}, Up)
 		}
 	case *tcell.EventKey:
 		if ev.Rune() == ' ' {
@@ -179,7 +181,7 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 		window.SetContentWithStyle(i, startY+3, ch, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("%d/%d", s.health, s.cfg.SpaceShipConfig.Health)) {
+	for i, r := range []rune(fmt.Sprintf("%d/%d", s.health, s.SpaceshipDesign.EntityHealth)) {
 		window.SetContentWithStyle(endPositionOfHealth+i, startY+3, r, whiteColor)
 	}
 
@@ -221,9 +223,9 @@ func (s *SpaceShip) isHit(pointBeam core.PointInterface, power int) bool {
 		{1, 1, tcell.RuneBoard, grayColor},
 	}
 
-	if int(pointBeam.GetX()) >= s.OriginPoint.X-s.Width &&
+	if int(pointBeam.GetX()) >= s.OriginPoint.X &&
 		int(pointBeam.GetX()) <= s.OriginPoint.X+s.Width &&
-		int(pointBeam.GetY()) >= s.OriginPoint.Y-s.Height &&
+		int(pointBeam.GetY()) >= s.OriginPoint.Y &&
 		int(pointBeam.GetY()) <= s.OriginPoint.Y+s.Height {
 
 		s.health -= power // update health of the falling object

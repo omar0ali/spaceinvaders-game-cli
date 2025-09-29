@@ -1,12 +1,75 @@
-{
-    "name": "spaceship",
-    "health": 100,
-    "color": "FFFFFF",
-    "shape": [
-        "    ++    ",
-        "   /||\\   ",
-        "  < || >  ",
-        "   /  \\   ",
-        "   ||||   "
-    ]
-}
+[
+    {
+        "name": "Scout",
+        "health": 10,
+        "color": "FF0000",
+        "gun_power": 1,
+        "gun_speed": 57,
+        "gun_cap": 8,
+        "shape": [
+            "  ^  ",
+            " /|\\ ",
+            "/_|_\\"
+        ]
+    },
+    {
+        "name": "Fighter",
+        "health": 18,
+        "color": "00FF00",
+        "gun_power": 2,
+        "gun_speed": 43,
+        "gun_cap": 3,
+        "shape": [
+            "   ^   ",
+            "  /|\\  ",
+            " / | \\ ",
+            "/_ | _\\",
+            " V | V  "
+        ]
+    },
+    {
+        "name": "Interceptor",
+        "health": 15,
+        "color": "0000FF",
+        "gun_power": 2,
+        "gun_speed": 59,
+        "gun_cap": 2,
+        "shape": [
+            "  ^  ",
+            " /|\\ ",
+            "< | >"
+        ]
+    },
+    {
+        "name": "Destroyer",
+        "health": 30,
+        "color": "FFFF00",
+        "gun_power": 4,
+        "gun_speed": 37,
+        "gun_cap": 1,
+        "shape": [
+            "    |    ",
+            "   +^+   ",
+            "  /|||\\  ",
+            " < ||| > ",
+            " //|||\\\\ "
+        ]
+    },
+    {
+        "name": "Battleship",
+        "health": 40,
+        "color": "FF00FF",
+        "gun_power": 6,
+        "gun_speed": 33,
+        "gun_cap": 1,
+        "shape": [
+            "      |      ",
+            "     +^+     ",
+            "    /|||\\    ",
+            "   < ||| >   ",
+            "  //|||||\\\\  ",
+            " < ||||||| > ",
+            " //|||||||\\\\ "
+        ]
+    }
+]
