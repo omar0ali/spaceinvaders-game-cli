@@ -14,7 +14,7 @@ func DeployEntities(gc *core.GameContext, cfg core.GameConfig) {
 	gc.AddEntity(entities.NewAlienProducer(cfg, gc))
 	gc.AddEntity(entities.NewHealthProducer(cfg, gc, 3))
 	gc.AddEntity(entities.NewStarsProducer(cfg))
-	gc.AddEntity(entities.NewUI(true, false, false, false, gc))
+	gc.AddEntity(entities.NewUI(gc))
 }
 
 func main() {

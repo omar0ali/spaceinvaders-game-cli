@@ -3,7 +3,6 @@ package entities
 
 import (
 	"fmt"
-	"math/rand"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/core"
@@ -22,7 +21,8 @@ type SpaceShip struct {
 	Width, Height   int
 	cfg             core.GameConfig
 	OnLevelUp       []func(newLevel int)
-	SpaceshipDesign core.SpaceshipDesign
+	SpaceshipDesign *core.SpaceshipDesign
+	ListOfDesigns   []core.SpaceshipDesign
 }
 
 func (s *SpaceShip) IncreaseGunPower(i int) bool {
@@ -77,34 +77,36 @@ func NewSpaceShip(cfg core.GameConfig) *SpaceShip {
 		X: w / 2,
 		Y: h - 3,
 	}
+
 	designs, err := core.LoadListOfAssets[core.SpaceshipDesign]("assets/spaceship.json")
-	design := designs[rand.Intn(len(designs))]
 	if err != nil {
 		panic(err)
 	}
-	width := len(design.Shape[0])
-	height := len(design.Shape)
 
 	return &SpaceShip{
-		OriginPoint:     origin,
-		SpaceshipDesign: design,
-		Gun: Gun{
-			Beams: []*Beam{},
-			Cap:   design.GunCap,
-			Power: design.GunPower,
-			Speed: design.GunSpeed,
-		},
-		health:         design.EntityHealth,
-		Width:          width,
-		Height:         height,
+		OriginPoint:    origin,
+		ListOfDesigns:  designs,
 		cfg:            cfg,
 		NextLevelScore: cfg.SpaceShipConfig.NextLevelScore,
 	}
 }
 
+func (s *SpaceShip) SpaceshipSelection(id int) {
+	s.Gun = Gun{
+		Beams: []*Beam{},
+		Cap:   s.ListOfDesigns[id].GunCap,
+		Power: s.ListOfDesigns[id].GunPower,
+		Speed: s.ListOfDesigns[id].GunSpeed,
+	}
+	s.SpaceshipDesign = &s.ListOfDesigns[id]
+	s.health = s.ListOfDesigns[id].EntityHealth
+	s.Width = len(s.ListOfDesigns[id].Shape[0])
+	s.Height = len(s.ListOfDesigns[id].Shape)
+}
+
 func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 	defer s.Gun.Update(gc, delta)
-	if s.health <= 0 {
+	if s.health <= 0 && s.SpaceshipDesign != nil {
 		if ui, ok := gc.FindEntity("ui").(*UI); ok {
 			ui.GameOverScreen = true
 		}
@@ -117,6 +119,9 @@ func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 }
 
 func (s *SpaceShip) Draw(gc *core.GameContext) {
+	if s.SpaceshipDesign == nil {
+		return
+	}
 	color := window.StyleIt(tcell.ColorReset, tcell.ColorRoyalBlue)
 	defer s.Gun.Draw(gc)
 
@@ -132,6 +137,10 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 }
 
 func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
+	if s.SpaceshipDesign == nil {
+		return
+	}
+
 	defer s.Gun.InputEvents(event, gc)
 	moveMouse := func(x int, y int) {
 		s.OriginPoint.X = x - (s.Width / 2)
@@ -155,6 +164,10 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 }
 
 func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
+	if s.SpaceshipDesign == nil {
+		return
+	}
+
 	const padding, startY = 2, 2
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 

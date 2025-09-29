@@ -42,7 +42,7 @@
     },
     {
         "name": "Destroyer",
-        "health": 30,
+        "health": 25,
         "color": "FFFF00",
         "gun_power": 4,
         "gun_speed": 37,
@@ -57,7 +57,7 @@
     },
     {
         "name": "Battleship",
-        "health": 40,
+        "health": 30,
         "color": "FF00FF",
         "gun_power": 6,
         "gun_speed": 33,

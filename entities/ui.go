@@ -21,14 +21,15 @@ const (
 )
 
 type UI struct {
-	MenuScreen     bool
-	PauseScreen    bool
-	GameOverScreen bool
-	LevelUpScreen  bool
+	MenuScreen         bool
+	PauseScreen        bool
+	GameOverScreen     bool
+	LevelUpScreen      bool
+	SpaceShipSelection bool
 }
 
-func NewUI(menu, pause, gameover, levelup bool, gc *core.GameContext) *UI {
-	u := &UI{menu, pause, gameover, levelup}
+func NewUI(gc *core.GameContext) *UI {
+	u := &UI{true, false, false, false, false}
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
 			u.LevelUpScreen = true
@@ -62,6 +63,19 @@ func (u *UI) Draw(gc *core.GameContext) {
 				Press [S] to start the game
 			`,
 			"Space Invaders Game")
+	}
+
+	if u.SpaceShipSelection {
+		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+			var strBuilder strings.Builder
+			strBuilder.WriteString("Select your spaceship by pressing a number (1-5)\n")
+			strBuilder.WriteString("------------------------------------------------------------------------\n")
+			for i, j := range s.ListOfDesigns {
+				strBuilder.WriteString(fmt.Sprintf("(%d) %s: ", i+1, j.Name))
+				strBuilder.WriteString(fmt.Sprintf("HP: %d | Gun POW: %d | Gun SPD: %d | Gun CAP: %d\n\n", j.EntityHealth, j.GunPower, j.GunSpeed, j.GunCap))
+			}
+			u.MessageBox(window.GetCenterPoint(), strBuilder.String(), "Choose a Spaceship")
+		}
 	}
 
 	if u.LevelUpScreen {
@@ -170,7 +184,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 }
 
 func (u *UI) Update(gc *core.GameContext, delta float64) {
-	if u.MenuScreen || u.PauseScreen || u.GameOverScreen || u.LevelUpScreen {
+	if u.MenuScreen || u.PauseScreen || u.GameOverScreen || u.LevelUpScreen || u.SpaceShipSelection {
 		gc.Halt = true
 	} else {
 		gc.Halt = false
@@ -188,6 +202,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 	case *tcell.EventKey:
 		if ev.Rune() == 's' || ev.Rune() == 'S' {
 			if u.MenuScreen {
+				u.SpaceShipSelection = true
 				u.MenuScreen = false
 			}
 		}
@@ -197,26 +212,38 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 			}
 			u.PauseScreen = !u.PauseScreen
 		}
-		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok && u.LevelUpScreen {
-			if ev.Rune() == 'A' || ev.Rune() == 'a' {
-				upgrade(func() bool {
-					return s.IncreaseGunPower(IncreaseGunPowerBy)
-				})
+		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+			if u.SpaceShipSelection {
+				if ev.Key() == tcell.KeyRune {
+					n := int(ev.Rune() - '0')
+					switch n {
+					case 1, 2, 3, 4, 5:
+						s.SpaceshipSelection(n - 1)
+						u.SpaceShipSelection = false
+					}
+				}
 			}
-			if ev.Rune() == 'S' || ev.Rune() == 's' {
-				upgrade(func() bool {
-					return s.IncreaseGunSpeed(IncreaseGunSpeedBy)
-				})
-			}
-			if ev.Rune() == 'D' || ev.Rune() == 'd' {
-				upgrade(func() bool {
-					return s.IncreaseGunCap(IncreaseGunCapBy)
-				})
-			}
-			if ev.Rune() == 'C' || ev.Rune() == 'c' {
-				upgrade(func() bool {
-					return s.RestoreFullHealth()
-				})
+			if u.LevelUpScreen {
+				if ev.Rune() == 'A' || ev.Rune() == 'a' {
+					upgrade(func() bool {
+						return s.IncreaseGunPower(IncreaseGunPowerBy)
+					})
+				}
+				if ev.Rune() == 'S' || ev.Rune() == 's' {
+					upgrade(func() bool {
+						return s.IncreaseGunSpeed(IncreaseGunSpeedBy)
+					})
+				}
+				if ev.Rune() == 'D' || ev.Rune() == 'd' {
+					upgrade(func() bool {
+						return s.IncreaseGunCap(IncreaseGunCapBy)
+					})
+				}
+				if ev.Rune() == 'C' || ev.Rune() == 'c' {
+					upgrade(func() bool {
+						return s.RestoreFullHealth()
+					})
+				}
 			}
 		}
 	}

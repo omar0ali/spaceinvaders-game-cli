@@ -58,7 +58,7 @@ The game is an endless space shooter where players face increasingly difficult w
     - [X] With upgrade choice /  stat selection. Player can choose to upgrade either (gun power, speed or capacity).
 - [X] The game runs without a `config` file. If the file dose not exist, the default configuration will be used.
 - [X] Adding variety designs of alien ships attacking. Using json file to load all alien ships designs.
-- [ ] Will add variety of spaceship selection before starting the game. Currently added just five.
+- [X] Will add variety of spaceship selection before starting the game. Currently added just five.
     - Before the game starts, the player will be able to select a ship.
 
 ### Controls
