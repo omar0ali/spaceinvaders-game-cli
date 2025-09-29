@@ -27,8 +27,10 @@ To install go or clone this repository follow the [steps](#getting-started).
 #### Objective
 The game is an endless space shooter where players face increasingly difficult waves of alien ships that scale with their level. Each time the player levels up, they can choose an upgrade to improve their spaceship, such as boosting firepower to handle tougher aliens with stronger armor. The objective is to survive as long as possible, destroy alien ships, and push for a higher score while managing health through occasional drop-down health packs that restore the spaceship health.
 
-#### Youtube - Gameplay Demo - v1.0.0
+#### Youtube - Gameplay Demo - v1.1.0
+[![Watch the video](https://img.youtube.com/vi/2flPiJvl4vU/0.jpg)](https://www.youtube.com/watch?v=DSeU1Lnglsg)
 
+#### Youtube - Gameplay Demo - v1.0.0
 [![Watch the video](https://img.youtube.com/vi/DSeU1Lnglsg/0.jpg)](https://www.youtube.com/watch?v=DSeU1Lnglsg)
 
 ### Checklist:
