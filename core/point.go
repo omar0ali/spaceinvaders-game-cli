@@ -49,14 +49,6 @@ func (p PointFloat) GetY() float64 {
 	return p.Y
 }
 
-func (p *PointFloat) SetX(x float64) {
-	p.X = x
-}
-
-func (p *PointFloat) SetY(y float64) {
-	p.Y = y
-}
-
 func (p *PointFloat) AppendX(x float64) {
 	p.X += x
 }
