@@ -96,7 +96,7 @@ func (a *AlienProducer) DeployAliens() {
 	xPos := rand.Intn(distance) + padding // starting from 18
 	randSpeed := rand.Intn(a.Cfg.AliensConfig.Speed) + 2
 	// spawn alien
-	designs, err := core.LoadListOfAssets[core.Design]("assets/alienship.json")
+	designs, err := core.LoadListOfAssets[core.Design]("alienship.json")
 	if err != nil {
 		panic(err)
 	}

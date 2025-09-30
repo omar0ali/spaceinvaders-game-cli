@@ -72,7 +72,7 @@ func (h *HealthProducer) DeployHealthKit() {
 	distance := (w - (15 * 2))
 	xPos := rand.Intn(distance) + 15
 	randSpeed := rand.Intn(max(h.Cfg.HealthDropConfig.Speed, 3)) + 2
-	design, err := core.LoadAsset[core.Design]("assets/health_kit.json")
+	design, err := core.LoadAsset[core.Design]("health_kit.json")
 	if err != nil {
 		panic(err)
 	}

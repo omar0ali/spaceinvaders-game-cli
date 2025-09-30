@@ -2,10 +2,10 @@ package core
 
 import (
 	"encoding/json"
-	"os"
 	"strconv"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/omar0ali/spaceinvaders-game-cli/assets"
 )
 
 type Design struct {
@@ -27,7 +27,7 @@ func (d *Design) GetColor() tcell.Color {
 }
 
 func LoadAsset[T any](filePath string) (T, error) {
-	file, err := os.Open(filePath)
+	file, err := assets.Files.Open(filePath)
 	var design T
 	if err != nil {
 		return design, err
@@ -42,7 +42,7 @@ func LoadAsset[T any](filePath string) (T, error) {
 }
 
 func LoadListOfAssets[T any](filePath string) ([]T, error) {
-	file, err := os.Open(filePath)
+	file, err := assets.Files.Open(filePath)
 	if err != nil {
 		return nil, err
 	}
