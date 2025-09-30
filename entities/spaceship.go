@@ -174,7 +174,7 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 		}
 		if ev.Rune() == 'f' || ev.Rune() == 'F' {
 			if s.HealthProducer.totalHealthKits > 0 {
-				if s.IncreaseHealth(IncreaseHealthBy) {
+				if s.IncreaseHealth(int(s.HealthProducer.increaseHealthBy)) {
 					s.HealthProducer.totalHealthKits--
 				}
 			}
@@ -203,7 +203,7 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 	_, h := window.GetSize()
 	DisplayHealth(0, h-7, 10, s, true, whiteColor)
 
-	healthStr := []rune(fmt.Sprintf("[HP Kit: %d/%d]", s.HealthProducer.totalHealthKits, s.cfg.HealthDropConfig.MaxDrop))
+	healthStr := []rune(fmt.Sprintf("[HP Kit: %d/%d]", s.HealthProducer.totalHealthKits, s.cfg.HealthDropConfig.MaxKits))
 	for i, r := range healthStr {
 		window.SetContentWithStyle(i, h-8, r, whiteColor)
 	}

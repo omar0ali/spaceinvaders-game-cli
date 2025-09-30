@@ -8,30 +8,30 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
-const IncreaseHealthBy = 3
-
 type Health struct {
 	FallingObjectBase
 	core.Design
 }
 
 type HealthProducer struct {
-	HealthKit       *Health
-	health          int
-	totalHealthKits int
-	Cfg             core.GameConfig
+	HealthKit        *Health
+	totalHealthKits  int
+	Cfg              core.GameConfig
+	health           float64
+	increaseHealthBy float64
 }
 
 func NewHealthProducer(cfg core.GameConfig, gc *core.GameContext) *HealthProducer {
 	h := &HealthProducer{
-		health:          cfg.HealthDropConfig.Health,
-		totalHealthKits: cfg.HealthDropConfig.Start,
+		health:          float64(cfg.HealthDropConfig.Health),
+		totalHealthKits: cfg.HealthDropConfig.StartWith,
 		Cfg:             cfg,
 	}
 
 	if s, ok := gc.FindEntity("spacehsip").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
-			h.health += 1
+			h.health += 0.3
+			h.increaseHealthBy += 0.3
 		})
 	}
 
@@ -82,8 +82,8 @@ func (h *HealthProducer) DeployHealthKit() {
 	h.HealthKit = &Health{
 		FallingObjectBase: FallingObjectBase{
 			Speed:       randSpeed,
-			Health:      design.EntityHealth + h.health,
-			MaxHealth:   design.EntityHealth + h.health,
+			Health:      design.EntityHealth + int(h.health),
+			MaxHealth:   design.EntityHealth + int(h.health),
 			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
 			Width:       width,
 			Height:      height,
