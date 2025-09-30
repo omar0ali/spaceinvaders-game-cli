@@ -118,22 +118,21 @@ func (u *UI) Draw(gc *core.GameContext) {
 	for i, r := range timeStr {
 		window.SetContent((w-len(timeStr))+i, 0, r)
 	}
-	// display spacehsip details
+
+	// display spacehsip details - Also drop a health kit every minute
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+		if nextMinute < minutes {
+			spaceship.HealthProducer.DeployHealthKit()
+			nextMinute++
+		}
 		spaceship.UISpaceshipData(gc)
 	}
+
 	// display aliens details
 	if aliens, ok := gc.FindEntity("alien").(*AlienProducer); ok {
 		aliens.UIAlienShipData(gc)
 	}
-	// display health pack
-	if healthPack, ok := gc.FindEntity("health").(*HealthProducer); ok {
-		if nextMinute < minutes {
-			healthPack.GenerateHealthPack()
-			nextMinute++
-		}
-		healthPack.UIHealthPackData(gc)
-	}
+
 	// pause ui
 	if u.PauseScreen {
 		if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {

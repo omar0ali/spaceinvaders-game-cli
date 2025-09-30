@@ -1,6 +1,6 @@
 # Space Invaders Game
 
-A terminal-based implementation of the classic space invaders game written in Go, using the [tcell](https://github.com/gdamore/tcell) library for handling terminal graphics and input. A simple game where the player controls spaceship with a laser, and shoots and destroy descending waves of alien invaders before they reach the bottom of the screen.
+A terminal-based implementation of the classic space invaders game written in Go, using the [tcell](https://github.com/gdamore/tcell) library for handling terminal graphics and input.
 
 ## Install
 
@@ -69,7 +69,7 @@ The game is an endless space shooter where players face increasingly difficult w
 |-------------------|----------------------------------------|
 | Left Mouse Click / Space Bar | Shoot beams                 |
 | Mouse Movement     | Move the spaceship                    |
-| F                  | Drop health kit (increase spaceship health) |
+| F                  | Consume health kit (increase spaceship's health) |
 | P                  | Pause the game                        |
 | S                  | Start the game or Upgrade Gun Speed   |
 | A                  | Upgrade Gun Power                     |
@@ -89,7 +89,7 @@ gun_max_speed = 85
 [aliens]
 limit = 1
 health = 2
-speed = 4
+speed = 3
 gun_speed = 35
 gun_power = 1
 
@@ -103,7 +103,6 @@ speed = 3
 limit = 1
 max_drop = 5
 start = 1
-
 ```
 
 ## Getting Started

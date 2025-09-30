@@ -24,12 +24,11 @@ gun_power = 1
 limit = 15
 speed = 50
 
-[health_drop]
+[health_kit]
 health = 2
 speed = 3
-limit = 1
-max_drop = 5
-start = 1
+max_kits = 5
+start_with = 1
 `
 
 type GameConfig struct {
@@ -51,12 +50,11 @@ type GameConfig struct {
 		Speed int `toml:"speed"`
 	} `toml:"stars"`
 	HealthDropConfig struct {
-		Health  int `tom:"health"`
-		Limit   int `toml:"limit"`
-		Speed   int `toml:"speed"`
-		MaxDrop int `toml:"max_drop"`
-		Start   int `toml:"start"`
-	} `toml:"health_drop"`
+		Health    int `tom:"health"`
+		Speed     int `toml:"speed"`
+		MaxKits   int `toml:"max_kits"`
+		StartWith int `toml:"start_with"`
+	} `toml:"health_kit"`
 }
 
 func LoadConfig() GameConfig {

@@ -10,9 +10,8 @@ import (
 
 func DeployEntities(gc *core.GameContext, cfg core.GameConfig) {
 	// order is important since some objects might overlap others
-	gc.AddEntity(entities.NewSpaceShip(cfg))
+	gc.AddEntity(entities.NewSpaceShip(cfg, gc))
 	gc.AddEntity(entities.NewAlienProducer(cfg, gc))
-	gc.AddEntity(entities.NewHealthProducer(cfg, gc, 3))
 	gc.AddEntity(entities.NewStarsProducer(cfg))
 	gc.AddEntity(entities.NewUI(gc))
 }

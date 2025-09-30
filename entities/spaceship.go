@@ -23,6 +23,7 @@ type SpaceShip struct {
 	OnLevelUp       []func(newLevel int)
 	SpaceshipDesign *core.SpaceshipDesign
 	ListOfDesigns   []core.SpaceshipDesign
+	HealthProducer  *HealthProducer
 }
 
 func (s *SpaceShip) IncreaseGunPower(i int) bool {
@@ -71,7 +72,7 @@ func (s *SpaceShip) AddOnLevelUp(fn func(newLevel int)) {
 
 // player initialized in the bottom center of the secreen by default
 
-func NewSpaceShip(cfg core.GameConfig) *SpaceShip {
+func NewSpaceShip(cfg core.GameConfig, gc *core.GameContext) *SpaceShip {
 	w, h := window.GetSize()
 	origin := core.Point{
 		X: w / 2,
@@ -83,11 +84,14 @@ func NewSpaceShip(cfg core.GameConfig) *SpaceShip {
 		panic(err)
 	}
 
+	healthProducer := NewHealthProducer(cfg, gc)
+
 	return &SpaceShip{
 		OriginPoint:    origin,
 		ListOfDesigns:  designs,
 		cfg:            cfg,
 		NextLevelScore: cfg.SpaceShipConfig.NextLevelScore,
+		HealthProducer: healthProducer,
 	}
 }
 
@@ -106,6 +110,7 @@ func (s *SpaceShip) SpaceshipSelection(id int) {
 
 func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 	defer s.Gun.Update(gc, delta)
+	defer s.HealthProducer.Update(gc, delta)
 	if s.health <= 0 && s.SpaceshipDesign != nil {
 		if ui, ok := gc.FindEntity("ui").(*UI); ok {
 			ui.GameOverScreen = true
@@ -122,8 +127,11 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 	if s.SpaceshipDesign == nil {
 		return
 	}
+
 	color := window.StyleIt(tcell.ColorReset, s.SpaceshipDesign.GetColor())
+
 	defer s.Gun.Draw(gc)
+	defer s.HealthProducer.Draw(gc)
 
 	for rowIndex, line := range s.SpaceshipDesign.Shape {
 		for colIndex, char := range line {
@@ -144,6 +152,7 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 		return
 	}
 
+	defer s.HealthProducer.InputEvents(event, gc)
 	defer s.Gun.InputEvents(event, gc)
 	moveMouse := func(x int, y int) {
 		s.OriginPoint.X = x - (s.Width / 2)
@@ -163,6 +172,14 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 		if ev.Rune() == ' ' {
 			s.initBeam(s.OriginPoint, Up)
 		}
+		if ev.Rune() == 'f' || ev.Rune() == 'F' {
+			if s.HealthProducer.totalHealthKits > 0 {
+				if s.IncreaseHealth(IncreaseHealthBy) {
+					s.HealthProducer.totalHealthKits--
+				}
+			}
+		}
+
 	}
 }
 
@@ -185,6 +202,11 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 	// display health at the bottome left
 	_, h := window.GetSize()
 	DisplayHealth(0, h-7, 10, s, true, whiteColor)
+
+	healthStr := []rune(fmt.Sprintf("[HP Kit: %d/%d]", s.HealthProducer.totalHealthKits, s.cfg.HealthDropConfig.MaxDrop))
+	for i, r := range healthStr {
+		window.SetContentWithStyle(i, h-8, r, whiteColor)
+	}
 
 	for i, r := range []rune(fmt.Sprintf("[Level: %d", s.Level)) {
 		window.SetContentWithStyle(i, h-6, r, whiteColor)
