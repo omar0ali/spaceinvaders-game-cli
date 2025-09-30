@@ -186,19 +186,19 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 	_, h := window.GetSize()
 	DisplayHealth(0, h-7, 10, s, true, whiteColor)
 
-	for i, r := range []rune(fmt.Sprintf("[Level: %d]", s.Level)) {
+	for i, r := range []rune(fmt.Sprintf("[Level: %d", s.Level)) {
 		window.SetContentWithStyle(i, h-6, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("[CAP: %d/%d]", len(s.Beams), s.Cap)) {
+	for i, r := range []rune(fmt.Sprintf("[CAP:   %d/%d", len(s.Beams), s.Cap)) {
 		window.SetContentWithStyle(i, h-5, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("[POW: %d]", s.Power)) {
+	for i, r := range []rune(fmt.Sprintf("[POW:   %d", s.Power)) {
 		window.SetContentWithStyle(i, h-4, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("[SPD: %d]", s.Speed)) {
+	for i, r := range []rune(fmt.Sprintf("[SPD:   %d", s.Speed)) {
 		window.SetContentWithStyle(i, h-3, r, whiteColor)
 	}
 }
