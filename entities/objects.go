@@ -92,16 +92,15 @@ type HealthBar interface {
 	GetMaxHealth() int
 }
 
-func DisplayHealth(xPos, yPos int, h HealthBar) {
+func DisplayHealth(xPos, yPos, barSize int, h HealthBar, showStats bool) {
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	trackXPossition := xPos
 	// pre draw health
-	for _, r := range string("  * [") {
+	for _, r := range string("[") {
 		window.SetContentWithStyle(trackXPossition, yPos, r, whiteColor)
 		trackXPossition++
 	}
 	// draw health
-	barSize := 10
 	ratio := float64(h.GetHealth()) / float64(h.GetMaxHealth())
 	filled := int(ratio * float64(barSize))
 
@@ -112,6 +111,12 @@ func DisplayHealth(xPos, yPos int, h HealthBar) {
 			window.SetContentWithStyle(trackXPossition+i, yPos, HealthBoxEmptyStyle, whiteColor)
 		}
 	}
+	if !showStats {
+		// end with a bracket
+		window.SetContentWithStyle(trackXPossition+barSize, yPos, ']', whiteColor)
+		return
+	}
+	// or end with showing stats (total health)
 	trackXPossition += barSize
 	// last
 	for i, r := range []rune(fmt.Sprintf("] %d/%d", h.GetHealth(), h.GetMaxHealth())) {

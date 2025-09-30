@@ -128,6 +128,8 @@ func (h *HealthProducer) MovementAndCollision(delta float64, gc *core.GameContex
 	return spaceship
 }
 
+// TODO: HealthPacks must be part of the spaceship (this whole thing must be replaced)
+
 func (h *HealthProducer) UIHealthPackData(gc *core.GameContext) {
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	healthStr := []rune(fmt.Sprintf("* Health Packs: %d/%d", h.totalHealthPack, h.Cfg.HealthDropConfig.MaxDrop))

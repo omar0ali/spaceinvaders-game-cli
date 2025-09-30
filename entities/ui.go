@@ -106,7 +106,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 	// show controls at the bottom of the screen
 	_, h := window.GetSize()
 	for i, r := range []rune("[LM] Shoot Beams ◆ [F] Drop Health Pack ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit") {
-		window.SetContentWithStyle(0+i, h-1, r, whiteColor)
+		window.SetContentWithStyle(i, h-1, r, whiteColor)
 	}
 	// timer
 	minutes := int(timeElapsed) / 60

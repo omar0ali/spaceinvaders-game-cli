@@ -134,6 +134,8 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 			}
 		}
 	}
+	barSize := 5
+	DisplayHealth(s.OriginPoint.X+(s.Width/2)-(barSize/2), s.OriginPoint.Y+(s.Height), barSize, s, false)
 }
 
 func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
@@ -179,22 +181,24 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 		window.SetContentWithStyle(padding+i, startY+1, r, whiteColor)
 	}
 
-	DisplayHealth(0, startY+3, s)
+	// display health at the bottome left
+	_, h := window.GetSize()
+	DisplayHealth(0, h-7, 10, s, true)
 
-	for i, r := range []rune(fmt.Sprintf("* Gun CAP: %d/%d", len(s.Beams), s.Cap)) {
-		window.SetContentWithStyle(padding+i, startY+4, r, whiteColor)
+	for i, r := range []rune(fmt.Sprintf("[Level: %d]", s.Level)) {
+		window.SetContentWithStyle(i, h-6, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Gun POW: %d", s.Power)) {
-		window.SetContentWithStyle(padding+i, startY+5, r, whiteColor)
+	for i, r := range []rune(fmt.Sprintf("[CAP: %d/%d]", len(s.Beams), s.Cap)) {
+		window.SetContentWithStyle(i, h-5, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Gun SPD: %d", s.Speed)) {
-		window.SetContentWithStyle(padding+i, startY+6, r, whiteColor)
+	for i, r := range []rune(fmt.Sprintf("[POW: %d]", s.Power)) {
+		window.SetContentWithStyle(i, h-4, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Level: %d", s.Level)) {
-		window.SetContentWithStyle(padding+i, startY+7, r, whiteColor)
+	for i, r := range []rune(fmt.Sprintf("[SPD: %d]", s.Speed)) {
+		window.SetContentWithStyle(i, h-3, r, whiteColor)
 	}
 }
 
