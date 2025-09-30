@@ -23,9 +23,10 @@ type HealthProducer struct {
 
 func NewHealthProducer(cfg core.GameConfig, gc *core.GameContext) *HealthProducer {
 	h := &HealthProducer{
-		health:          float64(cfg.HealthDropConfig.Health),
-		totalHealthKits: cfg.HealthDropConfig.StartWith,
-		Cfg:             cfg,
+		health:           float64(cfg.HealthDropConfig.Health),
+		totalHealthKits:  cfg.HealthDropConfig.StartWith,
+		Cfg:              cfg,
+		increaseHealthBy: 3,
 	}
 
 	if s, ok := gc.FindEntity("spacehsip").(*SpaceShip); ok {
@@ -118,6 +119,7 @@ func (h *HealthProducer) MovementAndCollision(delta float64, gc *core.GameContex
 	if h.HealthKit.isDead() {
 		h.totalHealthKits += 1
 		h.HealthKit = nil
+		return
 	}
 
 	if h.HealthKit.isOffScreen(hight) {
