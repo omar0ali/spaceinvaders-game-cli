@@ -78,7 +78,7 @@ func NewSpaceShip(cfg core.GameConfig) *SpaceShip {
 		Y: h - 3,
 	}
 
-	designs, err := core.LoadListOfAssets[core.SpaceshipDesign]("assets/spaceship.json")
+	designs, err := core.LoadListOfAssets[core.SpaceshipDesign]("assets/spaceships.json")
 	if err != nil {
 		panic(err)
 	}
