@@ -67,14 +67,12 @@ func (u *UI) Draw(gc *core.GameContext) {
 
 	if u.SpaceShipSelection {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-			var strBuilder strings.Builder
-			strBuilder.WriteString("Select your spaceship by pressing a number (1-5)\n")
-			strBuilder.WriteString("------------------------------------------------------------------------\n")
+			str := "Select your spaceship by pressing a number (1-5): \n\n"
 			for i, j := range s.ListOfDesigns {
-				strBuilder.WriteString(fmt.Sprintf("(%d) %s: ", i+1, j.Name))
-				strBuilder.WriteString(fmt.Sprintf("HP: %d | Gun POW: %d | Gun SPD: %d | Gun CAP: %d\n\n", j.EntityHealth, j.GunPower, j.GunSpeed, j.GunCap))
+				str += (fmt.Sprintf("(%d) %s\n", i+1, j.Name))
+				str += (fmt.Sprintf("* HP: %d - Gun POW: %d \n* Gun SPD: %d - Gun CAP: %d\n\n", j.EntityHealth, j.GunPower, j.GunSpeed, j.GunCap))
 			}
-			u.MessageBox(window.GetCenterPoint(), strBuilder.String(), "Choose a Spaceship")
+			u.MessageBox(window.GetCenterPoint(), str, "Choose a Spaceship")
 		}
 	}
 

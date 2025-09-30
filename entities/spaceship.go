@@ -179,24 +179,7 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 		window.SetContentWithStyle(padding+i, startY+1, r, whiteColor)
 	}
 
-	endPositionOfHealth := 4
-	for i := padding; i < s.health+(padding*2); i++ {
-		var ch rune
-		switch i {
-		case padding:
-			ch = '*'
-		case padding + 1:
-			ch = ' '
-		default:
-			endPositionOfHealth = i + (padding * 2) // more padding
-			ch = tcell.RuneBlock
-		}
-		window.SetContentWithStyle(i, startY+3, ch, whiteColor)
-	}
-
-	for i, r := range []rune(fmt.Sprintf("%d/%d", s.health, s.SpaceshipDesign.EntityHealth)) {
-		window.SetContentWithStyle(endPositionOfHealth+i, startY+3, r, whiteColor)
-	}
+	DisplayHealth(0, startY+3, s)
 
 	for i, r := range []rune(fmt.Sprintf("* Gun CAP: %d/%d", len(s.Beams), s.Cap)) {
 		window.SetContentWithStyle(padding+i, startY+4, r, whiteColor)
@@ -279,4 +262,12 @@ func (s *SpaceShip) ScoreHit() {
 
 func (s *SpaceShip) GetType() string {
 	return "spaceship"
+}
+
+func (s *SpaceShip) GetHealth() int {
+	return s.health
+}
+
+func (s *SpaceShip) GetMaxHealth() int {
+	return s.SpaceshipDesign.EntityHealth
 }
