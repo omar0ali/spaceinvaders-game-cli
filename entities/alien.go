@@ -63,17 +63,9 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 	for _, alien := range a.Aliens {
 		color := window.StyleIt(tcell.ColorReset, alien.GetColor())
 		alien.Gun.Draw(gc)
-		for i, r := range []rune(fmt.Sprintf("Lv.%d", int(a.health))) {
-			x := int(alien.OriginPoint.GetX()) - alien.Health/2
-			y := int(alien.OriginPoint.GetY())
-			window.SetContentWithStyle(x+i, y-1, r, colorHealth)
 
-		}
-		for i := range alien.Health {
-			x := int(alien.OriginPoint.GetX()) + (alien.Width / 2) - alien.Health/2
-			y := int(alien.OriginPoint.GetY())
-			window.SetContentWithStyle(x+i, y-1, tcell.RuneBoard, colorHealth)
-		}
+		alien.DisplayHealth(6, true, colorHealth)
+
 		// draw shape
 		for rowIndex, line := range alien.Shape {
 			for colIndex, char := range line {
@@ -115,6 +107,7 @@ func (a *AlienProducer) DeployAliens() {
 	a.Aliens = append(a.Aliens, &Alien{
 		FallingObjectBase: FallingObjectBase{
 			Health:      int(a.health) + randDesign.EntityHealth,
+			MaxHealth:   int(a.health) + randDesign.EntityHealth,
 			Speed:       randSpeed,
 			Width:       width,
 			Height:      height,

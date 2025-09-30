@@ -15,9 +15,18 @@ const (
 
 type FallingObjectBase struct {
 	Health        int
+	MaxHealth     int
 	Speed         int
 	OriginPoint   core.PointFloat
 	Width, Height int
+}
+
+func (f *FallingObjectBase) GetHealth() int {
+	return f.Health
+}
+
+func (f *FallingObjectBase) GetMaxHealth() int {
+	return f.MaxHealth
 }
 
 func (f *FallingObjectBase) isOffScreen(h int) bool {
@@ -92,12 +101,22 @@ type HealthBar interface {
 	GetMaxHealth() int
 }
 
-func DisplayHealth(xPos, yPos, barSize int, h HealthBar, showStats bool) {
-	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+func (f *FallingObjectBase) DisplayHealth(barSize int, showStats bool, style tcell.Style) {
+	DisplayHealth(
+		int(f.OriginPoint.GetX())+(f.Width/2)-(barSize/2)-1,
+		int(f.OriginPoint.GetY()-1),
+		barSize,
+		f,
+		showStats,
+		style,
+	)
+}
+
+func DisplayHealth(xPos, yPos, barSize int, h HealthBar, showStats bool, style tcell.Style) {
 	trackXPossition := xPos
 	// pre draw health
 	for _, r := range string("[") {
-		window.SetContentWithStyle(trackXPossition, yPos, r, whiteColor)
+		window.SetContentWithStyle(trackXPossition, yPos, r, style)
 		trackXPossition++
 	}
 	// draw health
@@ -106,20 +125,20 @@ func DisplayHealth(xPos, yPos, barSize int, h HealthBar, showStats bool) {
 
 	for i := range barSize {
 		if i < filled {
-			window.SetContentWithStyle(trackXPossition+i, yPos, HealthBoxStyle, whiteColor)
+			window.SetContentWithStyle(trackXPossition+i, yPos, HealthBoxStyle, style)
 		} else {
-			window.SetContentWithStyle(trackXPossition+i, yPos, HealthBoxEmptyStyle, whiteColor)
+			window.SetContentWithStyle(trackXPossition+i, yPos, HealthBoxEmptyStyle, style)
 		}
 	}
 	if !showStats {
 		// end with a bracket
-		window.SetContentWithStyle(trackXPossition+barSize, yPos, ']', whiteColor)
+		window.SetContentWithStyle(trackXPossition+barSize, yPos, ']', style)
 		return
 	}
 	// or end with showing stats (total health)
 	trackXPossition += barSize
 	// last
 	for i, r := range []rune(fmt.Sprintf("] %d/%d", h.GetHealth(), h.GetMaxHealth())) {
-		window.SetContentWithStyle(trackXPossition+i, yPos, r, whiteColor)
+		window.SetContentWithStyle(trackXPossition+i, yPos, r, style)
 	}
 }

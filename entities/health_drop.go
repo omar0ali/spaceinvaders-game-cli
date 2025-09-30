@@ -67,6 +67,7 @@ func (h *HealthProducer) Draw(gc *core.GameContext) {
 				}
 			}
 		}
+		health.DisplayHealth(6, true, color)
 	}
 }
 
@@ -86,6 +87,7 @@ func (h *HealthProducer) DeployHealthPack() {
 		FallingObjectBase: FallingObjectBase{
 			Speed:       randSpeed,
 			Health:      design.EntityHealth + h.health,
+			MaxHealth:   design.EntityHealth + h.health,
 			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
 			Width:       width,
 			Height:      height,

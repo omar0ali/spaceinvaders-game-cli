@@ -122,7 +122,7 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 	if s.SpaceshipDesign == nil {
 		return
 	}
-	color := window.StyleIt(tcell.ColorReset, tcell.ColorRoyalBlue)
+	color := window.StyleIt(tcell.ColorReset, s.SpaceshipDesign.GetColor())
 	defer s.Gun.Draw(gc)
 
 	for rowIndex, line := range s.SpaceshipDesign.Shape {
@@ -135,7 +135,8 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 		}
 	}
 	barSize := 5
-	DisplayHealth(s.OriginPoint.X+(s.Width/2)-(barSize/2), s.OriginPoint.Y+(s.Height), barSize, s, false)
+	DisplayHealth(s.OriginPoint.X+(s.Width/2)-(barSize/2)-1, s.OriginPoint.Y+(s.Height), barSize, s, false, color)
+	// -1 because there are the brackets []. So the barSize+[] which is + 2.
 }
 
 func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
@@ -183,7 +184,7 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 
 	// display health at the bottome left
 	_, h := window.GetSize()
-	DisplayHealth(0, h-7, 10, s, true)
+	DisplayHealth(0, h-7, 10, s, true, whiteColor)
 
 	for i, r := range []rune(fmt.Sprintf("[Level: %d]", s.Level)) {
 		window.SetContentWithStyle(i, h-6, r, whiteColor)
