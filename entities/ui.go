@@ -9,11 +9,6 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
-var (
-	timeElapsed = 0.0
-	nextMinute  int
-)
-
 const (
 	IncreaseGunCapBy   = 1
 	IncreaseGunPowerBy = 1
@@ -26,10 +21,12 @@ type UI struct {
 	GameOverScreen     bool
 	LevelUpScreen      bool
 	SpaceShipSelection bool
+	timeElapsed        float64
+	nextMinute         int
 }
 
 func NewUI(gc *core.GameContext) *UI {
-	u := &UI{true, false, false, false, false}
+	u := &UI{true, false, false, false, false, 0, 0}
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
 			u.LevelUpScreen = true
@@ -109,8 +106,8 @@ func (u *UI) Draw(gc *core.GameContext) {
 		window.SetContentWithStyle(i, h-1, r, whiteColor)
 	}
 	// timer
-	minutes := int(timeElapsed) / 60
-	seconds := int(timeElapsed) % 60
+	minutes := int(u.timeElapsed) / 60
+	seconds := int(u.timeElapsed) % 60
 
 	w, _ := window.GetSize()
 	timeStr := []rune(fmt.Sprintf("Time: %02d:%02d", minutes, seconds))
@@ -121,9 +118,9 @@ func (u *UI) Draw(gc *core.GameContext) {
 
 	// display spacehsip details - Also drop a health kit every minute
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-		if nextMinute < minutes {
+		if u.nextMinute < minutes {
 			spaceship.HealthProducer.DeployHealthKit()
-			nextMinute++
+			u.nextMinute++
 		}
 		spaceship.UISpaceshipData(gc)
 	}
@@ -185,7 +182,7 @@ func (u *UI) Update(gc *core.GameContext, delta float64) {
 		gc.Halt = true
 	} else {
 		gc.Halt = false
-		timeElapsed += delta
+		u.timeElapsed += delta
 	}
 }
 
