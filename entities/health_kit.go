@@ -119,6 +119,9 @@ func (h *HealthProducer) MovementAndCollision(delta float64, gc *core.GameContex
 	if h.HealthKit.isDead() {
 		h.totalHealthKits += 1
 		h.HealthKit = nil
+		if ui, ok := gc.FindEntity("ui").(*UI); ok {
+			ui.SetStatus("Health: Health kit +1")
+		}
 		return
 	}
 

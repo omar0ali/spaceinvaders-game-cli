@@ -457,7 +457,7 @@ func (u *UI) SetStatus(text string) {
 	u.showStatus = true
 	u.status = text
 	go func() {
-		time.Sleep(1 * time.Second)
+		time.Sleep(2 * time.Second)
 		u.showStatus = false
 	}()
 }
