@@ -1,5 +1,4 @@
 # Space Invaders Game
-
 A terminal-based implementation of the classic space invaders game written in Go, using the [tcell](https://github.com/gdamore/tcell) library for handling terminal graphics and input.
 
 ## Install
@@ -27,6 +26,9 @@ To install go or clone this repository follow the [steps](#getting-started).
 #### Objective
 The game is an endless space shooter where players face increasingly difficult waves of alien ships that scale with their level. Each time the player levels up, they can choose an upgrade to improve their spaceship, such as boosting firepower to handle tougher aliens with stronger armor. The objective is to survive as long as possible, destroy alien ships, and push for a higher score while managing health through occasional drop-down health packs that restore the spaceship health.
 
+#### Youtube - Gameplay Demo - v1.2.0
+[![Watch the video](https://img.youtube.com/vi/23ziir_IJDY/0.jpg)](https://www.youtube.com/watch?v=23ziir_IJDY)
+
 #### Youtube - Gameplay Demo - v1.1.0
 [![Watch the video](https://img.youtube.com/vi/2flPiJvl4vU/0.jpg)](https://www.youtube.com/watch?v=2flPiJvl4vU)
 
@@ -48,9 +50,9 @@ The game is an endless space shooter where players face increasingly difficult w
     - [X] Health Kits will be dropped every 1 minute.
     - [X] Can be consumed by pressing [F] key.
 - [X] Implement a configuration file.
-- [X] Adding Timer
+- [X] Adding Timer.
 - [X] Alien Ship Stats on the right of the screen.
-- [X] Alien ships can shoot the player's spaceship (every one second).
+- [X] Alien ships can shoot the player's spaceship.
 - [X] Implementing a better way to level up the player.
     - [X] With upgrade choice /  stat selection. Player can choose to upgrade either (gun power, speed or capacity).
 - [X] Now the game runs without a `config` file. If the file dose not exist, the default configuration will be used.
