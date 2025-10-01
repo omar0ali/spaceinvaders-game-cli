@@ -63,13 +63,53 @@ func (u *UI) Draw(gc *core.GameContext) {
 	}
 
 	if u.SpaceShipSelection {
+		w, _ := window.GetSize()
+		rectWidth := 45
+		rectHeight := 10
+		startPosY := 25
+		startPosX := (w / 2) - rectWidth/2
+		colGap := 54
+		rowGap := 10
+		columnsPerRow := 3
+
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-			str := "Select your spaceship by pressing a number (1-5): \n\n"
-			for i, j := range s.ListOfDesigns {
-				str += (fmt.Sprintf("(%d) %s\n", i+1, j.Name))
-				str += (fmt.Sprintf("* HP: %d - Gun POW: %d \n* Gun SPD: %d - Gun CAP: %d\n\n", j.EntityHealth, j.GunPower, j.GunSpeed, j.GunCap))
+			for i, shape := range s.ListOfDesigns {
+				rowIndex := i / columnsPerRow
+				colIndex := i % columnsPerRow
+
+				x := startPosX + colIndex*(rectWidth+colGap)
+				y := startPosY + rowIndex*(rectHeight+rowGap)
+
+				u.DrawRect(core.Point{X: x, Y: y}, rectWidth, rectHeight, func(initX int, initY int) {
+					// draw index (spaceship selection key)
+					for j, r := range fmt.Sprintf("[%d]", i+1) {
+						window.SetContent(initX+j, initY, r)
+					}
+
+					// draw the spaceship shape inside the rectangle
+					gap := 4
+					for rowIndex, line := range shape.Shape {
+						color := window.StyleIt(tcell.ColorReset, shape.GetColor())
+						for colIndex, char := range line {
+							if char != ' ' {
+								window.SetContentWithStyle(initX+colIndex+gap, initY+rowIndex, char, color)
+							}
+						}
+						// draw details of the spaceship
+						str := []string{
+							fmt.Sprintf("[%s]", shape.Name),
+							fmt.Sprintf("* Gun Power: %d", shape.GunPower),
+							fmt.Sprintf("* Gun Capacity: %d", shape.GunCap),
+							fmt.Sprintf("* Gun Speed: %d", shape.GunSpeed),
+						}
+						for j, line := range str {
+							for i, r := range line {
+								window.SetContentWithStyle(initX+colIndex+(gap*5)+i, initY+j, r, color)
+							}
+						}
+					}
+				})
 			}
-			u.MessageBox(window.GetCenterPoint(), str, "Choose a Spaceship")
 		}
 	}
 
@@ -336,4 +376,65 @@ func (u UI) wrapText(message string) []string {
 	}
 
 	return lines
+}
+
+func (u UI) DrawRect(pos core.Point, width, height int, fn func(initX, initY int)) {
+	const padding = 2
+	centerOfW := pos.X / 2
+	centerOfH := pos.Y / 2
+	startX := centerOfW - (width / 2)
+	startY := centerOfH - (height / 2)
+	for i := range height {
+		for j := range width {
+			switch {
+			case j == 0 && i == 0:
+				window.SetContent(startX+j, startY+i, tcell.RuneULCorner)
+			case j == width-1 && i == 0:
+				window.SetContent(startX+j, startY+i, tcell.RuneURCorner)
+			case j == 0 && i == height-1:
+				window.SetContent(startX+j, startY+i, tcell.RuneLLCorner)
+			case j == width-1 && i == height-1:
+				window.SetContent(startX+j, startY+i, tcell.RuneLRCorner)
+
+			case i == 0 || i == height-1:
+				window.SetContent(startX+j, startY+i, tcell.RuneHLine)
+			case j == 0 || j == width-1:
+				window.SetContent(startX+j, startY+i, tcell.RuneVLine)
+
+			default:
+				window.SetContent(startX+j, startY+i, ' ')
+			}
+		}
+	}
+	fn(startX+padding, startY+padding)
+}
+
+func (u UI) DrawRectCenter(width, height int, fn func(x, y int)) {
+	w, h := window.GetSize()
+	u.DrawRect(core.Point{X: w, Y: h}, width, height, func(x, y int) {
+		fn(x, y)
+	})
+}
+
+func (u UI) DrawBoxedText(text string) {
+	bottomPadding := 2
+	lines := strings.Split(text, "\n")
+
+	maxLen := 0
+	for _, line := range lines {
+		if len(line) > maxLen {
+			maxLen = len(line)
+		}
+	}
+
+	width := maxLen + 4
+	height := len(lines) + 2 + bottomPadding
+
+	u.DrawRectCenter(width, height, func(x, y int) {
+		for row, line := range lines {
+			for col, r := range line {
+				window.SetContent(x+col, y+row, r)
+			}
+		}
+	})
 }

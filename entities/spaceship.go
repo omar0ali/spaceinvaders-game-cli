@@ -154,25 +154,29 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 
 	defer s.HealthProducer.InputEvents(event, gc)
 	defer s.Gun.InputEvents(event, gc)
+
 	moveMouse := func(x int, y int) {
 		s.OriginPoint.X = x - (s.Width / 2)
 		s.OriginPoint.Y = y - (s.Height / 2)
 	}
+
+	shootBeam := func() {
+		x := s.OriginPoint.X + s.Width/2
+		y := s.OriginPoint.Y
+		s.initBeam(core.Point{X: x, Y: y}, Up)
+	}
+
 	switch ev := event.(type) {
 	case *tcell.EventMouse:
 		x, y := ev.Position()
 		moveMouse(x, y)
 
 		if ev.Buttons() == tcell.Button1 {
-			x := s.OriginPoint.X + s.Width/2
-			y := s.OriginPoint.Y
-			s.initBeam(core.Point{X: x, Y: y}, Up)
+			shootBeam()
 		}
 	case *tcell.EventKey:
 		if ev.Rune() == ' ' {
-			x := s.OriginPoint.X + s.Width/2
-			y := s.OriginPoint.Y
-			s.initBeam(core.Point{X: x, Y: y}, Up)
+			shootBeam()
 		}
 		if ev.Rune() == 'f' || ev.Rune() == 'F' {
 			if s.HealthProducer.totalHealthKits > 0 {
