@@ -56,7 +56,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 
 				[Controls]
 				[LM] Or [Space] to shoot coming alien-ships.
-				[F] Drop Health Pack.
+				[F] Consume Health Kit.
 				[P] To pause the game.
 				[Q] To quit the game.
 
@@ -105,7 +105,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 
 	// show controls at the bottom of the screen
 	_, h := window.GetSize()
-	for i, r := range []rune("[LM] Shoot Beams ◆ [F] Drop Health Pack ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit") {
+	for i, r := range []rune("[LM] Shoot Beams ◆ [F] Consume Health Kit ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit") {
 		window.SetContentWithStyle(i, h-1, r, whiteColor)
 	}
 	// timer
