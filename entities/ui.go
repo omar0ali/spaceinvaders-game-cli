@@ -246,7 +246,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 	case *tcell.EventKey:
 		if ev.Rune() == 's' || ev.Rune() == 'S' {
 			if u.MenuScreen {
-				u.SetStatus("Select a Spaceship")
+				u.SetStatus("Select a Spaceship (1 - 5)")
 				u.SpaceShipSelection = true
 				u.MenuScreen = false
 			}
@@ -272,25 +272,25 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 			if u.LevelUpScreen {
 				if ev.Rune() == 'A' || ev.Rune() == 'a' {
 					upgrade(func() bool {
-						u.SetStatus(fmt.Sprintf("Gun Power: +%d", IncreaseGunPowerBy))
+						u.SetStatus(fmt.Sprintf("[A] Gun Power: +%d", IncreaseGunPowerBy))
 						return s.IncreaseGunPower(IncreaseGunPowerBy)
 					})
 				}
 				if ev.Rune() == 'S' || ev.Rune() == 's' {
 					upgrade(func() bool {
-						u.SetStatus(fmt.Sprintf("Gun Speed: +%d", IncreaseGunSpeedBy))
+						u.SetStatus(fmt.Sprintf("[S] Gun Speed: +%d", IncreaseGunSpeedBy))
 						return s.IncreaseGunSpeed(IncreaseGunSpeedBy)
 					})
 				}
 				if ev.Rune() == 'D' || ev.Rune() == 'd' {
 					upgrade(func() bool {
-						u.SetStatus(fmt.Sprintf("Gun Cap: +%d", IncreaseGunCapBy))
+						u.SetStatus(fmt.Sprintf("[D] Gun Cap: +%d", IncreaseGunCapBy))
 						return s.IncreaseGunCap(IncreaseGunCapBy)
 					})
 				}
 				if ev.Rune() == 'C' || ev.Rune() == 'c' {
 					upgrade(func() bool {
-						u.SetStatus("Health Restored")
+						u.SetStatus("[C] Spaceship health has been restored!")
 						return s.RestoreFullHealth()
 					})
 				}
