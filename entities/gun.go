@@ -31,12 +31,17 @@ func (g *Gun) initBeam(pos core.Point, dir Direction) {
 		return
 	}
 
+	symbol := '↑'
+	if dir == Down {
+		symbol = '↓'
+	}
+
 	beam := Beam{
 		core.Point{
 			X: pos.X,
 			Y: pos.Y,
 		},
-		'|',
+		symbol,
 		dir,
 	}
 	g.Beams = append(g.Beams, &beam)
