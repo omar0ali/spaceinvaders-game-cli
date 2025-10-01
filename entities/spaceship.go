@@ -130,7 +130,7 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 
 	color := window.StyleIt(tcell.ColorReset, s.SpaceshipDesign.GetColor())
 
-	defer s.Gun.Draw(gc)
+	defer s.Gun.Draw(gc, s.SpaceshipDesign.GetColor())
 	defer s.HealthProducer.Draw(gc)
 
 	for rowIndex, line := range s.SpaceshipDesign.Shape {

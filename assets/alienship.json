@@ -1,7 +1,7 @@
 [
     {
         "name": "arrow",
-        "health": 2,
+        "health": 15,
         "color": "F88379",
         "shape": [
             "      ^      ",
@@ -14,7 +14,7 @@
     },
     {
         "name": "triangle",
-        "health": 3,
+        "health": 25,
         "color": "ADCCED",
         "shape": [
             "  -<----->-  ",
@@ -26,7 +26,7 @@
     },
     {
         "name": "diamond",
-        "health": 4,
+        "health": 35,
         "color": "FFFAFA",
         "shape": [
             "      ^      ",
@@ -40,7 +40,7 @@
     },
     {
         "name": "ufo",
-        "health": 6,
+        "health": 45,
         "color": "BDAD7E",
         "shape": [
             "    .---.    ",
@@ -53,7 +53,7 @@
     },
     {
         "name": "crab",
-        "health": 7,
+        "health": 55,
         "color": "8F8673",
         "shape": [
             "  \\  ^  ^  /  ",
@@ -64,7 +64,7 @@
     },
     {
         "name": "scout",
-        "health": 8,
+        "health": 65,
         "color": "F3E5AB",
         "shape": [
             "      ^      ",
@@ -76,7 +76,7 @@
     },
     {
         "name": "viper",
-        "health": 9,
+        "health": 75,
         "color": "B39EB5",
         "shape": [
             "     /^\\     ",
@@ -89,7 +89,7 @@
     },
     {
         "name": "falcon",
-        "health": 10,
+        "health": 85,
         "color": "FF991C",
         "shape": [
             "   __|__   ",
@@ -101,7 +101,7 @@
     },
     {
         "name": "beetle",
-        "health": 11,
+        "health": 95,
         "color": "B5C7EB",
         "shape": [
             "    /^^^\\    ",
@@ -113,7 +113,7 @@
     },
     {
         "name": "fortress",
-        "health": 12,
+        "health": 110,
         "color": "E7DFC6",
         "shape": [
             "   .-------.   ",

@@ -15,7 +15,7 @@ gun_max_speed = 85
 
 [aliens]
 limit = 1
-health = 2
+health = 1
 speed = 3
 gun_speed = 35
 gun_power = 1

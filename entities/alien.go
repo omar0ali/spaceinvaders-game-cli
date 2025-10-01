@@ -60,7 +60,7 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 	colorHealth := window.StyleIt(tcell.ColorReset, tcell.ColorIndianRed)
 	for _, alien := range a.Aliens {
 		color := window.StyleIt(tcell.ColorReset, alien.GetColor())
-		alien.Gun.Draw(gc)
+		alien.Gun.Draw(gc, alien.GetColor())
 
 		alien.DisplayHealth(6, true, colorHealth)
 
@@ -122,7 +122,7 @@ func (a *AlienProducer) DeployAliens() {
 		Design: randDesign,
 	}
 
-	go DoEvery(1*time.Second,
+	go DoEvery(1500*time.Millisecond,
 		func() {
 			alien.Gun.initBeam(core.Point{
 				X: int(alien.OriginPoint.X) + (alien.Width / 2),
