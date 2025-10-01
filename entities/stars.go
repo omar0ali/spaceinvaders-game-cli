@@ -70,11 +70,11 @@ func (s *StarProducer) Update(gc *core.GameContext, delta float64) {
 }
 
 func (s *StarProducer) Draw(gc *core.GameContext) {
-	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	whiteColor := window.StyleIt(tcell.ColorReset, core.HexToColor("999999"))
 	for _, star := range s.Stars {
 		switch {
 		case star.Speed < 15:
-			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '◆', whiteColor)
+			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '☼', whiteColor)
 		case star.Speed >= 15 && star.Speed < 25:
 			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '+', whiteColor)
 		case star.Speed >= 25 && star.Speed < 45:

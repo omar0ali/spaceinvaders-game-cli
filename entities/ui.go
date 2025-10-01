@@ -119,7 +119,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 
 	// display spacehsip details - Also drop a health kit every minute
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-		if u.nextMinute < minutes || seconds == 30 {
+		if u.nextMinute < minutes {
 			spaceship.HealthProducer.DeployHealthKit()
 			u.nextMinute++
 		}
