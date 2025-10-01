@@ -170,7 +170,9 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 		}
 	case *tcell.EventKey:
 		if ev.Rune() == ' ' {
-			s.initBeam(s.OriginPoint, Up)
+			x := s.OriginPoint.X + s.Width/2
+			y := s.OriginPoint.Y
+			s.initBeam(core.Point{X: x, Y: y}, Up)
 		}
 		if ev.Rune() == 'f' || ev.Rune() == 'F' {
 			if s.HealthProducer.totalHealthKits > 0 {

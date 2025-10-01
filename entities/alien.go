@@ -79,12 +79,14 @@ func (a *AlienProducer) Draw(gc *core.GameContext) {
 }
 
 func (a *AlienProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
-	switch ev := event.(type) {
-	case *tcell.EventKey:
-		if ev.Rune() == 'm' { // dev mode
-			a.DeployAliens()
-		}
-	}
+	// testing code
+
+	// switch ev := event.(type) {
+	// case *tcell.EventKey:
+	// 	if ev.Rune() == 'm' { // dev mode
+	// 		a.DeployAliens()
+	// 	}
+	// }
 }
 
 func (a *AlienProducer) DeployAliens() {
