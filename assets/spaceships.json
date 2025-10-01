@@ -2,7 +2,7 @@
     {
         "name": "Interceptor",
         "health": 10,
-        "color": "5682B1",
+        "color": "c4ffc2",
         "gun_power": 1,
         "gun_speed": 59,
         "gun_cap": 6,
@@ -15,7 +15,7 @@
     {
         "name": "Scout",
         "health": 15,
-        "color": "715A5A",
+        "color": "c2fffc",
         "gun_power": 1,
         "gun_speed": 57,
         "gun_cap": 4,
@@ -28,7 +28,7 @@
     {
         "name": "Fighter",
         "health": 18,
-        "color": "465C88",
+        "color": "c2c8ff",
         "gun_power": 2,
         "gun_speed": 40,
         "gun_cap": 3,
@@ -43,7 +43,7 @@
     {
         "name": "Destroyer",
         "health": 23,
-        "color": "948979",
+        "color": "fbc2ff",
         "gun_power": 4,
         "gun_speed": 37,
         "gun_cap": 1,
@@ -58,7 +58,7 @@
     {
         "name": "Battleship",
         "health": 28,
-        "color": "7AE2CF",
+        "color": "ffc2c2",
         "gun_power": 6,
         "gun_speed": 33,
         "gun_cap": 1,
