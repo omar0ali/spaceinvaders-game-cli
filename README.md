@@ -34,33 +34,27 @@ The game is an endless space shooter where players face increasingly difficult w
 [![Watch the video](https://img.youtube.com/vi/DSeU1Lnglsg/0.jpg)](https://www.youtube.com/watch?v=DSeU1Lnglsg)
 
 ### Checklist:
-- [X] Create a spaceship placed at the bottom of the screen.
-    - [X] Add controls to the spaceship, `Mouse Motion` left and right. 
-    - [X] Draw a proper Triangle shape.
-    - [X] Shoots laser beam by hitting the `Left Mouse Button`.
-- [X] Create a single enemy spaceship. Can be produced by hitting the `Space Bar` key. This will be changed later.
-    - [X] Alien ship can move towards the player.
-    - [X] Can place aliens ships in a random X position
-    - [X] Alien ship automatically falls with a limit of 3 ships at a time.
+- [X] Create a spaceship placed at mouse pointer on the screen.
+- [X] Add controls to the spaceship, `Mouse Motion` left, right, up and down. 
+- [X] Shoots laser beam by hitting the `Left Mouse Button` or `Space Bar`.
+- [X] Create enemy spaceships (Currently have 10 different types).
+- [X] Can deploy aliens ships in a random x position
 - [X] Stars falling down with different speed. (just to look cool)
-- [X] Adding Start Screen UI
+- [X] Adding Start Menu Screen UI
 - [X] Adding Pause Menu using `p` to pause the game.
-    - [X] Adding spaceship details
-- [X] Spaceship (Player) health, each alien ship reaching the end will depletes the health. (just a little bit)
+- [X] Adding spaceship UI details.
 - [X] Show control info at the bottom of the screen.
 - [X] Loot boxes to increase health.
-    - [X] Health Drop Packs will increase every minute by one and to use a health pack need to press `[H]` key to deploy and must destroy the health box to obtain.
+    - [X] Health Kits will be dropped every 1 minute.
+    - [X] Can be consumed by pressing [F] key.
 - [X] Implement a configuration file.
-- [X] Timer
-- [X] Spaceship stats on the left of screen.
+- [X] Adding Timer
 - [X] Alien Ship Stats on the right of the screen.
-- [X] Alien ships can shoot the player's spaceship.
-- [X] Spaceship now can move around the whole screen using the mouse.
-- [X] Better way to level up the player.
+- [X] Alien ships can shoot the player's spaceship (every one second).
+- [X] Implementing a better way to level up the player.
     - [X] With upgrade choice /  stat selection. Player can choose to upgrade either (gun power, speed or capacity).
-- [X] The game runs without a `config` file. If the file dose not exist, the default configuration will be used.
-- [X] Adding variety designs of alien ships attacking. Using json file to load all alien ships designs.
-- [X] Will add variety of spaceship selection before starting the game. Currently added just five.
+- [X] Now the game runs without a `config` file. If the file dose not exist, the default configuration will be used.
+- [X] Added variety of spaceship selection before starting the game. 
     - Before the game starts, the player will be able to select a ship.
 
 ### Controls
