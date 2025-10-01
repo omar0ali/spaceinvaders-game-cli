@@ -2,6 +2,7 @@ package entities
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/core"
@@ -140,5 +141,21 @@ func DisplayHealth(xPos, yPos, barSize int, h HealthBar, showStats bool, style t
 	// last
 	for i, r := range []rune(fmt.Sprintf("] %d/%d", h.GetHealth(), h.GetMaxHealth())) {
 		window.SetContentWithStyle(trackXPossition+i, yPos, r, style)
+	}
+}
+
+// Will use this for i.e alien ship shooting every # seconds
+
+func DoEvery(interval time.Duration, fn func(), done <-chan struct{}) {
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			fn()
+		case <-done:
+			return
+		}
 	}
 }

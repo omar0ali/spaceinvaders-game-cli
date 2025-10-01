@@ -3,6 +3,7 @@ package entities
 import (
 	"fmt"
 	"math/rand"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/core"
@@ -13,6 +14,7 @@ type Alien struct {
 	FallingObjectBase
 	Gun Gun
 	core.Design
+	done chan struct{}
 }
 
 type AlienProducer struct {
@@ -28,12 +30,14 @@ func NewAlienProducer(cfg core.GameConfig, gc *core.GameContext) *AlienProducer 
 		health: float64(cfg.AliensConfig.Health),
 		Cfg:    cfg,
 	}
+
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
 			a.limit += 0.3
 			a.health += 0.3
 		})
 	}
+
 	return a
 }
 
@@ -46,12 +50,6 @@ func (a *AlienProducer) Update(gc *core.GameContext, delta float64) {
 	// go through each alien's gun and shoot
 	for _, alien := range a.Aliens {
 		alien.Gun.Update(gc, delta)
-		if len(alien.Gun.Beams) < alien.Gun.Cap {
-			alien.Gun.initBeam(core.Point{
-				X: int(alien.OriginPoint.X) + (alien.Width / 2),
-				Y: int(alien.OriginPoint.Y) + (alien.Height) + 1,
-			}, Down)
-		}
 	}
 
 	// -------- this will ensure to clean up dead aliens and beams --------
@@ -100,11 +98,13 @@ func (a *AlienProducer) DeployAliens() {
 	if err != nil {
 		panic(err)
 	}
-	// pick random design
+
+	// pick random design: based on the current health level. The higher the stronger the ships.
 	randDesign := designs[rand.Intn(int(a.health))]
 	width := len(randDesign.Shape[0])
 	height := len(randDesign.Shape)
-	a.Aliens = append(a.Aliens, &Alien{
+
+	alien := &Alien{
 		FallingObjectBase: FallingObjectBase{
 			Health:      int(a.health) + randDesign.EntityHealth,
 			MaxHealth:   int(a.health) + randDesign.EntityHealth,
@@ -120,7 +120,19 @@ func (a *AlienProducer) DeployAliens() {
 			Speed: a.Cfg.AliensConfig.GunSpeed,
 		},
 		Design: randDesign,
-	})
+	}
+
+	go DoEvery(1*time.Second,
+		func() {
+			alien.Gun.initBeam(core.Point{
+				X: int(alien.OriginPoint.X) + (alien.Width / 2),
+				Y: int(alien.OriginPoint.Y) + (alien.Height) + 1,
+			}, Down)
+		},
+		alien.done,
+	)
+
+	a.Aliens = append(a.Aliens, alien)
 }
 
 func (a *AlienProducer) UIAlienShipData(gc *core.GameContext) {
@@ -166,6 +178,7 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *core.GameContext
 
 		// check the alien ship height position
 		// check the health of each alien
+
 		_, h := window.GetSize()
 		if alien.isOffScreen(h) {
 			spaceship.health -= 1
