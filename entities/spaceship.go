@@ -179,9 +179,16 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 			shootBeam()
 		}
 		if ev.Rune() == 'f' || ev.Rune() == 'F' {
-			if s.HealthProducer.totalHealthKits > 0 {
-				if s.IncreaseHealth(int(s.HealthProducer.increaseHealthBy)) {
-					s.HealthProducer.totalHealthKits--
+			if ui, ok := gc.FindEntity("ui").(*UI); ok {
+				if s.HealthProducer.totalHealthKits > 0 {
+					ui.SetStatus(fmt.Sprintf("Health: Consumed +%d", int(s.HealthProducer.increaseHealthBy)))
+					if s.IncreaseHealth(int(s.HealthProducer.increaseHealthBy)) {
+						s.HealthProducer.totalHealthKits--
+						return
+					}
+					ui.SetStatus("Health: Can't use right now")
+				} else {
+					ui.SetStatus("Health: N/A")
 				}
 			}
 		}

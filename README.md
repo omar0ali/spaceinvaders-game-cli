@@ -59,6 +59,7 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] Added variety of spaceship selection before starting the game. 
     - [X] Before the game starts, the player will be able to select a ship.
 - [X] Redesign UI of the spaceship selection.
+- [X] Adding status pop up. Will show to keep the player up to date.
 
 ### Controls
 

@@ -3,6 +3,7 @@ package entities
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/core"
@@ -23,12 +24,15 @@ type UI struct {
 	SpaceShipSelection bool
 	timeElapsed        float64
 	nextMinute         int
+	status             string
+	showStatus         bool
 }
 
 func NewUI(gc *core.GameContext) *UI {
-	u := &UI{true, false, false, false, false, 0, 0}
+	u := &UI{true, false, false, false, false, 0, 0, "Start New Game", false}
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
+			u.SetStatus("Level Up +1")
 			u.LevelUpScreen = true
 		})
 	}
@@ -37,6 +41,7 @@ func NewUI(gc *core.GameContext) *UI {
 
 func (u *UI) Draw(gc *core.GameContext) {
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+
 	// start screen
 	if u.MenuScreen {
 		u.MessageBox(window.GetCenterPoint(),
@@ -80,7 +85,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 				x := startPosX + colIndex*(rectWidth+colGap)
 				y := startPosY + rowIndex*(rectHeight+rowGap)
 
-				u.DrawRect(core.Point{X: x, Y: y}, rectWidth, rectHeight, func(initX int, initY int) {
+				DrawRect(core.Point{X: x, Y: y}, rectWidth, rectHeight, func(initX int, initY int) {
 					// draw index (spaceship selection key)
 					for j, r := range fmt.Sprintf("[%d]", i+1) {
 						window.SetContent(initX+j, initY, r)
@@ -217,6 +222,9 @@ func (u *UI) Draw(gc *core.GameContext) {
 			return
 		}
 	}
+	if u.showStatus {
+		DrawRectStatus(u.status)
+	}
 }
 
 func (u *UI) Update(gc *core.GameContext, delta float64) {
@@ -238,6 +246,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 	case *tcell.EventKey:
 		if ev.Rune() == 's' || ev.Rune() == 'S' {
 			if u.MenuScreen {
+				u.SetStatus("Select a Spaceship")
 				u.SpaceShipSelection = true
 				u.MenuScreen = false
 			}
@@ -256,27 +265,32 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 					case 1, 2, 3, 4, 5:
 						s.SpaceshipSelection(n - 1)
 						u.SpaceShipSelection = false
+						u.SetStatus("Get Ready!")
 					}
 				}
 			}
 			if u.LevelUpScreen {
 				if ev.Rune() == 'A' || ev.Rune() == 'a' {
 					upgrade(func() bool {
+						u.SetStatus(fmt.Sprintf("Gun Power: +%d", IncreaseGunPowerBy))
 						return s.IncreaseGunPower(IncreaseGunPowerBy)
 					})
 				}
 				if ev.Rune() == 'S' || ev.Rune() == 's' {
 					upgrade(func() bool {
+						u.SetStatus(fmt.Sprintf("Gun Speed: +%d", IncreaseGunSpeedBy))
 						return s.IncreaseGunSpeed(IncreaseGunSpeedBy)
 					})
 				}
 				if ev.Rune() == 'D' || ev.Rune() == 'd' {
 					upgrade(func() bool {
+						u.SetStatus(fmt.Sprintf("Gun Cap: +%d", IncreaseGunCapBy))
 						return s.IncreaseGunCap(IncreaseGunCapBy)
 					})
 				}
 				if ev.Rune() == 'C' || ev.Rune() == 'c' {
 					upgrade(func() bool {
+						u.SetStatus("Health Restored")
 						return s.RestoreFullHealth()
 					})
 				}
@@ -378,7 +392,7 @@ func (u UI) wrapText(message string) []string {
 	return lines
 }
 
-func (u UI) DrawRect(pos core.Point, width, height int, fn func(initX, initY int)) {
+func DrawRect(pos core.Point, width, height int, fn func(initX, initY int)) {
 	const padding = 2
 	centerOfW := pos.X / 2
 	centerOfH := pos.Y / 2
@@ -409,14 +423,14 @@ func (u UI) DrawRect(pos core.Point, width, height int, fn func(initX, initY int
 	fn(startX+padding, startY+padding)
 }
 
-func (u UI) DrawRectCenter(width, height int, fn func(x, y int)) {
+func DrawRectCenter(width, height int, fn func(x, y int)) {
 	w, h := window.GetSize()
-	u.DrawRect(core.Point{X: w, Y: h}, width, height, func(x, y int) {
+	DrawRect(core.Point{X: w, Y: h}, width, height, func(x, y int) {
 		fn(x, y)
 	})
 }
 
-func (u UI) DrawBoxedText(text string) {
+func DrawBoxedText(text string) {
 	bottomPadding := 2
 	lines := strings.Split(text, "\n")
 
@@ -430,10 +444,43 @@ func (u UI) DrawBoxedText(text string) {
 	width := maxLen + 4
 	height := len(lines) + 2 + bottomPadding
 
-	u.DrawRectCenter(width, height, func(x, y int) {
+	DrawRectCenter(width, height, func(x, y int) {
 		for row, line := range lines {
 			for col, r := range line {
 				window.SetContent(x+col, y+row, r)
+			}
+		}
+	})
+}
+
+func (u *UI) SetStatus(text string) {
+	u.showStatus = true
+	u.status = text
+	go func() {
+		time.Sleep(1 * time.Second)
+		u.showStatus = false
+	}()
+}
+
+func DrawRectStatus(text string) {
+	w, _ := window.GetSize()
+	color := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	bottomPadding := 2
+	lines := strings.Split(text, "\n")
+
+	maxLen := 0
+	for _, line := range lines {
+		if len(line) > maxLen {
+			maxLen = len(line)
+		}
+	}
+
+	width := maxLen + 4
+	height := len(lines) + 2 + bottomPadding
+	DrawRect(core.Point{X: (w * 2) - width - 1, Y: 15}, width, height, func(x, y int) {
+		for row, line := range lines {
+			for col, r := range line {
+				window.SetContentWithStyle(x+col, y+row, r, color)
 			}
 		}
 	})
