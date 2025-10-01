@@ -105,6 +105,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 	for i, r := range []rune("[LM] Shoot Beams ◆ [F] Consume Health Kit ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit") {
 		window.SetContentWithStyle(i, h-1, r, whiteColor)
 	}
+
 	// timer
 	minutes := int(u.timeElapsed) / 60
 	seconds := int(u.timeElapsed) % 60
@@ -118,10 +119,11 @@ func (u *UI) Draw(gc *core.GameContext) {
 
 	// display spacehsip details - Also drop a health kit every minute
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-		if u.nextMinute < minutes {
+		if u.nextMinute < minutes || seconds == 30 {
 			spaceship.HealthProducer.DeployHealthKit()
 			u.nextMinute++
 		}
+
 		spaceship.UISpaceshipData(gc)
 	}
 
