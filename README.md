@@ -82,7 +82,7 @@ gun_max_speed = 85
 
 [aliens]
 limit = 1
-health = 2
+health = 1
 speed = 3
 gun_speed = 35
 gun_power = 1
@@ -91,12 +91,11 @@ gun_power = 1
 limit = 15
 speed = 50
 
-[health_drop]
+[health_kit]
 health = 2
 speed = 3
-limit = 1
-max_drop = 5
-start = 1
+max_kits = 5
+start_with = 1
 ```
 
 ## Getting Started
