@@ -122,7 +122,7 @@ func (a *AlienProducer) DeployAliens() {
 		Design: randDesign,
 	}
 
-	go DoEvery(1500*time.Millisecond,
+	go DoEvery(2*time.Second,
 		func() {
 			alien.Gun.initBeam(core.Point{
 				X: int(alien.OriginPoint.X) + (alien.Width / 2),
