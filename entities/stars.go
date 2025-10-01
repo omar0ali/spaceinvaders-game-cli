@@ -70,7 +70,7 @@ func (s *StarProducer) Update(gc *core.GameContext, delta float64) {
 }
 
 func (s *StarProducer) Draw(gc *core.GameContext) {
-	whiteColor := window.StyleIt(tcell.ColorReset, core.HexToColor("999999"))
+	whiteColor := window.StyleIt(tcell.ColorReset, core.HexToColor("445559"))
 	for _, star := range s.Stars {
 		switch {
 		case star.Speed < 15:
