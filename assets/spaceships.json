@@ -16,7 +16,7 @@
         "name": "Scout",
         "health": 15,
         "color": "c2fffc",
-        "gun_power": 1,
+        "gun_power": 2,
         "gun_speed": 57,
         "gun_cap": 4,
         "shape": [
@@ -29,7 +29,7 @@
         "name": "Fighter",
         "health": 18,
         "color": "c2c8ff",
-        "gun_power": 2,
+        "gun_power": 4,
         "gun_speed": 40,
         "gun_cap": 3,
         "shape": [
@@ -44,7 +44,7 @@
         "name": "Destroyer",
         "health": 23,
         "color": "fbc2ff",
-        "gun_power": 4,
+        "gun_power": 7,
         "gun_speed": 37,
         "gun_cap": 1,
         "shape": [
@@ -59,7 +59,7 @@
         "name": "Battleship",
         "health": 28,
         "color": "ffc2c2",
-        "gun_power": 6,
+        "gun_power": 13,
         "gun_speed": 33,
         "gun_cap": 1,
         "shape": [
