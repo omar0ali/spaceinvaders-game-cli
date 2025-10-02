@@ -3,9 +3,9 @@
         "name": "Interceptor",
         "health": 15,
         "color": "c4ffc2",
-        "gun_power": 3,
-        "gun_speed": 65,
-        "gun_cap": 5,
+        "gun_power": 4,
+        "gun_speed": 44,
+        "gun_cap": 4,
         "shape": [
             "  ^  ",
             " /|\\ ",
@@ -17,7 +17,7 @@
         "health": 20,
         "color": "c2fffc",
         "gun_power": 6,
-        "gun_speed": 60,
+        "gun_speed": 42,
         "gun_cap": 4,
         "shape": [
             "  ^  ",
@@ -30,8 +30,8 @@
         "health": 25,
         "color": "c2c8ff",
         "gun_power": 8,
-        "gun_speed": 45,
-        "gun_cap": 3,
+        "gun_speed": 40,
+        "gun_cap": 2,
         "shape": [
             "   ^   ",
             "  /|\\  ",
@@ -45,8 +45,8 @@
         "health": 30,
         "color": "fbc2ff",
         "gun_power": 10,
-        "gun_speed": 40,
-        "gun_cap": 2,
+        "gun_speed": 38,
+        "gun_cap": 1,
         "shape": [
             "    |    ",
             "   +^+   ",
@@ -59,7 +59,7 @@
         "name": "Battleship",
         "health": 35,
         "color": "ffc2c2",
-        "gun_power": 15,
+        "gun_power": 18,
         "gun_speed": 35,
         "gun_cap": 1,
         "shape": [

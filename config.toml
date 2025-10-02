@@ -14,9 +14,3 @@ gun_power = 1
 [stars] 
 limit = 10
 speed = 45
-
-[health_kit]
-health = 2
-speed = 3
-max_kits = 5
-start_with = 1
