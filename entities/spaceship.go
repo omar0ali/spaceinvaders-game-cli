@@ -284,7 +284,7 @@ func (s *SpaceShip) LevelUp() {
 	if s.Level > s.previousLevel {
 
 		// TODO: Refactor
-		s.HealthProducer.health += 2
+		s.HealthProducer.health += 4
 		s.HealthProducer.increaseHealthBy += 0.2
 
 		if s.cfg.SpaceShipConfig.MaxLevel <= s.Level {
