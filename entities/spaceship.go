@@ -95,7 +95,7 @@ func NewSpaceShip(cfg core.GameConfig, gc *core.GameContext) *SpaceShip {
 	}
 }
 
-func (s *SpaceShip) SpaceshipSelection(id int) {
+func (s *SpaceShip) SpaceshipSelection(id int) string {
 	s.Gun = Gun{
 		Beams: []*Beam{},
 		Cap:   s.ListOfDesigns[id].GunCap,
@@ -106,6 +106,7 @@ func (s *SpaceShip) SpaceshipSelection(id int) {
 	s.health = s.ListOfDesigns[id].EntityHealth
 	s.Width = len(s.ListOfDesigns[id].Shape[0])
 	s.Height = len(s.ListOfDesigns[id].Shape)
+	return s.SpaceshipDesign.Name
 }
 
 func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {

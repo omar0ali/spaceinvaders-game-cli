@@ -122,7 +122,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 			u.MessageBox(window.GetCenterPoint(),
 				fmt.Sprintf(`
-				[Player] Current Level: %d
+				(*) Level: %d
 
 				(*) Choose a stat to upgrade:
 
@@ -147,7 +147,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 
 	// show controls at the bottom of the screen
 	_, h := window.GetSize()
-	for i, r := range []rune("[LM] Shoot Beams ◆ [F] Consume Health Kit ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit") {
+	for i, r := range []rune("[LM] or [Space] Shoot Beams ◆ [F] Consume Health Kit ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit") {
 		window.SetContentWithStyle(i, h-1, r, whiteColor)
 	}
 
@@ -263,9 +263,9 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 					n := int(ev.Rune() - '0')
 					switch n {
 					case 1, 2, 3, 4, 5:
-						s.SpaceshipSelection(n - 1)
+						name := s.SpaceshipSelection(n - 1)
+						u.SetStatus(fmt.Sprintf("[%d] %s Selected", n, name))
 						u.SpaceShipSelection = false
-						u.SetStatus("Get Ready!")
 					}
 				}
 			}
