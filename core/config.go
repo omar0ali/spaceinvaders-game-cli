@@ -11,7 +11,7 @@ const defaultConfig = `
 max_level = 50
 next_level_score = 400
 gun_max_cap = 15
-gun_max_speed = 80
+gun_max_speed = 75
 
 [aliens]
 limit = 1
@@ -21,14 +21,8 @@ gun_speed = 35
 gun_power = 1
 
 [stars] 
-limit = 15
-speed = 50
-
-[health_kit]
-health = 2
-speed = 3
-max_kits = 5
-start_with = 1
+limit = 10
+speed = 45
 `
 
 type GameConfig struct {
@@ -49,12 +43,6 @@ type GameConfig struct {
 		Limit int `toml:"limit"`
 		Speed int `toml:"speed"`
 	} `toml:"stars"`
-	HealthDropConfig struct {
-		Health    int `tom:"health"`
-		Speed     int `toml:"speed"`
-		MaxKits   int `toml:"max_kits"`
-		StartWith int `toml:"start_with"`
-	} `toml:"health_kit"`
 }
 
 func LoadConfig() GameConfig {

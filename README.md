@@ -86,7 +86,7 @@ Configuration file added for the player to freely change/update entity's attribu
 max_level = 50
 next_level_score = 400
 gun_max_cap = 15
-gun_max_speed = 80
+gun_max_speed = 75
 
 [aliens]
 limit = 1
@@ -98,12 +98,6 @@ gun_power = 1
 [stars] 
 limit = 10
 speed = 45
-
-[health_kit]
-health = 2
-speed = 3
-max_kits = 5
-start_with = 1
 ```
 
 ## Getting Started

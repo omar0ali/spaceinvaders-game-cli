@@ -2,7 +2,7 @@
 max_level = 50
 next_level_score = 400
 gun_max_cap = 15
-gun_max_speed = 80
+gun_max_speed = 75
 
 [aliens]
 limit = 1
