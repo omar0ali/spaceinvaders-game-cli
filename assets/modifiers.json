@@ -1,0 +1,71 @@
+[
+    {
+        "name": "level_scroll",
+        "health": 300,
+        "color": "FFD700",
+        "modify_health": 1,
+        "modify_level": true,
+        "modify_gun_cap": 0,
+        "modify_gun_speed": 0,
+        "modify_gun_power": 0,
+        "shape": [
+            "   /\\   ",
+            "  /  \\  ",
+            " / /\\ \\ ",
+            " \\ \\/ / ",
+            "  \\  /  ",
+            "   \\/   "
+        ]
+    },
+    {
+        "name": "gun_capacity_crate",
+        "health": 30,
+        "color": "0000FF",
+        "modify_health": 0,
+        "modify_level": false,
+        "modify_gun_cap": 1,
+        "modify_gun_speed": 0,
+        "modify_gun_power": 0,
+        "shape": [
+            "  _______ ",
+            " | [] [] | ",
+            " | [] [] | ",
+            " | [] [] | ",
+            " |_______| ",
+            "          "
+        ]
+    },
+    {
+        "name": "gun_speed_bolt",
+        "health": 60,
+        "color": "FF4500",
+        "modify_health": 0,
+        "modify_level": false,
+        "modify_gun_cap": 0,
+        "modify_gun_speed": 2,
+        "modify_gun_power": 0,
+        "shape": [
+            "⚡||||| ⚡",
+            "  |||||  ",
+            "  |||||  ",
+            "   |||   "
+        ]
+    },
+    {
+        "name": "gun_power_crystal",
+        "health": 100,
+        "color": "800080",
+        "modify_health": 0,
+        "modify_level": false,
+        "modify_gun_cap": 0,
+        "modify_gun_speed": 0,
+        "modify_gun_power": 1,
+        "shape": [
+            "   /\\   ",
+            "  /  \\  ",
+            " | ** | ",
+            "  \\__/  ",
+            "        "
+        ]
+    }
+]
