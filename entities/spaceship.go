@@ -282,6 +282,11 @@ func (s *SpaceShip) isHit(pointBeam core.PointInterface, power int) bool {
 
 func (s *SpaceShip) LevelUp() {
 	if s.Level > s.previousLevel {
+
+		// TODO: Refactor
+		s.HealthProducer.health += 2
+		s.HealthProducer.increaseHealthBy += 0.2
+
 		if s.cfg.SpaceShipConfig.MaxLevel <= s.Level {
 			return // skip when reaching max level, will not increase any elements of other objects
 		}

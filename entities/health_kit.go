@@ -22,21 +22,12 @@ type HealthProducer struct {
 }
 
 func NewHealthProducer(cfg core.GameConfig, gc *core.GameContext) *HealthProducer {
-	h := &HealthProducer{
+	return &HealthProducer{
 		health:           float64(cfg.HealthDropConfig.Health),
 		totalHealthKits:  cfg.HealthDropConfig.StartWith,
 		Cfg:              cfg,
 		increaseHealthBy: 3,
 	}
-
-	if s, ok := gc.FindEntity("spacehsip").(*SpaceShip); ok {
-		s.AddOnLevelUp(func(newLevel int) {
-			h.health += 0.3
-			h.increaseHealthBy += 0.3
-		})
-	}
-
-	return h
 }
 
 func (h *HealthProducer) Update(gc *core.GameContext, delta float64) {

@@ -1,8 +1,8 @@
 [spaceship]
 max_level = 50
-next_level_score = 50
-gun_max_cap = 30
-gun_max_speed = 85
+next_level_score = 400
+gun_max_cap = 15
+gun_max_speed = 80
 
 [aliens]
 limit = 1

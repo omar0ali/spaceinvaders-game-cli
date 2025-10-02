@@ -33,8 +33,8 @@ func NewAlienProducer(cfg core.GameConfig, gc *core.GameContext) *AlienProducer 
 
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
-			a.limit += 0.3
-			a.health += 0.3
+			a.limit += 0.2
+			a.health += 0.8
 		})
 	}
 

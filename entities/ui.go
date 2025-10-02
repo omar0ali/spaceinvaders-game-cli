@@ -103,6 +103,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 						// draw details of the spaceship
 						str := []string{
 							fmt.Sprintf("[%s]", shape.Name),
+							fmt.Sprintf("* Spaceship HP: %d", shape.EntityHealth),
 							fmt.Sprintf("* Gun Power: %d", shape.GunPower),
 							fmt.Sprintf("* Gun Capacity: %d", shape.GunCap),
 							fmt.Sprintf("* Gun Speed: %d", shape.GunSpeed),
