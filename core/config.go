@@ -9,7 +9,7 @@ import (
 const defaultConfig = `
 [spaceship]
 max_level = 50
-next_level_score = 400
+next_level_score = 300
 gun_max_cap = 15
 gun_max_speed = 75
 
