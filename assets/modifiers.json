@@ -1,71 +1,84 @@
 [
     {
-        "name": "level_scroll",
-        "health": 300,
-        "color": "FFD700",
+        "name": "Free Upgrade",
+        "health": 800,
+        "color": "EADDCA",
         "modify_health": 1,
         "modify_level": true,
         "modify_gun_cap": 0,
         "modify_gun_speed": 0,
         "modify_gun_power": 0,
         "shape": [
-            "   /\\   ",
-            "  /  \\  ",
-            " / /\\ \\ ",
-            " \\ \\/ / ",
-            "  \\  /  ",
-            "   \\/   "
+            " -------- ",
+            "|   /\\    |",
+            "|  /  \\   |",
+            "| / /\\ \\  |",
+            "| \\ \\/ /  |",
+            "|  \\  /   |",
+            "|   \\/    |",
+            "|_________|",
+            "|   LVL   |",
+            "|____+____|"
         ]
     },
     {
-        "name": "gun_capacity_crate",
-        "health": 30,
-        "color": "0000FF",
+        "name": "Gun Capacity +1",
+        "health": 300,
+        "color": "8B8000",
         "modify_health": 0,
         "modify_level": false,
         "modify_gun_cap": 1,
         "modify_gun_speed": 0,
         "modify_gun_power": 0,
         "shape": [
-            "  _______ ",
-            " | [] [] | ",
-            " | [] [] | ",
-            " | [] [] | ",
-            " |_______| ",
-            "          "
+            " _________  ",
+            "| [] [] []| ",
+            "| [] [] []| ",
+            "| [] [] []| ",
+            "|_________| ",
+            "|   CAP   | ",
+            "|____+____| "
         ]
     },
     {
-        "name": "gun_speed_bolt",
-        "health": 60,
-        "color": "FF4500",
+        "name": "Gun Speed +1",
+        "health": 400,
+        "color": "E49B0F",
         "modify_health": 0,
         "modify_level": false,
         "modify_gun_cap": 0,
-        "modify_gun_speed": 2,
+        "modify_gun_speed": 1,
         "modify_gun_power": 0,
         "shape": [
-            "⚡||||| ⚡",
-            "  |||||  ",
-            "  |||||  ",
-            "   |||   "
+            " ---------",
+            "|  |||||  |",
+            "|  |||||  |",
+            "|  |||||  |",
+            "|   |||   |",
+            "|    |    |",
+            "|_________|",
+            "|   SPD   |",
+            "|____+____|"
         ]
     },
     {
-        "name": "gun_power_crystal",
-        "health": 100,
-        "color": "800080",
+        "name": "Gun Power +1",
+        "health": 500,
+        "color": "93C572",
         "modify_health": 0,
         "modify_level": false,
         "modify_gun_cap": 0,
         "modify_gun_speed": 0,
         "modify_gun_power": 1,
         "shape": [
-            "   /\\   ",
-            "  /  \\  ",
-            " | ** | ",
-            "  \\__/  ",
-            "        "
+            " ---------",
+            "|   /\\    |",
+            "|  /  \\   |",
+            "| | ** |  |",
+            "|  \\__/   |",
+            "|_________|",
+            "|   POW   |",
+            "|____+____|"
         ]
     }
 ]
