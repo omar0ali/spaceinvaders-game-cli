@@ -63,7 +63,8 @@ The game is an endless space shooter where players face increasingly difficult w
     - [X] Before the game starts, the player will be able to select a ship.
 - [X] Redesign UI of the spaceship selection.
 - [X] Adding status pop up. Will show to keep the player up to date.
-- [ ] Add another drop down to increase other spaceship stats. 
+- [X] Add another drop down to increase other spaceship stats. 
+- [ ] Boss Fights ever 5 levels.
 
 ### Controls
 
