@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/gdamore/tcell/v2"
@@ -89,12 +90,14 @@ func (p *Producer) DeployModifiers() {
 
 	m := &Modifier{
 		FallingObjectBase: FallingObjectBase{
-			Speed:       randSpeed,
-			Health:      design.EntityHealth + ModifierHealth,
-			MaxHealth:   design.EntityHealth + ModifierHealth,
-			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-			Width:       width,
-			Height:      height,
+			ObjectBase: ObjectBase{
+				Health:      design.EntityHealth + ModifierHealth,
+				MaxHealth:   design.EntityHealth + ModifierHealth,
+				OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
+				Width:       width,
+				Height:      height,
+			},
+			Speed: randSpeed,
 		},
 		ModifierDesign: design,
 	}
@@ -120,12 +123,14 @@ func (p *Producer) DeployHealthKit() {
 
 	p.HealthKit = &Health{
 		FallingObjectBase: FallingObjectBase{
-			Speed:       randSpeed,
-			Health:      design.EntityHealth + ModifierHealth,
-			MaxHealth:   design.EntityHealth + ModifierHealth,
-			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-			Width:       width,
-			Height:      height,
+			ObjectBase: ObjectBase{
+				Health:      design.EntityHealth + ModifierHealth,
+				MaxHealth:   design.EntityHealth + ModifierHealth,
+				OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
+				Width:       width,
+				Height:      height,
+			},
+			Speed: randSpeed,
 		},
 		Design: design,
 	}
@@ -138,7 +143,7 @@ func (p *Producer) MovementAndCollision(delta float64, gc *core.GameContext) {
 	}
 
 	if p.HealthKit != nil {
-		if p.HealthKit.movementAndCollision(delta, gc, spaceship) {
+		if p.HealthKit.movementAndCollision(delta, spaceship) {
 			p.HealthKit = nil
 		}
 	}
@@ -170,11 +175,11 @@ func (m *Modifier) movementAndCollision(delta float64, gc *core.GameContext, spa
 		spaceship.IncreaseGunPower(m.ModifyGunPower)
 		spaceship.IncreaseGunSpeed(m.ModifyGunSpeed)
 		if m.ModifyLevel {
-			u.SetStatus("Level Up +1")
+			SetStatus("Free Upgrade!")
 			u.LevelUpScreen = true
 			return true
 		}
-		u.SetStatus("Modifier Applied!")
+		SetStatus(fmt.Sprintf("Modifier %s Applied!", m.Name))
 		return true
 	}
 
@@ -184,7 +189,7 @@ func (m *Modifier) movementAndCollision(delta float64, gc *core.GameContext, spa
 	return false
 }
 
-func (h *Health) movementAndCollision(delta float64, gc *core.GameContext, spaceship *SpaceShip) bool {
+func (h *Health) movementAndCollision(delta float64, spaceship *SpaceShip) bool {
 	_, hight := window.GetSize()
 
 	h.move(delta)
@@ -197,9 +202,7 @@ func (h *Health) movementAndCollision(delta float64, gc *core.GameContext, space
 
 	if h.isDead() {
 		spaceship.healthKitsOwned += 1
-		if ui, ok := gc.FindEntity("ui").(*UI); ok {
-			ui.SetStatus("Health: Health kit +1")
-		}
+		SetStatus("Health: Health kit +1")
 		return true
 	}
 

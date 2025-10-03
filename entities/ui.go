@@ -13,7 +13,13 @@ import (
 const (
 	IncreaseGunCapBy   = 1
 	IncreaseGunPowerBy = 1
-	IncreaseGunSpeedBy = 2
+	IncreaseGunSpeedBy = 1
+)
+
+var (
+	nextMinute int
+	status     string
+	showStatus bool
 )
 
 type UI struct {
@@ -23,16 +29,14 @@ type UI struct {
 	LevelUpScreen      bool
 	SpaceShipSelection bool
 	timeElapsed        float64
-	nextMinute         int
-	status             string
-	showStatus         bool
 }
 
 func NewUI(gc *core.GameContext) *UI {
-	u := &UI{true, false, false, false, false, 0, 0, "Start New Game", false}
+	nextMinute = 0
+	u := &UI{true, false, false, false, false, 0}
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
-			u.SetStatus("Level Up +1")
+			SetStatus("Level Up")
 			u.LevelUpScreen = true
 		})
 	}
@@ -56,7 +60,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 				a higher score while managing health through occasional drop-down health packs that
 				restore the spaceship health.
 
-				[Controls]
+				**** Controls ****
 				[LM] Or [Space] to shoot coming alien-ships.
 				[F] Consume Health Kit.
 				[P] To pause the game.
@@ -78,7 +82,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 		columnsPerRow := 3
 
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-			for i, shape := range s.ListOfDesigns {
+			for i, shape := range s.ListOfSpaceships {
 				rowIndex := i / columnsPerRow
 				colIndex := i % columnsPerRow
 
@@ -125,13 +129,13 @@ func (u *UI) Draw(gc *core.GameContext) {
 				fmt.Sprintf(`
 				(*) Level: %d
 
-				(*) Choose a stat to upgrade:
+				(*) Choose a stat to upgrade:--------------------
 
 				[A] (%d) Increase Gun Power by %d
 				[S] (%d/%d) Increase Gun Speed by %d
 				[D] (%d/%d) Increase Gun Capacity by %d
 				[C] (%d/%d) Restore Full Health
-				`, s.Level,
+				`, level,
 					s.Power,
 					IncreaseGunPowerBy,
 					s.Speed,
@@ -140,8 +144,8 @@ func (u *UI) Draw(gc *core.GameContext) {
 					s.Cap,
 					s.cfg.SpaceShipConfig.GunMaxCap,
 					IncreaseGunCapBy,
-					s.health,
-					s.SpaceshipDesign.EntityHealth),
+					s.Health,
+					s.SelectedSpaceship.EntityHealth),
 				"Level Up")
 		}
 	}
@@ -164,13 +168,18 @@ func (u *UI) Draw(gc *core.GameContext) {
 	}
 
 	// display spacehsip details - Also drop a health kit every minute
-	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-		if u.nextMinute < minutes {
-			spaceship.HealthProducer.DeployHealthKit()
-			u.nextMinute++
-		}
+	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+		s.UISpaceshipData(gc)
+	}
 
-		spaceship.UISpaceshipData(gc)
+	if producer, ok := gc.FindEntity("producer").(*Producer); ok {
+		if nextMinute < minutes {
+			producer.DeployHealthKit()
+			nextMinute++
+		}
+		if seconds == 30 {
+			producer.DeployModifiers()
+		}
 	}
 
 	// display aliens details
@@ -180,7 +189,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 
 	// pause ui
 	if u.PauseScreen {
-		if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 
 			u.MessageBox(
 				window.GetCenterPoint(),
@@ -194,7 +203,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 				[R] To restart the game.
 				[Q] To quit the game.
 				[P] To continue the game.
-			`, spaceship.health, spaceship.Score, spaceship.Kills, spaceship.Level),
+			`, s.Health, score, kills, level),
 				"Paused",
 			)
 			return
@@ -202,10 +211,9 @@ func (u *UI) Draw(gc *core.GameContext) {
 	}
 	// game over ui
 	if u.GameOverScreen {
-		if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-			u.MessageBox(
-				window.GetCenterPoint(),
-				fmt.Sprintf(`
+		u.MessageBox(
+			window.GetCenterPoint(),
+			fmt.Sprintf(`
 				Thank you for playing :)
 
 				- Score: %d
@@ -217,14 +225,14 @@ func (u *UI) Draw(gc *core.GameContext) {
 				[R] To restart the game.
 				[Q] To quit the game.
 
-			`, spaceship.Score, spaceship.Kills, spaceship.Level),
-				"Game Over",
-			)
-			return
-		}
+			`, score, kills, level),
+			"Game Over",
+		)
+		return
 	}
-	if u.showStatus {
-		DrawRectStatus(u.status)
+
+	if showStatus {
+		DrawRectStatus(status)
 	}
 }
 
@@ -247,7 +255,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 	case *tcell.EventKey:
 		if ev.Rune() == 's' || ev.Rune() == 'S' {
 			if u.MenuScreen {
-				u.SetStatus("Select a Spaceship (1 - 5)")
+				SetStatus("Select a Spaceship (1 - 5)")
 				u.SpaceShipSelection = true
 				u.MenuScreen = false
 			}
@@ -265,7 +273,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 					switch n {
 					case 1, 2, 3, 4, 5:
 						name := s.SpaceshipSelection(n - 1)
-						u.SetStatus(fmt.Sprintf("[%d] %s Selected", n, name))
+						SetStatus(fmt.Sprintf("[%d] %s Selected", n, name))
 						u.SpaceShipSelection = false
 					}
 				}
@@ -273,25 +281,25 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 			if u.LevelUpScreen {
 				if ev.Rune() == 'A' || ev.Rune() == 'a' {
 					upgrade(func() bool {
-						u.SetStatus(fmt.Sprintf("[A] Gun Power: +%d", IncreaseGunPowerBy))
+						SetStatus(fmt.Sprintf("[A] Gun Power: +%d", IncreaseGunPowerBy))
 						return s.IncreaseGunPower(IncreaseGunPowerBy)
 					})
 				}
 				if ev.Rune() == 'S' || ev.Rune() == 's' {
 					upgrade(func() bool {
-						u.SetStatus(fmt.Sprintf("[S] Gun Speed: +%d", IncreaseGunSpeedBy))
+						SetStatus(fmt.Sprintf("[S] Gun Speed: +%d", IncreaseGunSpeedBy))
 						return s.IncreaseGunSpeed(IncreaseGunSpeedBy)
 					})
 				}
 				if ev.Rune() == 'D' || ev.Rune() == 'd' {
 					upgrade(func() bool {
-						u.SetStatus(fmt.Sprintf("[D] Gun Cap: +%d", IncreaseGunCapBy))
+						SetStatus(fmt.Sprintf("[D] Gun Cap: +%d", IncreaseGunCapBy))
 						return s.IncreaseGunCap(IncreaseGunCapBy)
 					})
 				}
 				if ev.Rune() == 'C' || ev.Rune() == 'c' {
 					upgrade(func() bool {
-						u.SetStatus("[C] Spaceship health has been restored!")
+						SetStatus("[C] Spaceship health has been restored!")
 						return s.RestoreFullHealth()
 					})
 				}
@@ -353,9 +361,10 @@ func (u *UI) MessageBox(origin core.Point, message string, title string) {
 		}
 	}
 
+	color := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	for i, line := range wrappedLines {
 		for j, r := range line {
-			window.SetContent(int(origin.GetX())+padding+j, int(origin.GetY())+padding+i, r)
+			window.SetContentWithStyle(int(origin.GetX())+padding+j, int(origin.GetY())+padding+i, r, color)
 		}
 	}
 
@@ -454,12 +463,12 @@ func DrawBoxedText(text string) {
 	})
 }
 
-func (u *UI) SetStatus(text string) {
-	u.showStatus = true
-	u.status = text
+func SetStatus(text string) {
+	showStatus = true
+	status = text
 	go func() {
 		time.Sleep(2 * time.Second)
-		u.showStatus = false
+		showStatus = false
 	}()
 }
 
@@ -478,7 +487,7 @@ func DrawRectStatus(text string) {
 
 	width := maxLen + 4
 	height := len(lines) + 2 + bottomPadding
-	DrawRect(core.Point{X: (w * 2) - width - 1, Y: 15}, width, height, func(x, y int) {
+	DrawRect(core.Point{X: (w * 2) - width - 6, Y: 15}, width, height, func(x, y int) {
 		for row, line := range lines {
 			for col, r := range line {
 				window.SetContentWithStyle(x+col, y+row, r, color)

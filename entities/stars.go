@@ -33,11 +33,13 @@ func (s *StarProducer) Deployment() {
 	randSpeed := rand.Intn(max(s.Cfg.StarsConfig.Speed, 30)) + 10 // ensure the speed its always high < 30 larger than 30
 	s.Stars = append(s.Stars, &Star{
 		FallingObjectBase: FallingObjectBase{
-			Health:      1,
-			Speed:       randSpeed,
-			OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-			Width:       1,
-			Height:      1,
+			ObjectBase: ObjectBase{
+				Health:      1,
+				OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
+				Width:       1,
+				Height:      1,
+			},
+			Speed: randSpeed,
 		},
 	})
 }

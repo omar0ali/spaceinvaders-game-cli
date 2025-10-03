@@ -2,6 +2,7 @@ package entities
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -14,12 +15,16 @@ const (
 	HealthBoxEmptyStyle = '□'
 )
 
-type FallingObjectBase struct {
+type ObjectBase struct {
 	Health        int
 	MaxHealth     int
-	Speed         int
 	OriginPoint   core.PointFloat
 	Width, Height int
+}
+
+type FallingObjectBase struct {
+	ObjectBase
+	Speed int
 }
 
 func (f *FallingObjectBase) GetHealth() int {
@@ -49,20 +54,24 @@ func (f *FallingObjectBase) isHit(pointBeam core.PointInterface, power int) bool
 		r      rune
 		style  tcell.Style
 	}{
-		{-1, 0, tcell.RuneBoard, yellowColor},
-		{1, 0, tcell.RuneBoard, yellowColor},
-		{0, -1, tcell.RuneBoard, grayColor},
-		{0, 1, tcell.RuneBoard, grayColor},
-		{-1, -1, tcell.RuneCkBoard, grayColor},
-		{1, -1, tcell.RuneCkBoard, grayColor},
-		{-1, 1, tcell.RuneCkBoard, redColor},
-		{1, 1, tcell.RuneBoard, grayColor},
+		{0, 0, '*', yellowColor},
+		{-1, 0, '-', yellowColor},
+		{1, 0, '-', yellowColor},
+		{0, -1, '|', grayColor},
+		{0, 1, '|', grayColor},
+		{-1, -1, '\\', grayColor},
+		{1, -1, '/', grayColor},
+		{-1, 1, '/', redColor},
+		{1, 1, '\\', grayColor},
 	}
 
-	if pointBeam.GetX() >= f.OriginPoint.X &&
-		pointBeam.GetX() <= f.OriginPoint.X+float64(f.Width) &&
-		pointBeam.GetY() >= f.OriginPoint.Y &&
-		pointBeam.GetY() <= f.OriginPoint.Y+float64(f.Height-2) {
+	px := int(math.Round(pointBeam.GetX()))
+	py := int(math.Round(pointBeam.GetY()))
+	ox := int(math.Round(f.OriginPoint.X))
+	oy := int(math.Round(f.OriginPoint.Y))
+
+	if px >= ox && px < ox+f.Width &&
+		py >= oy && py < oy+f.Height {
 
 		f.Health -= power // update health of the falling object
 
