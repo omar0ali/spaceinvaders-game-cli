@@ -102,7 +102,7 @@ func (f *FallingObjectBase) Move(delta float64) {
 func MoveTo(from, to *ObjectBase, delta float64, gc *game.GameContext) {
 	distance := from.Speed * delta
 
-	const toleranceX = 1
+	const toleranceX = 2
 	const toleranceY = 5
 
 	bossCenterX := from.Position.X + float64(from.Width)/2
@@ -115,7 +115,7 @@ func MoveTo(from, to *ObjectBase, delta float64, gc *game.GameContext) {
 			from.Position.AppendX(distance)
 		}
 	}
-	targetY := to.Position.Y - float64(to.Height) - 15
+	targetY := to.Position.Y - float64(to.Height) - 18
 	if targetY < -5 {
 		targetY = -5
 	}
