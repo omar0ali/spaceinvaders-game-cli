@@ -11,9 +11,10 @@ import (
 )
 
 const (
-	IncreaseGunCapBy   = 1
-	IncreaseGunPowerBy = 1
-	IncreaseGunSpeedBy = 1
+	IncreaseGunCapBy      = 1
+	IncreaseGunPowerBy    = 1
+	IncreaseGunSpeedBy    = 1
+	DecreaseGunCooldownBy = 3
 )
 
 var (
@@ -136,7 +137,8 @@ func (u *UI) Draw(gc *game.GameContext) {
 				[A] (%d) Increase Gun Power by %d
 				[S] (%d/%d) Increase Gun Speed by %d
 				[D] (%d/%d) Increase Gun Capacity by %d
-				[C] (%d/%d) Restore Full Health
+				[C] (%d) Decrease Gun Cooldown by %d
+				[H] (%d/%d) Restore Full Health
 				`, level,
 					s.GetPower(),
 					IncreaseGunPowerBy,
@@ -146,6 +148,8 @@ func (u *UI) Draw(gc *game.GameContext) {
 					s.GetCapacity(),
 					s.cfg.SpaceShipConfig.GunMaxCap,
 					IncreaseGunCapBy,
+					s.GetCooldown(),
+					DecreaseGunCooldownBy,
 					s.Health,
 					s.SelectedSpaceship.EntityHealth),
 				"Level Up")
@@ -300,12 +304,24 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 							return s.IncreaseGunCap(IncreaseGunCapBy, s.cfg.SpaceShipConfig.GunMaxCap)
 						})
 					}
-					if ev.Rune() == 'C' || ev.Rune() == 'c' {
+					if ev.Rune() == 'H' || ev.Rune() == 'h' {
 						upgrade(func() bool {
-							SetStatus("[C] Spaceship health has been restored!")
+							SetStatus("[H] Spaceship health has been restored!")
 							return s.RestoreFullHealth()
 						})
 					}
+
+					if ev.Rune() == 'C' || ev.Rune() == 'c' {
+						upgrade(func() bool {
+							if s.DecreaseCooldown(DecreaseGunCooldownBy) {
+								SetStatus(fmt.Sprintf("[C] Gun Cooldown: -%d", DecreaseGunCooldownBy))
+								return true
+							}
+							SetStatus("[C] Gun Cooldown: Maxed Out!")
+							return false
+						})
+					}
+
 				}
 			}
 		}
@@ -471,7 +487,7 @@ func SetStatus(text string) {
 	showStatus = true
 	status = text
 	go func() {
-		time.Sleep(2 * time.Second)
+		time.Sleep(3 * time.Second)
 		showStatus = false
 	}()
 }
