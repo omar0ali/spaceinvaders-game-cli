@@ -13,16 +13,9 @@ next_level_score = 300
 gun_max_cap = 15
 gun_max_speed = 75
 
-[aliens]
-limit = 1
-health = 1
-speed = 3
-gun_speed = 35
-gun_power = 1
-
 [stars] 
 limit = 10
-speed = 45
+speed = 50
 `
 
 type GameConfig struct {
@@ -32,13 +25,6 @@ type GameConfig struct {
 		GunMaxCap      int `toml:"gun_max_cap"`
 		GunMaxSpeed    int `toml:"gun_max_speed"`
 	} `toml:"spaceship"`
-	AliensConfig struct {
-		Limit    int `toml:"limit"`
-		Health   int `toml:"health"`
-		Speed    int `toml:"speed"`
-		GunSpeed int `toml:"gun_speed"`
-		GunPower int `toml:"gun_power"`
-	} `toml:"aliens"`
 	StarsConfig struct {
 		Limit int `toml:"limit"`
 		Speed int `toml:"speed"`

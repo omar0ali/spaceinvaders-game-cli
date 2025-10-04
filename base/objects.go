@@ -1,4 +1,5 @@
-package entities
+// Package base
+package base
 
 import (
 	"fmt"
@@ -6,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/omar0ali/spaceinvaders-game-cli/core"
+	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
@@ -15,35 +16,40 @@ const (
 	HealthBoxEmptyStyle = '□'
 )
 
+type HealthBar interface {
+	GetHealth() int
+	GetMaxHealth() int
+}
+
 type ObjectBase struct {
 	Health        int
 	MaxHealth     int
-	OriginPoint   core.PointFloat
+	Position      game.PointFloat
 	Width, Height int
+	Speed         float64
 }
 
 type FallingObjectBase struct {
 	ObjectBase
-	Speed int
 }
 
-func (f *FallingObjectBase) GetHealth() int {
+func (f *ObjectBase) GetHealth() int {
 	return f.Health
 }
 
-func (f *FallingObjectBase) GetMaxHealth() int {
+func (f *ObjectBase) GetMaxHealth() int {
 	return f.MaxHealth
 }
 
-func (f *FallingObjectBase) isOffScreen(h int) bool {
-	return int(f.OriginPoint.Y) > h-2
+func (f *ObjectBase) IsOffScreen(h int) bool {
+	return int(f.Position.Y) > h-2
 }
 
-func (f *FallingObjectBase) isDead() bool {
+func (f *ObjectBase) IsDead() bool {
 	return f.Health <= 0
 }
 
-func (f *FallingObjectBase) isHit(pointBeam core.PointInterface, power int) bool {
+func (f *ObjectBase) IsHit(pointBeam game.PointInterface, power int) bool {
 	grayColor := window.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
 	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
 	yellowColor := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
@@ -67,8 +73,8 @@ func (f *FallingObjectBase) isHit(pointBeam core.PointInterface, power int) bool
 
 	px := int(math.Round(pointBeam.GetX()))
 	py := int(math.Round(pointBeam.GetY()))
-	ox := int(math.Round(f.OriginPoint.X))
-	oy := int(math.Round(f.OriginPoint.Y))
+	ox := int(math.Round(f.Position.X))
+	oy := int(math.Round(f.Position.Y))
 
 	if px >= ox && px < ox+f.Width &&
 		py >= oy && py < oy+f.Height {
@@ -88,33 +94,45 @@ func (f *FallingObjectBase) isHit(pointBeam core.PointInterface, power int) bool
 	return false
 }
 
-func (f *FallingObjectBase) move(delta float64) {
-	distance := float64(f.Speed) * delta
-	f.OriginPoint.AppendY(distance)
+func (f *FallingObjectBase) Move(delta float64) {
+	distance := f.Speed * delta
+	f.Position.AppendY(distance)
 }
 
-type ObjectOpts struct {
-	Health        int
-	Speed         int
-	OriginPoint   core.PointFloat
-	Width, Height int
+func MoveTo(from, to *ObjectBase, delta float64, gc *game.GameContext) {
+	distance := from.Speed * delta
+
+	const toleranceX = 1
+	const toleranceY = 5
+
+	bossCenterX := from.Position.X + float64(from.Width)/2
+	shipCenterX := to.Position.X + float64(to.Width)/2 + 2
+
+	if math.Abs(bossCenterX-shipCenterX) > toleranceX {
+		if bossCenterX > shipCenterX {
+			from.Position.AppendX(-distance)
+		} else {
+			from.Position.AppendX(distance)
+		}
+	}
+	targetY := to.Position.Y - float64(to.Height) - 15
+	if targetY < -5 {
+		targetY = -5
+	}
+
+	if math.Abs(from.Position.Y-targetY) > toleranceY {
+		if from.Position.Y > targetY {
+			from.Position.AppendY(-distance)
+		} else {
+			from.Position.AppendY(distance)
+		}
+	}
 }
 
-type FallingObjects interface {
-	move(distance float64)
-	isHit(point core.PointInterface)
-	NewObject(health, speed int, origin core.PointFloat)
-}
-
-type HealthBar interface {
-	GetHealth() int
-	GetMaxHealth() int
-}
-
-func (f *FallingObjectBase) DisplayHealth(barSize int, showStats bool, style tcell.Style) {
+func (f *ObjectBase) DisplayHealth(barSize int, showStats bool, style tcell.Style) {
 	DisplayHealth(
-		int(f.OriginPoint.GetX())+(f.Width/2)-(barSize/2)-1,
-		int(f.OriginPoint.GetY()-1),
+		int(f.Position.GetX())+(f.Width/2)-(barSize/2)-1,
+		int(f.Position.GetY()-1),
 		barSize,
 		f,
 		showStats,

@@ -31,6 +31,11 @@ type SpaceshipDesign struct {
 	GunCap   int `json:"gun_cap"`
 }
 
+type AlienshipDesign struct {
+	SpaceshipDesign
+	Speed int `json:"speed"`
+}
+
 func (d *Design) GetColor() tcell.Color {
 	return HexToColor(d.Color)
 }

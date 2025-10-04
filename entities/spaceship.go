@@ -5,7 +5,8 @@ import (
 	"fmt"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/omar0ali/spaceinvaders-game-cli/core"
+	"github.com/omar0ali/spaceinvaders-game-cli/base"
+	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
@@ -18,37 +19,14 @@ var (
 )
 
 type SpaceShip struct {
-	Gun
-	ObjectBase
+	base.Gun
+	base.ObjectBase
 	Width, Height     int
-	cfg               core.GameConfig
+	cfg               game.GameConfig
 	OnLevelUp         []func(newLevel int)
-	SelectedSpaceship *core.SpaceshipDesign
-	ListOfSpaceships  []core.SpaceshipDesign
+	SelectedSpaceship *game.SpaceshipDesign
+	ListOfSpaceships  []game.SpaceshipDesign
 	healthKitsOwned   int
-}
-
-func (s *SpaceShip) IncreaseGunPower(i int) bool {
-	s.Power += i
-	return true
-}
-
-func (s *SpaceShip) IncreaseGunSpeed(i int) bool {
-	if s.Speed < s.cfg.SpaceShipConfig.GunMaxSpeed {
-		s.Speed += i
-		s.Speed = min(s.Speed, s.cfg.SpaceShipConfig.GunMaxSpeed)
-		return true
-	}
-	return false
-}
-
-func (s *SpaceShip) IncreaseGunCap(i int) bool {
-	if s.Cap < s.cfg.SpaceShipConfig.GunMaxCap {
-		s.Cap += i
-		s.Cap = min(s.Cap, s.cfg.SpaceShipConfig.GunMaxCap)
-		return true
-	}
-	return false
 }
 
 func (s *SpaceShip) RestoreFullHealth() bool {
@@ -74,9 +52,9 @@ func (s *SpaceShip) AddOnLevelUp(fn func(newLevel int)) {
 
 // player initialized in the bottom center of the secreen by default
 
-func NewSpaceShip(cfg core.GameConfig, gc *core.GameContext) *SpaceShip {
+func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
 	w, h := window.GetSize()
-	origin := core.PointFloat{
+	origin := game.PointFloat{
 		X: float64(w / 2),
 		Y: float64(h - 3),
 	}
@@ -90,7 +68,7 @@ func NewSpaceShip(cfg core.GameConfig, gc *core.GameContext) *SpaceShip {
 	ModifierHealth = 5
 	IncreaseHealthBy = 3
 
-	designs, err := core.LoadListOfAssets[core.SpaceshipDesign]("spaceships.json")
+	designs, err := game.LoadListOfAssets[game.SpaceshipDesign]("spaceships.json")
 	if err != nil {
 		panic(err)
 	}
@@ -98,8 +76,8 @@ func NewSpaceShip(cfg core.GameConfig, gc *core.GameContext) *SpaceShip {
 	nextLevelScore = cfg.SpaceShipConfig.NextLevelScore
 
 	return &SpaceShip{
-		ObjectBase: ObjectBase{
-			OriginPoint: origin,
+		ObjectBase: base.ObjectBase{
+			Position: origin,
 		},
 		ListOfSpaceships: designs,
 		cfg:              cfg,
@@ -108,12 +86,11 @@ func NewSpaceShip(cfg core.GameConfig, gc *core.GameContext) *SpaceShip {
 }
 
 func (s *SpaceShip) SpaceshipSelection(id int) string {
-	s.Gun = Gun{
-		Beams: []*Beam{},
-		Cap:   s.ListOfSpaceships[id].GunCap,
-		Power: s.ListOfSpaceships[id].GunPower,
-		Speed: s.ListOfSpaceships[id].GunSpeed,
-	}
+	s.Gun = base.NewGun(
+		s.ListOfSpaceships[id].GunCap,
+		s.ListOfSpaceships[id].GunPower,
+		s.ListOfSpaceships[id].GunSpeed,
+	)
 	s.SelectedSpaceship = &s.ListOfSpaceships[id]
 	s.Health = s.ListOfSpaceships[id].EntityHealth
 	s.MaxHealth = s.ListOfSpaceships[id].EntityHealth
@@ -122,7 +99,7 @@ func (s *SpaceShip) SpaceshipSelection(id int) string {
 	return s.SelectedSpaceship.Name
 }
 
-func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
+func (s *SpaceShip) Update(gc *game.GameContext, delta float64) {
 	defer s.Gun.Update(gc, delta)
 	if s.Health <= 0 && s.SelectedSpaceship != nil {
 		if ui, ok := gc.FindEntity("ui").(*UI); ok {
@@ -138,7 +115,7 @@ func (s *SpaceShip) Update(gc *core.GameContext, delta float64) {
 	s.MovementAndCollision(delta, gc)
 }
 
-func (s *SpaceShip) Draw(gc *core.GameContext) {
+func (s *SpaceShip) Draw(gc *game.GameContext) {
 	if s.SelectedSpaceship == nil {
 		return
 	}
@@ -150,18 +127,18 @@ func (s *SpaceShip) Draw(gc *core.GameContext) {
 	for rowIndex, line := range s.SelectedSpaceship.Shape {
 		for colIndex, char := range line {
 			if char != ' ' {
-				x := int(s.OriginPoint.GetX()) + colIndex
-				y := int(s.OriginPoint.GetY()) + rowIndex
+				x := int(s.Position.GetX()) + colIndex
+				y := int(s.Position.GetY()) + rowIndex
 				window.SetContentWithStyle(x, y, char, color)
 			}
 		}
 	}
 	barSize := 5
-	DisplayHealth(int(s.OriginPoint.GetX())+(s.Width/2)-(barSize/2)-1, int(s.OriginPoint.GetY())+(s.Height), barSize, s, false, color)
+	base.DisplayHealth(int(s.Position.GetX())+(s.Width/2)-(barSize/2)-1, int(s.Position.GetY())+(s.Height), barSize, s, false, color)
 	// -1 because there are the brackets []. So the barSize+[] which is + 2.
 }
 
-func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
+func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 	if s.SelectedSpaceship == nil {
 		return
 	}
@@ -169,14 +146,14 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 	defer s.Gun.InputEvents(event, gc)
 
 	moveMouse := func(x int, y int) {
-		s.OriginPoint.X = float64(x - (s.Width / 2))
-		s.OriginPoint.Y = float64(y - (s.Height / 2))
+		s.Position.X = float64(x - (s.Width / 2))
+		s.Position.Y = float64(y - (s.Height / 2))
 	}
 
 	shootBeam := func() {
-		x := int(s.OriginPoint.GetX()) + s.Width/2
-		y := int(s.OriginPoint.Y)
-		s.initBeam(core.Point{X: x, Y: y}, Up)
+		x := int(s.Position.GetX()) + s.Width/2
+		y := int(s.Position.Y)
+		s.InitBeam(game.Point{X: x, Y: y}, base.Up)
 	}
 
 	switch ev := event.(type) {
@@ -207,7 +184,7 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *core.GameContext) {
 	}
 }
 
-func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
+func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 	if s.SelectedSpaceship == nil {
 		return
 	}
@@ -225,7 +202,7 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 
 	// display health at the bottome left
 	_, h := window.GetSize()
-	DisplayHealth(0, h-7, 10, s, true, whiteColor)
+	base.DisplayHealth(0, h-7, 10, s, true, whiteColor)
 
 	healthStr := []rune(fmt.Sprintf("[HP Kit: %d/%d]", s.healthKitsOwned, MaxHealthKitsToOwn))
 	for i, r := range healthStr {
@@ -236,33 +213,42 @@ func (s *SpaceShip) UISpaceshipData(gc *core.GameContext) {
 		window.SetContentWithStyle(i, h-6, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("[CAP:   %d/%d", len(s.Beams), s.Cap)) {
+	for i, r := range []rune(fmt.Sprintf("[CAP:   %d/%d", len(s.GetBeams()), s.GetCapacity())) {
 		window.SetContentWithStyle(i, h-5, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("[POW:   %d", s.Power)) {
+	for i, r := range []rune(fmt.Sprintf("[POW:   %d", s.GetPower())) {
 		window.SetContentWithStyle(i, h-4, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("[SPD:   %d", s.Speed)) {
+	for i, r := range []rune(fmt.Sprintf("[SPD:   %d", s.GetSpeed())) {
 		window.SetContentWithStyle(i, h-3, r, whiteColor)
 	}
 }
 
-func (s *SpaceShip) MovementAndCollision(delta float64, gc *core.GameContext) {
+func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 	if a, ok := gc.FindEntity("alien").(*AlienProducer); ok {
 		for _, alien := range a.Aliens {
 			// check alien shooting the spaceship
-			for _, alienBeam := range alien.Beams {
-				if s.isHit(&alienBeam.position, alien.Power) {
-					alien.RemoveBeam(alienBeam) // removing the beam hitting spaceship
+			for _, alienBeam := range alien.GetBeams() {
+				if s.isHit(alienBeam.GetPosition(), alien.GetPower()) {
+					alien.RemoveBeam(alienBeam)
+				}
+			}
+		}
+	}
+	if b, ok := gc.FindEntity("boss").(*BossProducer); ok {
+		if b.BossAlien != nil {
+			for _, bossBeam := range b.BossAlien.Gun.GetBeams() {
+				if s.isHit(bossBeam.GetPosition(), b.BossAlien.GetPower()) {
+					b.BossAlien.RemoveBeam(bossBeam)
 				}
 			}
 		}
 	}
 }
 
-func (s *SpaceShip) isHit(pointBeam core.PointInterface, power int) bool {
+func (s *SpaceShip) isHit(pointBeam game.PointInterface, power int) bool {
 	grayColor := window.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
 	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
 	yellowColor := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
@@ -283,10 +269,10 @@ func (s *SpaceShip) isHit(pointBeam core.PointInterface, power int) bool {
 		{1, 1, tcell.RuneBoard, grayColor},
 	}
 
-	if int(pointBeam.GetX()) >= int(s.OriginPoint.GetX()) &&
-		int(pointBeam.GetX()) <= int(s.OriginPoint.GetX())+s.Width &&
-		int(pointBeam.GetY()) >= int(s.OriginPoint.GetY()) &&
-		int(pointBeam.GetY()) <= int(s.OriginPoint.GetY())+s.Height {
+	if int(pointBeam.GetX()) >= int(s.Position.GetX()) &&
+		int(pointBeam.GetX()) <= int(s.Position.GetX())+s.Width &&
+		int(pointBeam.GetY()) >= int(s.Position.GetY()) &&
+		int(pointBeam.GetY()) <= int(s.Position.GetY())+s.Height {
 
 		s.Health -= power // update health of the falling object
 
@@ -326,7 +312,7 @@ func ScoreKill() {
 }
 
 func (s *SpaceShip) ScoreHit() {
-	score += s.Power * 2
+	score += s.GetPower() * 2
 }
 
 func (s *SpaceShip) GetType() string {
