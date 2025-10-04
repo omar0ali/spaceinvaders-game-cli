@@ -15,19 +15,17 @@ type Star struct {
 
 type StarProducer struct {
 	Stars []*Star
-	Limit int
 	Cfg   game.GameConfig
 }
 
 func NewStarsProducer(cfg game.GameConfig) *StarProducer {
 	return &StarProducer{
 		Stars: []*Star{},
-		Limit: max(cfg.StarsConfig.Limit, 15),
 		Cfg:   cfg,
 	}
 }
 
-func (s *StarProducer) Deployment() {
+func (s *StarProducer) Deploy() {
 	w, _ := window.GetSize()
 	xPos := rand.Intn(w)
 
@@ -47,8 +45,9 @@ func (s *StarProducer) Deployment() {
 }
 
 func (s *StarProducer) Update(gc *game.GameContext, delta float64) {
-	if len(s.Stars) < s.Limit {
-		s.Deployment()
+	limit := s.Cfg.StarsConfig.Limit
+	if len(s.Stars) < limit {
+		s.Deploy()
 	}
 
 	// Update the coordinates of the stars.
