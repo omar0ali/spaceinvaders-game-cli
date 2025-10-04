@@ -3,15 +3,16 @@ package main
 
 import (
 	"github.com/gdamore/tcell/v2"
-	"github.com/omar0ali/spaceinvaders-game-cli/core"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities"
+	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
-func DeployEntities(gc *core.GameContext, cfg core.GameConfig) {
+func DeployEntities(gc *game.GameContext, cfg game.GameConfig) {
 	// order is important since some objects might overlap others
 	gc.AddEntity(entities.NewSpaceShip(cfg, gc))
-	gc.AddEntity(entities.NewAlienProducer(cfg, gc))
+	gc.AddEntity(entities.NewAlienProducer(gc))
+	gc.AddEntity(entities.NewBossAlienProducer(cfg, gc))
 	gc.AddEntity(&entities.Producer{})
 	gc.AddEntity(entities.NewStarsProducer(cfg))
 	gc.AddEntity(entities.NewUI(gc))
@@ -23,10 +24,10 @@ func main() {
 	// ------------------------------- Setup ------------------------------------
 	screen := window.InitScreen(window.EnableMouse)
 	screen.SetTitle("Space Invader Game")
-	cfg := core.LoadConfig()
+	cfg := game.LoadConfig()
 
 	// ------------------------------------- Objects ----------------------------------
-	gameContext := core.GameContext{
+	gameContext := game.GameContext{
 		Screen: screen,
 	}
 	// ---------------------------------- entities --------------------------------------
