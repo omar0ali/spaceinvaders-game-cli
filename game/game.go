@@ -1,5 +1,5 @@
-// Package core
-package core
+// Package game
+package game
 
 import (
 	"github.com/gdamore/tcell/v2"
