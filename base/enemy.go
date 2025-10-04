@@ -30,7 +30,11 @@ func Deploy(fileDesigns string, level int) *Enemy {
 	width := len(design.Shape[0])
 	height := len(design.Shape)
 
-	randSpeed := rand.Float64()*float64(design.Speed) + 2
+	// TODO: I need to know if its boss fight or alien ship. cuz the speed differ. The boss should be always start from 50
+
+	// will pick the first alienship as the min or starting point.
+	lowest := designs[0].Speed
+	randSpeed := rand.Float64()*float64(design.Speed) + float64(lowest) - 1
 	alien := &Enemy{
 		FallingObjectBase: FallingObjectBase{
 			ObjectBase: ObjectBase{
@@ -42,12 +46,12 @@ func Deploy(fileDesigns string, level int) *Enemy {
 				Speed:     randSpeed,
 			},
 		},
-		Gun:             NewGun(design.GunCap*level, design.GunPower, design.GunSpeed),
+		Gun:             NewGun(design.GunCap, design.GunPower, design.GunSpeed, design.GunCooldown),
 		AlienshipDesign: design,
 	}
 
 	done := make(chan struct{})
-	go DoEvery(2*time.Second,
+	go DoEvery(100*time.Millisecond,
 		func() {
 			alien.InitBeam(game.Point{
 				X: int(alien.Position.X) + (alien.Width / 2),

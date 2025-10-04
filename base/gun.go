@@ -1,6 +1,9 @@
 package base
 
 import (
+	"sync"
+	"time"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
@@ -19,7 +22,7 @@ type beam struct {
 	Direction Direction
 }
 
-func (b beam) GetPosition() *game.Point {
+func (b *beam) GetPosition() *game.Point {
 	return &b.position
 }
 
@@ -28,23 +31,32 @@ type Gun struct {
 	cap   int
 	power int
 	speed int
+
+	mu       sync.Mutex
+	lastShot time.Time
+	cooldown time.Duration
 }
 
-func NewGun(cap, power, speed int) Gun {
+func NewGun(cap, power, speed int, cooldown int) Gun {
 	return Gun{
-		beams: []*beam{},
-		cap:   cap,
-		power: power,
-		speed: speed,
+		beams:    []*beam{},
+		cap:      cap,
+		power:    power,
+		speed:    speed,
+		cooldown: time.Duration(cooldown) * time.Millisecond,
 	}
 }
 
-func (g Gun) GetPower() int {
+func (g *Gun) GetPower() int {
 	return g.power
 }
 
-func (g Gun) GetSpeed() int {
+func (g *Gun) GetSpeed() int {
 	return g.speed
+}
+
+func (g *Gun) GetCooldown() time.Duration {
+	return g.cooldown / time.Millisecond
 }
 
 func (g *Gun) IncreaseGunSpeed(i, limit int) bool {
@@ -61,6 +73,14 @@ func (g *Gun) IncreaseGunPower(i int) bool {
 	return true
 }
 
+func (g *Gun) DecreaseCooldown(i int) bool {
+	if g.cooldown < 30 {
+		return false
+	}
+	g.cooldown -= time.Duration(i) * time.Millisecond
+	return true
+}
+
 func (g *Gun) IncreaseGunCap(i, limit int) bool {
 	if g.cap < limit {
 		g.cap += i
@@ -70,15 +90,22 @@ func (g *Gun) IncreaseGunCap(i, limit int) bool {
 	return false
 }
 
-func (g Gun) GetCapacity() int {
+func (g *Gun) GetCapacity() int {
 	return g.cap
 }
 
-func (g Gun) GetBeams() []*beam {
+func (g *Gun) GetBeams() []*beam {
 	return g.beams
 }
 
 func (g *Gun) InitBeam(pos game.Point, dir Direction) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+
+	if time.Since(g.lastShot) < g.cooldown {
+		return
+	}
+
 	if len(g.beams) >= g.cap {
 		return
 	}
@@ -89,14 +116,15 @@ func (g *Gun) InitBeam(pos game.Point, dir Direction) {
 	}
 
 	beam := beam{
-		game.Point{
+		position: game.Point{
 			X: pos.X,
 			Y: pos.Y,
 		},
-		symbol,
-		dir,
+		Symbol:    symbol,
+		Direction: dir,
 	}
 	g.beams = append(g.beams, &beam)
+	g.lastShot = time.Now()
 }
 
 func (g *Gun) RemoveBeam(beam *beam) {
