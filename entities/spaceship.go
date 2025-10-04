@@ -90,6 +90,7 @@ func (s *SpaceShip) SpaceshipSelection(id int) string {
 		s.ListOfSpaceships[id].GunCap,
 		s.ListOfSpaceships[id].GunPower,
 		s.ListOfSpaceships[id].GunSpeed,
+		s.ListOfSpaceships[id].GunCooldown,
 	)
 	s.SelectedSpaceship = &s.ListOfSpaceships[id]
 	s.Health = s.ListOfSpaceships[id].EntityHealth
@@ -142,8 +143,6 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 	if s.SelectedSpaceship == nil {
 		return
 	}
-
-	defer s.Gun.InputEvents(event, gc)
 
 	moveMouse := func(x int, y int) {
 		s.Position.X = float64(x - (s.Width / 2))
@@ -202,26 +201,31 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 
 	// display health at the bottome left
 	_, h := window.GetSize()
-	base.DisplayHealth(0, h-7, 10, s, true, whiteColor)
 
 	healthStr := []rune(fmt.Sprintf("[HP Kit: %d/%d]", s.healthKitsOwned, MaxHealthKitsToOwn))
 	for i, r := range healthStr {
-		window.SetContentWithStyle(i, h-8, r, whiteColor)
+		window.SetContentWithStyle(i, h-9, r, whiteColor)
 	}
 
+	base.DisplayHealth(0, h-8, 10, s, true, whiteColor)
+
 	for i, r := range []rune(fmt.Sprintf("[Level: %d", level)) {
-		window.SetContentWithStyle(i, h-6, r, whiteColor)
+		window.SetContentWithStyle(i, h-7, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("[CAP:   %d/%d", len(s.GetBeams()), s.GetCapacity())) {
-		window.SetContentWithStyle(i, h-5, r, whiteColor)
+		window.SetContentWithStyle(i, h-6, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("[POW:   %d", s.GetPower())) {
-		window.SetContentWithStyle(i, h-4, r, whiteColor)
+		window.SetContentWithStyle(i, h-5, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("[SPD:   %d", s.GetSpeed())) {
+		window.SetContentWithStyle(i, h-4, r, whiteColor)
+	}
+
+	for i, r := range []rune(fmt.Sprintf("[CD:   %d ms", int(s.GetCooldown()))) {
 		window.SetContentWithStyle(i, h-3, r, whiteColor)
 	}
 }
@@ -239,7 +243,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 	}
 	if b, ok := gc.FindEntity("boss").(*BossProducer); ok {
 		if b.BossAlien != nil {
-			for _, bossBeam := range b.BossAlien.Gun.GetBeams() {
+			for _, bossBeam := range b.BossAlien.GetBeams() {
 				if s.isHit(bossBeam.GetPosition(), b.BossAlien.GetPower()) {
 					b.BossAlien.RemoveBeam(bossBeam)
 				}
@@ -293,8 +297,8 @@ func (s *SpaceShip) LevelUp() {
 	if level > previousLevel {
 
 		// TODO: Refactor
-		ModifierHealth += 4
-		IncreaseHealthBy += 0.2
+		ModifierHealth += 5
+		IncreaseHealthBy += 0.3
 
 		if s.cfg.SpaceShipConfig.MaxLevel <= level {
 			return // skip when reaching max level, will not increase any elements of other objects
