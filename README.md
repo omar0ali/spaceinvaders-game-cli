@@ -64,7 +64,7 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] Redesign UI of the spaceship selection.
 - [X] Adding status pop up. Will show to keep the player up to date.
 - [X] Add another drop down to increase other spaceship stats. 
-- [ ] Boss Fights ever 5 levels.
+- [X] Boss Fights ever 5 levels.
 
 ### Controls
 
@@ -88,13 +88,6 @@ max_level = 50
 next_level_score = 300
 gun_max_cap = 15
 gun_max_speed = 75
-
-[aliens]
-limit = 1
-health = 1
-speed = 3
-gun_speed = 35
-gun_power = 1
 
 [stars] 
 limit = 10

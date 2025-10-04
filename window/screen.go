@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/omar0ali/spaceinvaders-game-cli/core"
+	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
 type OptsFunc func(*WindowOpts)
@@ -174,10 +174,10 @@ func StyleIt(background, forground tcell.Color) tcell.Style {
 	return tcell.StyleDefault.Background(background).Foreground(forground)
 }
 
-func GetCenterPoint() core.Point {
+func GetCenterPoint() game.Point {
 	if screen == nil {
 		log.Fatal("[GetCenterPoint] Screen must be initialized first. Call InitScreen()")
 	}
 	w, h := GetSize()
-	return core.Point{X: w / 2, Y: h / 2}
+	return game.Point{X: w / 2, Y: h / 2}
 }
