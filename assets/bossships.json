@@ -3,6 +3,10 @@
         "name": "dreadnought",
         "health": 500,
         "color": "9400D3",
+        "speed": 10,
+        "gun_speed": 35,
+        "gun_power": 1,
+        "gun_cap": 2,
         "shape": [
             "   [========]   ",
             "   [  ||||  ]   ",
@@ -16,8 +20,12 @@
     },
     {
         "name": "oblivion_cruiser",
-        "health": 650,
+        "health": 750,
         "color": "FF1493",
+        "speed": 15,
+        "gun_speed": 35,
+        "gun_power": 1,
+        "gun_cap": 3,
         "shape": [
             " [==============] ",
             " [   ||    ||   ] ",
@@ -33,6 +41,10 @@
         "name": "alien_overlord",
         "health": 1000,
         "color": "228B22",
+        "speed": 20,
+        "gun_speed": 40,
+        "gun_power": 1,
+        "gun_cap": 3,
         "shape": [
             "   [::::::::::::]   ",
             "  <[            ]>  ",
@@ -48,8 +60,12 @@
     },
     {
         "name": "iron_titan",
-        "health": 750,
+        "health": 1300,
         "color": "1E90FF",
+        "speed": 22,
+        "gun_speed": 40,
+        "gun_power": 2,
+        "gun_cap": 3,
         "shape": [
             "         ^         ",
             "     /------\\     ",
@@ -65,8 +81,12 @@
     },
     {
         "name": "dread_fortress",
-        "health": 900,
+        "health": 1500,
         "color": "FF8C00",
+        "speed": 23,
+        "gun_speed": 45,
+        "gun_power": 2,
+        "gun_cap": 3,
         "shape": [
             "  ^              ^  ",
             " [================] ",
@@ -81,8 +101,12 @@
     },
     {
         "name": "celestial_warden",
-        "health": 850,
+        "health": 1800,
         "color": "00CED1",
+        "speed": 25,
+        "gun_speed": 45,
+        "gun_power": 3,
+        "gun_cap": 3,
         "shape": [
             "         ^         ",
             "     /------\\     ",
@@ -98,11 +122,15 @@
     },
     {
         "name": "void_reaper",
-        "health": 950,
+        "health": 2000,
         "color": "8B0000",
+        "speed": 30,
+        "gun_speed": 50,
+        "gun_power": 3,
+        "gun_cap": 3,
         "shape": [
             "   .-[********]-.   ",
-            "  [  |  |  |  |  ]  ",
+            " -[  |  |  |  |  ]- ",
             "  [  [##]  [##]  ]  ",
             "  [  |  |  |  |  ]  ",
             "   '-[********]-'   ",

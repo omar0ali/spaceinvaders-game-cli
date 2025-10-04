@@ -3,6 +3,10 @@
         "name": "arrow",
         "health": 50,
         "color": "F88379",
+        "speed": 4,
+        "gun_speed": 35,
+        "gun_power": 1,
+        "gun_cap": 2,
         "shape": [
             "      ^      ",
             "     /|\\     ",
@@ -16,6 +20,10 @@
         "name": "triangle",
         "health": 100,
         "color": "ADCCED",
+        "speed": 3,
+        "gun_speed": 40,
+        "gun_power": 1,
+        "gun_cap": 2,
         "shape": [
             "  -<----->-  ",
             "    \\   /    ",
@@ -26,8 +34,12 @@
     },
     {
         "name": "diamond",
-        "health": 150,
+        "health": 130,
         "color": "FFFAFA",
+        "speed": 3,
+        "gun_speed": 35,
+        "gun_power": 1,
+        "gun_cap": 1,
         "shape": [
             "      ^      ",
             "     / \\     ",
@@ -40,8 +52,12 @@
     },
     {
         "name": "ufo",
-        "health": 200,
+        "health": 150,
         "color": "BDAD7E",
+        "speed": 4,
+        "gun_speed": 35,
+        "gun_power": 1,
+        "gun_cap": 2,
         "shape": [
             "    .---.    ",
             "  .'     '.  ",
@@ -53,19 +69,27 @@
     },
     {
         "name": "crab",
-        "health": 250,
+        "health": 180,
         "color": "8F8673",
+        "speed": 4,
+        "gun_speed": 35,
+        "gun_power": 1,
+        "gun_cap": 1,
         "shape": [
             "  \\  ^  ^  /  ",
             "   (  0 0  )  ",
             "  /(   v   )\\ ",
-            "    <----- >  "
+            "   <------->  "
         ]
     },
     {
         "name": "scout",
-        "health": 300,
+        "health": 200,
         "color": "F3E5AB",
+        "speed": 3,
+        "gun_speed": 35,
+        "gun_power": 1,
+        "gun_cap": 1,
         "shape": [
             "      ^      ",
             "     /_\\     ",
@@ -76,8 +100,12 @@
     },
     {
         "name": "viper",
-        "health": 350,
+        "health": 250,
         "color": "B39EB5",
+        "speed": 3,
+        "gun_speed": 50,
+        "gun_power": 1,
+        "gun_cap": 1,
         "shape": [
             "     /^\\     ",
             "    /   \\    ",
@@ -89,8 +117,12 @@
     },
     {
         "name": "falcon",
-        "health": 400,
+        "health": 300,
         "color": "FF991C",
+        "speed": 3,
+        "gun_speed": 60,
+        "gun_cap": 1,
+        "gun_power": 1,
         "shape": [
             "   __|__   ",
             "  /  ^  \\  ",
@@ -101,8 +133,12 @@
     },
     {
         "name": "beetle",
-        "health": 450,
+        "health": 330,
         "color": "B5C7EB",
+        "speed": 4,
+        "gun_speed": 50,
+        "gun_power": 2,
+        "gun_cap": 1,
         "shape": [
             "    /^^^\\    ",
             "   ( o o )   ",
@@ -113,8 +149,12 @@
     },
     {
         "name": "fortress",
-        "health": 500,
+        "health": 400,
         "color": "E7DFC6",
+        "speed": 3,
+        "gun_speed": 35,
+        "gun_power": 1,
+        "gun_cap": 1,
         "shape": [
             "   .-------.   ",
             "  /  O   O  \\  ",
