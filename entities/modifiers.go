@@ -5,7 +5,8 @@ import (
 	"math/rand"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/omar0ali/spaceinvaders-game-cli/core"
+	"github.com/omar0ali/spaceinvaders-game-cli/base"
+	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
@@ -17,13 +18,13 @@ var (
 )
 
 type Health struct {
-	FallingObjectBase
-	core.Design
+	base.FallingObjectBase
+	game.Design
 }
 
 type Modifier struct {
-	FallingObjectBase
-	core.ModifierDesign
+	base.FallingObjectBase
+	game.ModifierDesign
 }
 
 type Producer struct {
@@ -31,25 +32,25 @@ type Producer struct {
 	HealthKit *Health
 }
 
-func (p *Producer) Update(gc *core.GameContext, delta float64) {
+func (p *Producer) Update(gc *game.GameContext, delta float64) {
 	if p.Modifiers != nil {
-		p.Modifiers.move(delta)
+		p.Modifiers.Move(delta)
 	}
 
 	if p.HealthKit != nil {
-		p.HealthKit.move(delta)
+		p.HealthKit.Move(delta)
 	}
 	p.MovementAndCollision(delta, gc)
 }
 
-func (p *Producer) Draw(gc *core.GameContext) {
+func (p *Producer) Draw(gc *game.GameContext) {
 	if p.HealthKit != nil {
 		color := window.StyleIt(tcell.ColorReset, p.HealthKit.GetColor())
 		for rowIndex, line := range p.HealthKit.Shape {
 			for colIndex, char := range line {
 				if char != ' ' {
-					x := int(p.HealthKit.OriginPoint.GetX()) + colIndex
-					y := int(p.HealthKit.OriginPoint.GetY()) + rowIndex
+					x := int(p.HealthKit.Position.GetX()) + colIndex
+					y := int(p.HealthKit.Position.GetY()) + rowIndex
 					window.SetContentWithStyle(x, y, char, color)
 				}
 			}
@@ -61,8 +62,8 @@ func (p *Producer) Draw(gc *core.GameContext) {
 		for rowIndex, line := range p.Modifiers.Shape {
 			for colIndex, char := range line {
 				if char != ' ' {
-					x := int(p.Modifiers.OriginPoint.GetX()) + colIndex
-					y := int(p.Modifiers.OriginPoint.GetY()) + rowIndex
+					x := int(p.Modifiers.Position.GetX()) + colIndex
+					y := int(p.Modifiers.Position.GetY()) + rowIndex
 					window.SetContentWithStyle(x, y, char, color)
 				}
 			}
@@ -78,8 +79,8 @@ func (p *Producer) DeployModifiers() {
 	w, _ := window.GetSize()
 	distance := (w - (15 * 2))
 	xPos := rand.Intn(distance) + 15
-	randSpeed := rand.Intn(4) + 2
-	designs, err := core.LoadListOfAssets[core.ModifierDesign]("modifiers.json")
+
+	designs, err := game.LoadListOfAssets[game.ModifierDesign]("modifiers.json")
 	if err != nil {
 		panic(err)
 	}
@@ -88,16 +89,18 @@ func (p *Producer) DeployModifiers() {
 	width := len(design.Shape[0])
 	height := len(design.Shape)
 
+	randSpeed := rand.Float64()*float64(4) + 2
+
 	m := &Modifier{
-		FallingObjectBase: FallingObjectBase{
-			ObjectBase: ObjectBase{
-				Health:      design.EntityHealth + ModifierHealth,
-				MaxHealth:   design.EntityHealth + ModifierHealth,
-				OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-				Width:       width,
-				Height:      height,
+		FallingObjectBase: base.FallingObjectBase{
+			ObjectBase: base.ObjectBase{
+				Health:    design.EntityHealth + ModifierHealth,
+				MaxHealth: design.EntityHealth + ModifierHealth,
+				Position:  game.PointFloat{X: float64(xPos), Y: -5},
+				Width:     width,
+				Height:    height,
+				Speed:     randSpeed,
 			},
-			Speed: randSpeed,
 		},
 		ModifierDesign: design,
 	}
@@ -112,8 +115,8 @@ func (p *Producer) DeployHealthKit() {
 	w, _ := window.GetSize()
 	distance := (w - (15 * 2))
 	xPos := rand.Intn(distance) + 15
-	randSpeed := rand.Intn(4) + 2
-	design, err := core.LoadAsset[core.Design]("health_kit.json")
+
+	design, err := game.LoadAsset[game.Design]("health_kit.json")
 	if err != nil {
 		panic(err)
 	}
@@ -121,22 +124,24 @@ func (p *Producer) DeployHealthKit() {
 	width := len(design.Shape[0])
 	height := len(design.Shape)
 
+	randSpeed := rand.Float64()*float64(4) + 2
+
 	p.HealthKit = &Health{
-		FallingObjectBase: FallingObjectBase{
-			ObjectBase: ObjectBase{
-				Health:      design.EntityHealth + ModifierHealth,
-				MaxHealth:   design.EntityHealth + ModifierHealth,
-				OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-				Width:       width,
-				Height:      height,
+		FallingObjectBase: base.FallingObjectBase{
+			ObjectBase: base.ObjectBase{
+				Health:    design.EntityHealth + ModifierHealth,
+				MaxHealth: design.EntityHealth + ModifierHealth,
+				Position:  game.PointFloat{X: float64(xPos), Y: -5},
+				Width:     width,
+				Height:    height,
+				Speed:     randSpeed,
 			},
-			Speed: randSpeed,
 		},
 		Design: design,
 	}
 }
 
-func (p *Producer) MovementAndCollision(delta float64, gc *core.GameContext) {
+func (p *Producer) MovementAndCollision(delta float64, gc *game.GameContext) {
 	var spaceship *SpaceShip
 	if ship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		spaceship = ship
@@ -154,11 +159,11 @@ func (p *Producer) MovementAndCollision(delta float64, gc *core.GameContext) {
 	}
 }
 
-func (m *Modifier) movementAndCollision(delta float64, gc *core.GameContext, spaceship *SpaceShip) bool {
+func (m *Modifier) movementAndCollision(delta float64, gc *game.GameContext, spaceship *SpaceShip) bool {
 	_, hight := window.GetSize()
-	m.move(delta)
-	for _, beam := range spaceship.Beams {
-		if m.isHit(&beam.position, spaceship.Power) {
+	m.Move(delta)
+	for _, beam := range spaceship.GetBeams() {
+		if m.IsHit(beam.GetPosition(), spaceship.GetPower()) {
 			spaceship.ScoreHit()
 			spaceship.RemoveBeam(beam)
 		}
@@ -169,11 +174,11 @@ func (m *Modifier) movementAndCollision(delta float64, gc *core.GameContext, spa
 		u = ui
 	}
 
-	if m.isDead() {
+	if m.IsDead() {
 		spaceship.IncreaseHealth(m.ModifyHealth)
-		spaceship.IncreaseGunCap(m.ModifyGunCap)
+		spaceship.IncreaseGunCap(m.ModifyGunCap, spaceship.cfg.SpaceShipConfig.GunMaxCap)
 		spaceship.IncreaseGunPower(m.ModifyGunPower)
-		spaceship.IncreaseGunSpeed(m.ModifyGunSpeed)
+		spaceship.IncreaseGunSpeed(m.ModifyGunSpeed, spaceship.cfg.SpaceShipConfig.GunMaxSpeed)
 		if m.ModifyLevel {
 			SetStatus("Free Upgrade!")
 			u.LevelUpScreen = true
@@ -183,7 +188,7 @@ func (m *Modifier) movementAndCollision(delta float64, gc *core.GameContext, spa
 		return true
 	}
 
-	if m.isOffScreen(hight) {
+	if m.IsOffScreen(hight) {
 		return true
 	}
 	return false
@@ -192,27 +197,27 @@ func (m *Modifier) movementAndCollision(delta float64, gc *core.GameContext, spa
 func (h *Health) movementAndCollision(delta float64, spaceship *SpaceShip) bool {
 	_, hight := window.GetSize()
 
-	h.move(delta)
-	for _, beam := range spaceship.Beams {
-		if h.isHit(&beam.position, spaceship.Power) {
+	h.Move(delta)
+	for _, beam := range spaceship.GetBeams() {
+		if h.IsHit(beam.GetPosition(), spaceship.GetPower()) {
 			spaceship.ScoreHit()
 			spaceship.RemoveBeam(beam)
 		}
 	}
 
-	if h.isDead() {
+	if h.IsDead() {
 		spaceship.healthKitsOwned += 1
 		SetStatus("Health: Health kit +1")
 		return true
 	}
 
-	if h.isOffScreen(hight) {
+	if h.IsOffScreen(hight) {
 		return true
 	}
 	return false
 }
 
-func (p *Producer) InputEvents(event tcell.Event, gc *core.GameContext) {
+func (p *Producer) InputEvents(event tcell.Event, gc *game.GameContext) {
 	// This code used for testing
 
 	// switch ev := event.(type) {
