@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/omar0ali/spaceinvaders-game-cli/core"
+	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
@@ -20,6 +20,8 @@ var (
 	nextMinute int
 	status     string
 	showStatus bool
+	minutes    int
+	seconds    int
 )
 
 type UI struct {
@@ -31,7 +33,7 @@ type UI struct {
 	timeElapsed        float64
 }
 
-func NewUI(gc *core.GameContext) *UI {
+func NewUI(gc *game.GameContext) *UI {
 	nextMinute = 0
 	u := &UI{true, false, false, false, false, 0}
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -43,7 +45,7 @@ func NewUI(gc *core.GameContext) *UI {
 	return u
 }
 
-func (u *UI) Draw(gc *core.GameContext) {
+func (u *UI) Draw(gc *game.GameContext) {
 	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 
 	// start screen
@@ -89,7 +91,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 				x := startPosX + colIndex*(rectWidth+colGap)
 				y := startPosY + rowIndex*(rectHeight+rowGap)
 
-				DrawRect(core.Point{X: x, Y: y}, rectWidth, rectHeight, func(initX int, initY int) {
+				DrawRect(game.Point{X: x, Y: y}, rectWidth, rectHeight, func(initX int, initY int) {
 					// draw index (spaceship selection key)
 					for j, r := range fmt.Sprintf("[%d]", i+1) {
 						window.SetContent(initX+j, initY, r)
@@ -136,12 +138,12 @@ func (u *UI) Draw(gc *core.GameContext) {
 				[D] (%d/%d) Increase Gun Capacity by %d
 				[C] (%d/%d) Restore Full Health
 				`, level,
-					s.Power,
+					s.GetPower(),
 					IncreaseGunPowerBy,
-					s.Speed,
+					s.GetSpeed(),
 					s.cfg.SpaceShipConfig.GunMaxSpeed,
 					IncreaseGunSpeedBy,
-					s.Cap,
+					s.GetCapacity(),
 					s.cfg.SpaceShipConfig.GunMaxCap,
 					IncreaseGunCapBy,
 					s.Health,
@@ -157,8 +159,8 @@ func (u *UI) Draw(gc *core.GameContext) {
 	}
 
 	// timer
-	minutes := int(u.timeElapsed) / 60
-	seconds := int(u.timeElapsed) % 60
+	minutes = int(u.timeElapsed) / 60
+	seconds = int(u.timeElapsed) % 60
 
 	w, _ := window.GetSize()
 	timeStr := []rune(fmt.Sprintf("Time: %02d:%02d", minutes, seconds))
@@ -236,7 +238,7 @@ func (u *UI) Draw(gc *core.GameContext) {
 	}
 }
 
-func (u *UI) Update(gc *core.GameContext, delta float64) {
+func (u *UI) Update(gc *game.GameContext, delta float64) {
 	if u.MenuScreen || u.PauseScreen || u.GameOverScreen || u.LevelUpScreen || u.SpaceShipSelection {
 		gc.Halt = true
 	} else {
@@ -245,7 +247,7 @@ func (u *UI) Update(gc *core.GameContext, delta float64) {
 	}
 }
 
-func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
+func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 	upgrade := func(up func() bool) {
 		if up() {
 			u.LevelUpScreen = false
@@ -279,29 +281,31 @@ func (u *UI) InputEvents(events tcell.Event, gc *core.GameContext) {
 				}
 			}
 			if u.LevelUpScreen {
-				if ev.Rune() == 'A' || ev.Rune() == 'a' {
-					upgrade(func() bool {
-						SetStatus(fmt.Sprintf("[A] Gun Power: +%d", IncreaseGunPowerBy))
-						return s.IncreaseGunPower(IncreaseGunPowerBy)
-					})
-				}
-				if ev.Rune() == 'S' || ev.Rune() == 's' {
-					upgrade(func() bool {
-						SetStatus(fmt.Sprintf("[S] Gun Speed: +%d", IncreaseGunSpeedBy))
-						return s.IncreaseGunSpeed(IncreaseGunSpeedBy)
-					})
-				}
-				if ev.Rune() == 'D' || ev.Rune() == 'd' {
-					upgrade(func() bool {
-						SetStatus(fmt.Sprintf("[D] Gun Cap: +%d", IncreaseGunCapBy))
-						return s.IncreaseGunCap(IncreaseGunCapBy)
-					})
-				}
-				if ev.Rune() == 'C' || ev.Rune() == 'c' {
-					upgrade(func() bool {
-						SetStatus("[C] Spaceship health has been restored!")
-						return s.RestoreFullHealth()
-					})
+				if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+					if ev.Rune() == 'A' || ev.Rune() == 'a' {
+						upgrade(func() bool {
+							SetStatus(fmt.Sprintf("[A] Gun Power: +%d", IncreaseGunPowerBy))
+							return s.IncreaseGunPower(IncreaseGunPowerBy)
+						})
+					}
+					if ev.Rune() == 'S' || ev.Rune() == 's' {
+						upgrade(func() bool {
+							SetStatus(fmt.Sprintf("[S] Gun Speed: +%d", IncreaseGunSpeedBy))
+							return s.IncreaseGunSpeed(IncreaseGunSpeedBy, s.cfg.SpaceShipConfig.GunMaxSpeed)
+						})
+					}
+					if ev.Rune() == 'D' || ev.Rune() == 'd' {
+						upgrade(func() bool {
+							SetStatus(fmt.Sprintf("[D] Gun Cap: +%d", IncreaseGunCapBy))
+							return s.IncreaseGunCap(IncreaseGunCapBy, s.cfg.SpaceShipConfig.GunMaxCap)
+						})
+					}
+					if ev.Rune() == 'C' || ev.Rune() == 'c' {
+						upgrade(func() bool {
+							SetStatus("[C] Spaceship health has been restored!")
+							return s.RestoreFullHealth()
+						})
+					}
 				}
 			}
 		}
@@ -312,7 +316,7 @@ func (u *UI) GetType() string {
 	return "ui"
 }
 
-func (u *UI) MessageBox(origin core.Point, message string, title string) {
+func (u *UI) MessageBox(origin game.Point, message string, title string) {
 	padding := 2
 	wrappedLines := u.wrapText(message)
 
@@ -402,7 +406,7 @@ func (u UI) wrapText(message string) []string {
 	return lines
 }
 
-func DrawRect(pos core.Point, width, height int, fn func(initX, initY int)) {
+func DrawRect(pos game.Point, width, height int, fn func(initX, initY int)) {
 	const padding = 2
 	centerOfW := pos.X / 2
 	centerOfH := pos.Y / 2
@@ -435,7 +439,7 @@ func DrawRect(pos core.Point, width, height int, fn func(initX, initY int)) {
 
 func DrawRectCenter(width, height int, fn func(x, y int)) {
 	w, h := window.GetSize()
-	DrawRect(core.Point{X: w, Y: h}, width, height, func(x, y int) {
+	DrawRect(game.Point{X: w, Y: h}, width, height, func(x, y int) {
 		fn(x, y)
 	})
 }
@@ -487,7 +491,7 @@ func DrawRectStatus(text string) {
 
 	width := maxLen + 4
 	height := len(lines) + 2 + bottomPadding
-	DrawRect(core.Point{X: (w * 2) - width - 6, Y: 15}, width, height, func(x, y int) {
+	DrawRect(game.Point{X: (w * 2) - width - 6, Y: 15}, width, height, func(x, y int) {
 		for row, line := range lines {
 			for col, r := range line {
 				window.SetContentWithStyle(x+col, y+row, r, color)

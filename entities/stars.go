@@ -4,21 +4,22 @@ import (
 	"math/rand"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/omar0ali/spaceinvaders-game-cli/core"
+	"github.com/omar0ali/spaceinvaders-game-cli/base"
+	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
 type Star struct {
-	FallingObjectBase
+	base.FallingObjectBase
 }
 
 type StarProducer struct {
 	Stars []*Star
 	Limit int
-	Cfg   core.GameConfig
+	Cfg   game.GameConfig
 }
 
-func NewStarsProducer(cfg core.GameConfig) *StarProducer {
+func NewStarsProducer(cfg game.GameConfig) *StarProducer {
 	return &StarProducer{
 		Stars: []*Star{},
 		Limit: max(cfg.StarsConfig.Limit, 15),
@@ -30,28 +31,29 @@ func (s *StarProducer) Deployment() {
 	w, _ := window.GetSize()
 	xPos := rand.Intn(w)
 
-	randSpeed := rand.Intn(max(s.Cfg.StarsConfig.Speed, 30)) + 10 // ensure the speed its always high < 30 larger than 30
+	randSpeed := rand.Float64()*float64(max(s.Cfg.StarsConfig.Speed, 15)) + 10
+
 	s.Stars = append(s.Stars, &Star{
-		FallingObjectBase: FallingObjectBase{
-			ObjectBase: ObjectBase{
-				Health:      1,
-				OriginPoint: core.PointFloat{X: float64(xPos), Y: -5},
-				Width:       1,
-				Height:      1,
+		FallingObjectBase: base.FallingObjectBase{
+			ObjectBase: base.ObjectBase{
+				Health:   1,
+				Position: game.PointFloat{X: float64(xPos), Y: -5},
+				Width:    1,
+				Height:   1,
+				Speed:    randSpeed,
 			},
-			Speed: randSpeed,
 		},
 	})
 }
 
-func (s *StarProducer) Update(gc *core.GameContext, delta float64) {
+func (s *StarProducer) Update(gc *game.GameContext, delta float64) {
 	if len(s.Stars) < s.Limit {
 		s.Deployment()
 	}
 
 	// Update the coordinates of the stars.
 	for _, star := range s.Stars {
-		star.move(delta)
+		star.Move(delta)
 	}
 
 	// -------- this will ensure to clean up stars --------
@@ -63,7 +65,7 @@ func (s *StarProducer) Update(gc *core.GameContext, delta float64) {
 		// check the star height position
 		// clear
 		_, h := window.GetSize()
-		if !star.isOffScreen(h) {
+		if !star.IsOffScreen(h) {
 			activeStars = append(activeStars, star)
 		}
 	}
@@ -71,25 +73,25 @@ func (s *StarProducer) Update(gc *core.GameContext, delta float64) {
 	s.Stars = activeStars
 }
 
-func (s *StarProducer) Draw(gc *core.GameContext) {
-	whiteColor := window.StyleIt(tcell.ColorReset, core.HexToColor("445559"))
+func (s *StarProducer) Draw(gc *game.GameContext) {
+	whiteColor := window.StyleIt(tcell.ColorReset, game.HexToColor("445559"))
 	for _, star := range s.Stars {
 		switch {
 		case star.Speed < 15:
-			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '☼', whiteColor)
+			window.SetContentWithStyle(int(star.Position.GetX()), int(star.Position.GetY()), '☼', whiteColor)
 		case star.Speed >= 15 && star.Speed < 25:
-			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '+', whiteColor)
+			window.SetContentWithStyle(int(star.Position.GetX()), int(star.Position.GetY()), '+', whiteColor)
 		case star.Speed >= 25 && star.Speed < 45:
-			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '*', whiteColor)
+			window.SetContentWithStyle(int(star.Position.GetX()), int(star.Position.GetY()), '*', whiteColor)
 		case star.Speed >= 45 && star.Speed < 50:
-			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), tcell.RuneDegree, whiteColor)
+			window.SetContentWithStyle(int(star.Position.GetX()), int(star.Position.GetY()), tcell.RuneDegree, whiteColor)
 		default:
-			window.SetContentWithStyle(int(star.OriginPoint.GetX()), int(star.OriginPoint.GetY()), '.', whiteColor)
+			window.SetContentWithStyle(int(star.Position.GetX()), int(star.Position.GetY()), '.', whiteColor)
 		}
 	}
 }
 
-func (s *StarProducer) InputEvents(event tcell.Event, gc *core.GameContext) {
+func (s *StarProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 	// testing mode
 
 	// switch ev := event.(type) {
