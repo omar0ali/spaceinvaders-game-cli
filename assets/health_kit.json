@@ -1,6 +1,6 @@
 {
     "name": "health_chest",
-    "health": 3,
+    "health": 20,
     "color": "008000",
     "shape": [
         "  ______  ",
