@@ -2,7 +2,6 @@ package base
 
 import (
 	"math/rand"
-	"time"
 
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
@@ -49,17 +48,6 @@ func Deploy(fileDesigns string, level int) *Enemy {
 		Gun:             NewGun(design.GunCap, design.GunPower, design.GunSpeed, design.GunCooldown),
 		AlienshipDesign: design,
 	}
-
-	done := make(chan struct{})
-	go DoEvery(100*time.Millisecond,
-		func() {
-			alien.InitBeam(game.Point{
-				X: int(alien.Position.X) + (alien.Width / 2),
-				Y: int(alien.Position.Y) + (alien.Height) + 1,
-			}, Down)
-		},
-		done,
-	)
 
 	return alien
 }

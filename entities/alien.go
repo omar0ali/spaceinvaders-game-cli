@@ -21,7 +21,7 @@ func NewAlienProducer(gc *game.GameContext) *AlienProducer {
 
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
-			a.Level += 0.2
+			a.Level += 0.1
 		})
 	}
 
@@ -45,6 +45,10 @@ func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
 	// go through each alien's gun and shoot
 	for _, alien := range a.Aliens {
 		alien.Update(gc, delta)
+		alien.InitBeam(game.Point{
+			X: int(alien.Position.X) + (alien.Width / 2),
+			Y: int(alien.Position.Y) + (alien.Height) + 1,
+		}, base.Down)
 	}
 
 	// -------- this will ensure to clean up dead aliens and beams --------

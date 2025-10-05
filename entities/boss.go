@@ -7,7 +7,7 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
-var everyThreeMinutes = 3
+var everyThreeMinutes = 2
 
 type BossProducer struct {
 	BossAlien *base.Enemy
@@ -41,6 +41,11 @@ func (b *BossProducer) Update(gc *game.GameContext, delta float64) {
 
 	if b.BossAlien != nil {
 		b.BossAlien.Update(gc, delta)
+		b.BossAlien.InitBeam(game.Point{
+			X: int(b.BossAlien.Position.X) + (b.BossAlien.Width / 2),
+			Y: int(b.BossAlien.Position.Y) + (b.BossAlien.Height) + 1,
+		}, base.Down)
+
 		b.MovementAndCollision(delta, gc)
 	}
 }
