@@ -178,12 +178,13 @@ func (u *UI) Draw(gc *game.GameContext) {
 		s.UISpaceshipData(gc)
 	}
 
+	// TODO: This should be moved to modifiers.go / health.go
 	if producer, ok := gc.FindEntity("producer").(*Producer); ok {
 		if nextMinute < minutes {
 			producer.DeployHealthKit()
 			nextMinute++
 		}
-		if seconds == 30 {
+		if seconds == 20 || seconds == 50 {
 			producer.DeployModifiers()
 		}
 	}
