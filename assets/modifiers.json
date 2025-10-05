@@ -1,13 +1,14 @@
 [
     {
         "name": "Free Upgrade",
-        "health": 800,
+        "health": 500,
         "color": "EADDCA",
         "modify_health": 1,
         "modify_level": true,
         "modify_gun_cap": 0,
         "modify_gun_speed": 0,
         "modify_gun_power": 0,
+        "modify_gun_cooldown": 0,
         "shape": [
             " -------- ",
             "|   /\\    |",
@@ -17,19 +18,41 @@
             "|  \\  /   |",
             "|   \\/    |",
             "|_________|",
-            "|   LVL   |",
+            "|  Level  |",
             "|____+____|"
         ]
     },
     {
+        "name": "Gun Cooldown -1",
+        "health": 100,
+        "color": "FF8000",
+        "modify_health": 0,
+        "modify_level": false,
+        "modify_gun_cap": 0,
+        "modify_gun_speed": 0,
+        "modify_gun_power": 0,
+        "modify_gun_cooldown": -3,
+        "shape": [
+            " __________ ",
+            "|    __    |",
+            "| - |||| - |",
+            "|  [||||]  |",
+            "|    vv    |",
+            "|__________|",
+            "| COOLDOWN |",
+            "|____--____|"
+        ]
+    },
+    {
         "name": "Gun Capacity +1",
-        "health": 300,
+        "health": 100,
         "color": "8B8000",
         "modify_health": 0,
         "modify_level": false,
         "modify_gun_cap": 1,
         "modify_gun_speed": 0,
         "modify_gun_power": 0,
+        "modify_gun_cooldown": 0,
         "shape": [
             " _________  ",
             "| [] [] []| ",
@@ -42,13 +65,14 @@
     },
     {
         "name": "Gun Speed +1",
-        "health": 400,
+        "health": 150,
         "color": "E49B0F",
         "modify_health": 0,
         "modify_level": false,
         "modify_gun_cap": 0,
         "modify_gun_speed": 1,
         "modify_gun_power": 0,
+        "modify_gun_cooldown": 0,
         "shape": [
             " ---------",
             "|  |||||  |",
@@ -63,13 +87,14 @@
     },
     {
         "name": "Gun Power +1",
-        "health": 500,
+        "health": 200,
         "color": "93C572",
         "modify_health": 0,
         "modify_level": false,
         "modify_gun_cap": 0,
         "modify_gun_speed": 0,
         "modify_gun_power": 1,
+        "modify_gun_cooldown": 0,
         "shape": [
             " ---------",
             "|   /\\    |",

@@ -17,18 +17,20 @@ type Design struct {
 
 type ModifierDesign struct {
 	Design
-	ModifyHealth   int  `json:"modify_health"`
-	ModifyLevel    bool `json:"modify_level"`
-	ModifyGunPower int  `json:"modify_gun_power"`
-	ModifyGunCap   int  `json:"modify_gun_cap"`
-	ModifyGunSpeed int  `json:"modify_gun_speed"`
+	ModifyHealth      int  `json:"modify_health"`
+	ModifyLevel       bool `json:"modify_level"`
+	ModifyGunPower    int  `json:"modify_gun_power"`
+	ModifyGunCap      int  `json:"modify_gun_cap"`
+	ModifyGunSpeed    int  `json:"modify_gun_speed"`
+	ModifyGunCoolDown int  `json:"modify_gun_cooldown"`
 }
 
 type SpaceshipDesign struct {
 	Design
-	GunPower int `json:"gun_power"`
-	GunSpeed int `json:"gun_speed"`
-	GunCap   int `json:"gun_cap"`
+	GunPower    int `json:"gun_power"`
+	GunSpeed    int `json:"gun_speed"`
+	GunCap      int `json:"gun_cap"`
+	GunCooldown int `json:"gun_cooldown"`
 }
 
 type AlienshipDesign struct {
