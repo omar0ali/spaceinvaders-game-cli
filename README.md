@@ -64,7 +64,9 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] Redesign UI of the spaceship selection.
 - [X] Adding status pop up. Will show to keep the player up to date.
 - [X] Add another drop down to increase other spaceship stats. 
-- [X] Boss Fights ever 5 levels.
+- [X] Boss Fights every 3 minutes.
+- [X] Gun Cool-down.
+- [ ] Gun Reload.
 
 ### Controls
 
