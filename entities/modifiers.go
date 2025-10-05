@@ -89,7 +89,7 @@ func (p *Producer) DeployModifiers() {
 	width := len(design.Shape[0])
 	height := len(design.Shape)
 
-	randSpeed := rand.Float64()*float64(4) + 2
+	randSpeed := rand.Float64()*float64(2) + 1
 
 	m := &Modifier{
 		FallingObjectBase: base.FallingObjectBase{
