@@ -1,9 +1,31 @@
 [
     {
-        "name": "Free Upgrade",
-        "health": 500,
-        "color": "EADDCA",
+        "name": "Health +1",
+        "health": 30,
+        "color": "008000",
         "modify_health": 1,
+        "modify_level": false,
+        "modify_gun_cap": 0,
+        "modify_gun_speed": 0,
+        "modify_gun_power": 0,
+        "modify_gun_cooldown": 0,
+        "shape": [
+            " __________ ",
+            "|  ______  |",
+            "| |__+___| |",
+            "| |      | |",
+            "| |______| |",
+            "|          |",
+            "|__________|",
+            "|  HEALTH  |",
+            "|____++____|"
+        ]
+    },
+    {
+        "name": "Free Upgrade",
+        "health": 300,
+        "color": "EADDCA",
+        "modify_health": 3,
         "modify_level": true,
         "modify_gun_cap": 0,
         "modify_gun_speed": 0,
@@ -18,13 +40,13 @@
             "|  \\  /   |",
             "|   \\/    |",
             "|_________|",
-            "|  Level  |",
+            "|  LEVEL  |",
             "|____+____|"
         ]
     },
     {
-        "name": "Gun Cooldown -1",
-        "health": 100,
+        "name": "Gun Cooldown -3",
+        "health": 80,
         "color": "FF8000",
         "modify_health": 0,
         "modify_level": false,
@@ -65,7 +87,7 @@
     },
     {
         "name": "Gun Speed +1",
-        "health": 150,
+        "health": 80,
         "color": "E49B0F",
         "modify_health": 0,
         "modify_level": false,
