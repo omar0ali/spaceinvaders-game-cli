@@ -15,9 +15,9 @@ const (
 	HealthBoxEmptyStyle = '□'
 )
 
-type HealthBar interface {
-	GetHealth() int
-	GetMaxHealth() int
+type Meter interface {
+	GetCurrent() int
+	GetMax() int
 }
 
 type ObjectBase struct {
@@ -32,11 +32,11 @@ type FallingObjectBase struct {
 	ObjectBase
 }
 
-func (f *ObjectBase) GetHealth() int {
+func (f *ObjectBase) GetCurrent() int {
 	return f.Health
 }
 
-func (f *ObjectBase) GetMaxHealth() int {
+func (f *ObjectBase) GetMax() int {
 	return f.MaxHealth
 }
 
@@ -227,7 +227,7 @@ func (f *ObjectBase) DisplayHealth(barSize int, showStats bool, style tcell.Styl
 	)
 }
 
-func DisplayBar(xPos, yPos, barSize int, h HealthBar, showStats bool, style tcell.Style, gun Gunner) {
+func DisplayBar(xPos, yPos, barSize int, h Meter, showStats bool, style tcell.Style, gun Gunner) {
 	reloadAnimation := []rune("•○")
 	if gun != nil && gun.IsReloading() {
 		frame := int(time.Now().UnixNano()/300_000_000) % len(reloadAnimation)
@@ -241,7 +241,7 @@ func DisplayBar(xPos, yPos, barSize int, h HealthBar, showStats bool, style tcel
 		trackXPossition++
 	}
 	// draw health
-	ratio := float64(h.GetHealth()) / float64(h.GetMaxHealth())
+	ratio := float64(h.GetCurrent()) / float64(h.GetMax())
 	filled := int(ratio * float64(barSize))
 
 	for i := range barSize {
@@ -258,7 +258,7 @@ func DisplayBar(xPos, yPos, barSize int, h HealthBar, showStats bool, style tcel
 	// or end with showing stats (total health)
 	trackXPossition += barSize
 	// last
-	for i, r := range []rune(fmt.Sprintf(" %d/%d", h.GetHealth(), h.GetMaxHealth())) {
+	for i, r := range []rune(fmt.Sprintf(" %d/%d", h.GetCurrent(), h.GetMax())) {
 		SetContentWithStyle(trackXPossition+i+1, yPos, r, style)
 	}
 }
