@@ -3,9 +3,9 @@ package main
 
 import (
 	"github.com/gdamore/tcell/v2"
+	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
-	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
 func DeployEntities(gc *game.GameContext, cfg game.GameConfig) {
@@ -22,7 +22,7 @@ func main() {
 	exit := make(chan struct{})
 
 	// ------------------------------- Setup ------------------------------------
-	screen := window.InitScreen(window.EnableMouse)
+	screen := base.InitScreen(base.EnableMouse)
 	screen.SetTitle("Space Invader Game")
 	cfg := game.LoadConfig()
 
@@ -35,7 +35,7 @@ func main() {
 	DeployEntities(&gameContext, cfg)
 
 	// ----------------------------------------- window ------------------------------------
-	window.InputEvent(exit,
+	base.InputEvent(exit,
 		func(event tcell.Event) {
 			switch ev := event.(type) {
 			case *tcell.EventKey:
@@ -50,7 +50,7 @@ func main() {
 		},
 	)
 
-	window.Update(exit,
+	base.Update(exit,
 		func(delta float64) {
 			// update game
 
