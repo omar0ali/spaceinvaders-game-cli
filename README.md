@@ -66,20 +66,25 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] Add another drop down to increase other spaceship stats. 
 - [X] Boss Fights every 3 minutes.
 - [X] Gun Cool-down.
-- [ ] Gun Reload.
-
+- [X] Both the player and the enemy can take damage when crashing the ships.
+- [X] Gun Reload.
+    - [X] Gun Reload Level Up.
+- [ ] Display a score bar
 ### Controls
 
 | Control            | Action                                |
 |-------------------|----------------------------------------|
 | Left Mouse Click / Space Bar | Shoot beams                 |
 | Mouse Movement     | Move the spaceship                    |
-| F                  | Consume health kit (increase spaceship's health) |
+| E                  | Consume health kit (increase spaceship's health) |
 | P                  | Pause the game                        |
-| S                  | Start the game or Upgrade Gun Speed   |
+| S                  | Start the game                        |
 | A                  | Upgrade Gun Power                     |
+| S                  | Upgrade Gun Speed                     |
 | D                  | Upgrade Gun Capacity                  |
-| C                  | Increase heatlh
+| F                  | Upgrade Gun Cooldown                  |
+| G                  | Upgrade Gun Reload Cooldown           |
+| H                  | Restore Heatlh                        |
 
 ### Default Configuration File
 Configuration file added for the player to freely change/update entity's attributes. The config file saved as `config.toml`.
@@ -87,13 +92,13 @@ Configuration file added for the player to freely change/update entity's attribu
 ```toml
 [spaceship]
 max_level = 50
-next_level_score = 300
-gun_max_cap = 15
-gun_max_speed = 75
+next_level_score = 200
+gun_max_cap = 40
+gun_max_speed = 70
 
 [stars] 
 limit = 10
-speed = 45
+speed = 50
 ```
 
 ## Getting Started
