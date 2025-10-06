@@ -53,9 +53,9 @@
         "color": "fbc2ff",
         "gun_power": 15,
         "gun_speed": 38,
-        "gun_cap": 5,
+        "gun_cap": 10,
         "gun_cooldown": 700,
-        "gun_reload_cooldown": 1000,
+        "gun_reload_cooldown": 1500,
         "shape": [
             "    |    ",
             "   +^+   ",
@@ -72,7 +72,7 @@
         "gun_speed": 35,
         "gun_cap": 20,
         "gun_cooldown": 800,
-        "gun_reload_cooldown": 1100,
+        "gun_reload_cooldown": 2500,
         "shape": [
             "      |      ",
             "     +^+     ",
