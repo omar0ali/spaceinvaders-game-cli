@@ -6,7 +6,6 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
-	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
 type AlienProducer struct {
@@ -39,13 +38,13 @@ func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
 		}
 	}
 	if len(a.Aliens) < int(a.Level) {
-		a.Aliens = append(a.Aliens, base.Deploy("alienships.json", int(a.Level)))
+		a.Aliens = append(a.Aliens, base.Deploy("alienships.json", a.Level))
 	}
 
 	// go through each alien's gun and shoot
 	for _, alien := range a.Aliens {
 		alien.Update(gc, delta)
-		alien.InitBeam(game.Point{
+		alien.InitBeam(base.Point{
 			X: int(alien.Position.X) + (alien.Width / 2),
 			Y: int(alien.Position.Y) + (alien.Height) + 1,
 		}, base.Down)
@@ -56,12 +55,11 @@ func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
 }
 
 func (a *AlienProducer) Draw(gc *game.GameContext) {
-	colorHealth := window.StyleIt(tcell.ColorReset, tcell.ColorIndianRed)
 	for _, alien := range a.Aliens {
-		color := window.StyleIt(tcell.ColorReset, alien.GetColor())
+		color := base.StyleIt(tcell.ColorReset, alien.GetColor())
 		alien.Draw(gc, alien.GetColor())
 
-		alien.DisplayHealth(6, true, colorHealth)
+		alien.DisplayHealth(6, true, color, &alien.Gun)
 
 		// draw shape
 		for rowIndex, line := range alien.Shape {
@@ -69,7 +67,7 @@ func (a *AlienProducer) Draw(gc *game.GameContext) {
 				if char != ' ' {
 					x := int(alien.Position.GetX()) + colIndex
 					y := int(alien.Position.GetY()) + rowIndex
-					window.SetContentWithStyle(x, y, char, color)
+					base.SetContentWithStyle(x, y, char, color)
 				}
 			}
 		}
@@ -89,11 +87,11 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 }
 
 func (a *AlienProducer) UIAlienShipData(gc *game.GameContext) {
-	w, _ := window.GetSize()
-	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	w, _ := base.GetSize()
+	whiteColor := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	aliensStr := []rune(fmt.Sprintf("Enemy Level: %d * ", int(a.Level)))
 	for i, r := range aliensStr {
-		window.SetContentWithStyle(w+i-len(aliensStr), 2, r, whiteColor)
+		base.SetContentWithStyle(w+i-len(aliensStr), 2, r, whiteColor)
 	}
 }
 
@@ -108,9 +106,10 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 	// on each alien avaiable check its position and check if the beam is at the same position
 	for _, alien := range a.Aliens {
 		// Update the coordinates of the aliens.
-		alien.Move(delta)
+		base.Move(&alien.ObjectBase, delta)
 		for _, beam := range spaceship.GetBeams() {
-			if alien.IsHit(beam.GetPosition(), spaceship.GetPower()) {
+			if base.GettingHit(&alien.ObjectBase, beam) {
+				alien.TakeDamage(spaceship.GetPower())
 				spaceship.ScoreHit()
 				spaceship.RemoveBeam(beam) // removing a beam when hitting the ship
 			}
@@ -119,9 +118,9 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 		// check the alien ship height position
 		// check the health of each alien
 
-		_, h := window.GetSize()
+		_, h := base.GetSize()
 		if alien.IsOffScreen(h) {
-			spaceship.Health -= 1
+			spaceship.TakeDamage(1)
 		}
 		if alien.IsDead() {
 			ScoreKill()
