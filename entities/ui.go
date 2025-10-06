@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
-	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
 const (
@@ -47,11 +47,11 @@ func NewUI(gc *game.GameContext) *UI {
 }
 
 func (u *UI) Draw(gc *game.GameContext) {
-	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	whiteColor := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 
 	// start screen
 	if u.MenuScreen {
-		u.MessageBox(window.GetCenterPoint(),
+		u.MessageBox(base.GetCenterPoint(),
 			`
 				The game is an endless space shooter where players face increasingly difficult 
 				waves of alien ships that scale with their level.
@@ -76,7 +76,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 	}
 
 	if u.SpaceShipSelection {
-		w, _ := window.GetSize()
+		w, _ := base.GetSize()
 		rectWidth := 45
 		rectHeight := 10
 		startPosY := 25
@@ -93,19 +93,19 @@ func (u *UI) Draw(gc *game.GameContext) {
 				x := startPosX + colIndex*(rectWidth+colGap)
 				y := startPosY + rowIndex*(rectHeight+rowGap)
 
-				DrawRect(game.Point{X: x, Y: y}, rectWidth, rectHeight, func(initX int, initY int) {
+				DrawRect(base.Point{X: x, Y: y}, rectWidth, rectHeight, func(initX int, initY int) {
 					// draw index (spaceship selection key)
 					for j, r := range fmt.Sprintf("[%d]", i+1) {
-						window.SetContent(initX+j, initY, r)
+						base.SetContent(initX+j, initY, r)
 					}
 
 					// draw the spaceship shape inside the rectangle
 					gap := 4
 					for rowIndex, line := range shape.Shape {
-						color := window.StyleIt(tcell.ColorReset, shape.GetColor())
+						color := base.StyleIt(tcell.ColorReset, shape.GetColor())
 						for colIndex, char := range line {
 							if char != ' ' {
-								window.SetContentWithStyle(initX+colIndex+gap, initY+rowIndex, char, color)
+								base.SetContentWithStyle(initX+colIndex+gap, initY+rowIndex, char, color)
 							}
 						}
 						// draw details of the spaceship
@@ -121,7 +121,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 
 						for j, line := range str {
 							for i, r := range line {
-								window.SetContentWithStyle(initX+colIndex+(gap*4)+i, initY+j, r, color)
+								base.SetContentWithStyle(initX+colIndex+(gap*4)+i, initY+j, r, color)
 							}
 						}
 					}
@@ -132,7 +132,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 
 	if u.LevelUpScreen {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-			u.MessageBox(window.GetCenterPoint(),
+			u.MessageBox(base.GetCenterPoint(),
 				fmt.Sprintf(`
 				(*) Level: %d
 
@@ -164,20 +164,20 @@ func (u *UI) Draw(gc *game.GameContext) {
 	}
 
 	// show controls at the bottom of the screen
-	_, h := window.GetSize()
+	_, h := base.GetSize()
 	for i, r := range []rune("[LM] or [Space] Shoot Beams ◆ [E] Consume Health Kit ◆ [R] Reload Gun ◆ [P] Pause Game ◆ [Ctrl+R] Restart Game ◆ [Ctrl+Q] Quit") {
-		window.SetContentWithStyle(i, h-1, r, whiteColor)
+		base.SetContentWithStyle(i, h-1, r, whiteColor)
 	}
 
 	// timer
 	minutes = int(u.timeElapsed) / 60
 	seconds = int(u.timeElapsed) % 60
 
-	w, _ := window.GetSize()
+	w, _ := base.GetSize()
 	timeStr := []rune(fmt.Sprintf("Time: %02d:%02d", minutes, seconds))
 	// display objects details
 	for i, r := range timeStr {
-		window.SetContent((w-len(timeStr))+i, 0, r)
+		base.SetContent((w-len(timeStr))+i, 0, r)
 	}
 
 	// display spacehsip details - Also drop a health kit every minute
@@ -206,7 +206,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 
 			u.MessageBox(
-				window.GetCenterPoint(),
+				base.GetCenterPoint(),
 				fmt.Sprintf(`
 				----------- PAUSED -----------
 				- HP: %d
@@ -226,7 +226,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 	// game over ui
 	if u.GameOverScreen {
 		u.MessageBox(
-			window.GetCenterPoint(),
+			base.GetCenterPoint(),
 			fmt.Sprintf(`
 				Thank you for playing :)
 
@@ -351,7 +351,7 @@ func (u *UI) GetType() string {
 	return "ui"
 }
 
-func (u *UI) MessageBox(origin game.Point, message string, title string) {
+func (u *UI) MessageBox(origin base.Point, message string, title string) {
 	padding := 2
 	wrappedLines := u.wrapText(message)
 
@@ -377,39 +377,39 @@ func (u *UI) MessageBox(origin game.Point, message string, title string) {
 		if x < len(titleStr) {
 			ch = rune(titleStr[x])
 		}
-		window.SetContent(int(origin.GetX())+x, origin.Y, ch)
+		base.SetContent(int(origin.GetX())+x, origin.Y, ch)
 	}
 
 	// corners
-	window.SetContent(int(origin.GetX()), int(origin.GetY()), tcell.RuneULCorner)
-	window.SetContent(int(origin.GetX())+boxWidth-1, int(origin.GetY()), tcell.RuneURCorner)
-	window.SetContent(int(origin.GetX())+boxWidth-1, int(origin.GetY())+boxHeight-1, tcell.RuneLRCorner)
-	window.SetContent(int(origin.GetX()), int(origin.GetY())+boxHeight-1, tcell.RuneLLCorner)
+	base.SetContent(int(origin.GetX()), int(origin.GetY()), tcell.RuneULCorner)
+	base.SetContent(int(origin.GetX())+boxWidth-1, int(origin.GetY()), tcell.RuneURCorner)
+	base.SetContent(int(origin.GetX())+boxWidth-1, int(origin.GetY())+boxHeight-1, tcell.RuneLRCorner)
+	base.SetContent(int(origin.GetX()), int(origin.GetY())+boxHeight-1, tcell.RuneLLCorner)
 
 	// sides and inner space
 	for y := 1; y < boxHeight-1; y++ {
 		// left side
-		window.SetContent(int(origin.GetX()), int(origin.GetY())+y, tcell.RuneVLine)
+		base.SetContent(int(origin.GetX()), int(origin.GetY())+y, tcell.RuneVLine)
 
 		// right side
-		window.SetContent(int(origin.GetX())+boxWidth-1, int(origin.GetY())+y, tcell.RuneVLine)
+		base.SetContent(int(origin.GetX())+boxWidth-1, int(origin.GetY())+y, tcell.RuneVLine)
 
 		// inner space
 		for x := 1; x < boxWidth-1; x++ {
-			window.SetContent(int(origin.GetX())+x, int(origin.GetY())+y, ' ')
+			base.SetContent(int(origin.GetX())+x, int(origin.GetY())+y, ' ')
 		}
 	}
 
-	color := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	color := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	for i, line := range wrappedLines {
 		for j, r := range line {
-			window.SetContentWithStyle(int(origin.GetX())+padding+j, int(origin.GetY())+padding+i, r, color)
+			base.SetContentWithStyle(int(origin.GetX())+padding+j, int(origin.GetY())+padding+i, r, color)
 		}
 	}
 
 	// bottom line
 	for x := 0; x < boxWidth-2; x++ {
-		window.SetContent(int(origin.GetX())+x+1, int(origin.GetY())+boxHeight-1, tcell.RuneHLine)
+		base.SetContent(int(origin.GetX())+x+1, int(origin.GetY())+boxHeight-1, tcell.RuneHLine)
 	}
 }
 
@@ -441,7 +441,7 @@ func (u UI) wrapText(message string) []string {
 	return lines
 }
 
-func DrawRect(pos game.Point, width, height int, fn func(initX, initY int)) {
+func DrawRect(pos base.Point, width, height int, fn func(initX, initY int)) {
 	const padding = 2
 	centerOfW := pos.X / 2
 	centerOfH := pos.Y / 2
@@ -451,21 +451,21 @@ func DrawRect(pos game.Point, width, height int, fn func(initX, initY int)) {
 		for j := range width {
 			switch {
 			case j == 0 && i == 0:
-				window.SetContent(startX+j, startY+i, tcell.RuneULCorner)
+				base.SetContent(startX+j, startY+i, tcell.RuneULCorner)
 			case j == width-1 && i == 0:
-				window.SetContent(startX+j, startY+i, tcell.RuneURCorner)
+				base.SetContent(startX+j, startY+i, tcell.RuneURCorner)
 			case j == 0 && i == height-1:
-				window.SetContent(startX+j, startY+i, tcell.RuneLLCorner)
+				base.SetContent(startX+j, startY+i, tcell.RuneLLCorner)
 			case j == width-1 && i == height-1:
-				window.SetContent(startX+j, startY+i, tcell.RuneLRCorner)
+				base.SetContent(startX+j, startY+i, tcell.RuneLRCorner)
 
 			case i == 0 || i == height-1:
-				window.SetContent(startX+j, startY+i, tcell.RuneHLine)
+				base.SetContent(startX+j, startY+i, tcell.RuneHLine)
 			case j == 0 || j == width-1:
-				window.SetContent(startX+j, startY+i, tcell.RuneVLine)
+				base.SetContent(startX+j, startY+i, tcell.RuneVLine)
 
 			default:
-				window.SetContent(startX+j, startY+i, ' ')
+				base.SetContent(startX+j, startY+i, ' ')
 			}
 		}
 	}
@@ -473,8 +473,8 @@ func DrawRect(pos game.Point, width, height int, fn func(initX, initY int)) {
 }
 
 func DrawRectCenter(width, height int, fn func(x, y int)) {
-	w, h := window.GetSize()
-	DrawRect(game.Point{X: w, Y: h}, width, height, func(x, y int) {
+	w, h := base.GetSize()
+	DrawRect(base.Point{X: w, Y: h}, width, height, func(x, y int) {
 		fn(x, y)
 	})
 }
@@ -496,7 +496,7 @@ func DrawBoxedText(text string) {
 	DrawRectCenter(width, height, func(x, y int) {
 		for row, line := range lines {
 			for col, r := range line {
-				window.SetContent(x+col, y+row, r)
+				base.SetContent(x+col, y+row, r)
 			}
 		}
 	})
@@ -512,8 +512,8 @@ func SetStatus(text string) {
 }
 
 func DrawRectStatus(text string) {
-	w, _ := window.GetSize()
-	color := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	w, _ := base.GetSize()
+	color := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	bottomPadding := 2
 	lines := strings.Split(text, "\n")
 
@@ -526,10 +526,10 @@ func DrawRectStatus(text string) {
 
 	width := maxLen + 4
 	height := len(lines) + 2 + bottomPadding
-	DrawRect(game.Point{X: (w * 2) - width - 6, Y: 15}, width, height, func(x, y int) {
+	DrawRect(base.Point{X: (w * 2) - width - 6, Y: 15}, width, height, func(x, y int) {
 		for row, line := range lines {
 			for col, r := range line {
-				window.SetContentWithStyle(x+col, y+row, r, color)
+				base.SetContentWithStyle(x+col, y+row, r, color)
 			}
 		}
 	})

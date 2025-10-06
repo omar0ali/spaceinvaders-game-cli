@@ -8,7 +8,6 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
-	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
 var (
@@ -53,8 +52,8 @@ func (s *SpaceShip) AddOnLevelUp(fn func(newLevel int)) {
 // player initialized in the bottom center of the secreen by default
 
 func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
-	w, h := window.GetSize()
-	origin := game.PointFloat{
+	w, h := base.GetSize()
+	origin := base.PointFloat{
 		X: float64(w / 2),
 		Y: float64(h - 3),
 	}
@@ -122,7 +121,7 @@ func (s *SpaceShip) Draw(gc *game.GameContext) {
 		return
 	}
 
-	color := window.StyleIt(tcell.ColorReset, s.SelectedSpaceship.GetColor())
+	color := base.StyleIt(tcell.ColorReset, s.SelectedSpaceship.GetColor())
 
 	defer s.Gun.Draw(gc, s.SelectedSpaceship.GetColor())
 
@@ -131,7 +130,7 @@ func (s *SpaceShip) Draw(gc *game.GameContext) {
 			if char != ' ' {
 				x := int(s.Position.GetX()) + colIndex
 				y := int(s.Position.GetY()) + rowIndex
-				window.SetContentWithStyle(x, y, char, color)
+				base.SetContentWithStyle(x, y, char, color)
 			}
 		}
 	}
@@ -153,7 +152,7 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 	shootBeam := func() {
 		x := int(s.Position.GetX()) + s.Width/2
 		y := int(s.Position.Y)
-		s.InitBeam(game.Point{X: x, Y: y}, base.Up)
+		s.InitBeam(base.Point{X: x, Y: y}, base.Up)
 	}
 
 	switch ev := event.(type) {
@@ -195,28 +194,28 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 	}
 
 	const padding, startY = 2, 2
-	whiteColor := window.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	whiteColor := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 
 	for i, r := range []rune(fmt.Sprintf("* Score: %d/%d", score, nextLevelScore)) {
-		window.SetContentWithStyle(padding+i, startY, r, whiteColor)
+		base.SetContentWithStyle(padding+i, startY, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("* Kills: %d", kills)) {
-		window.SetContentWithStyle(padding+i, startY+1, r, whiteColor)
+		base.SetContentWithStyle(padding+i, startY+1, r, whiteColor)
 	}
 
 	// display health at the bottome left
-	_, h := window.GetSize()
+	_, h := base.GetSize()
 
 	healthStr := []rune(fmt.Sprintf("[HP Kit: %d/%d]", s.healthKitsOwned, MaxHealthKitsToOwn))
 	for i, r := range healthStr {
-		window.SetContentWithStyle(i, h-10, r, whiteColor)
+		base.SetContentWithStyle(i, h-10, r, whiteColor)
 	}
 
 	base.DisplayBar(0, h-9, 10, s, true, whiteColor, &s.Gun)
 
 	for i, r := range []rune(fmt.Sprintf("[Level:     %d", level)) {
-		window.SetContentWithStyle(i, h-8, r, whiteColor)
+		base.SetContentWithStyle(i, h-8, r, whiteColor)
 	}
 
 	reloadAnimation := []rune("•○")
@@ -227,22 +226,22 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 		str += " " + string(reloadAnimation[frame]) + " RELOADING"
 	}
 	for i, r := range []rune(str) {
-		window.SetContentWithStyle(i, h-7, r, whiteColor)
+		base.SetContentWithStyle(i, h-7, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("[POW:    %d", s.GetPower())) {
-		window.SetContentWithStyle(i, h-6, r, whiteColor)
+		base.SetContentWithStyle(i, h-6, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("[SPD:    %d", int(s.Gun.GetSpeed()))) {
-		window.SetContentWithStyle(i, h-5, r, whiteColor)
+		base.SetContentWithStyle(i, h-5, r, whiteColor)
 	}
 
 	for i, r := range []rune(fmt.Sprintf("[CD:     %d ms", int(s.GetCooldown()))) {
-		window.SetContentWithStyle(i, h-4, r, whiteColor)
+		base.SetContentWithStyle(i, h-4, r, whiteColor)
 	}
 	for i, r := range []rune(fmt.Sprintf("[RLD:    %d ms", int(s.GetReloadCooldown()))) {
-		window.SetContentWithStyle(i, h-3, r, whiteColor)
+		base.SetContentWithStyle(i, h-3, r, whiteColor)
 	}
 }
 
@@ -279,10 +278,10 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 	}
 }
 
-func (s *SpaceShip) isHit(pointBeam game.PointInterface, power int) bool {
-	grayColor := window.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
-	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
-	yellowColor := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
+func (s *SpaceShip) isHit(pointBeam base.PointInterface, power int) bool {
+	grayColor := base.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
+	redColor := base.StyleIt(tcell.ColorReset, tcell.ColorRed)
+	yellowColor := base.StyleIt(tcell.ColorReset, tcell.ColorYellow)
 
 	// draw flash when hitting
 	pattern := []struct {
@@ -308,7 +307,7 @@ func (s *SpaceShip) isHit(pointBeam game.PointInterface, power int) bool {
 		s.Health -= power // update health of the falling object
 
 		for _, p := range pattern {
-			window.SetContentWithStyle(
+			base.SetContentWithStyle(
 				int(pointBeam.GetX())+p.dx,
 				int(pointBeam.GetY())+p.dy,
 				p.r, p.style,
