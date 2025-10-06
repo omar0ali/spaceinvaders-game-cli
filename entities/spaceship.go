@@ -3,6 +3,7 @@ package entities
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
@@ -21,7 +22,6 @@ var (
 type SpaceShip struct {
 	base.Gun
 	base.ObjectBase
-	Width, Height     int
 	cfg               game.GameConfig
 	OnLevelUp         []func(newLevel int)
 	SelectedSpaceship *game.SpaceshipDesign
@@ -91,6 +91,7 @@ func (s *SpaceShip) SpaceshipSelection(id int) string {
 		s.ListOfSpaceships[id].GunPower,
 		s.ListOfSpaceships[id].GunSpeed,
 		s.ListOfSpaceships[id].GunCooldown,
+		s.ListOfSpaceships[id].GunReloadCooldown,
 	)
 	s.SelectedSpaceship = &s.ListOfSpaceships[id]
 	s.Health = s.ListOfSpaceships[id].EntityHealth
@@ -135,7 +136,7 @@ func (s *SpaceShip) Draw(gc *game.GameContext) {
 		}
 	}
 	barSize := 5
-	base.DisplayHealth(int(s.Position.GetX())+(s.Width/2)-(barSize/2)-1, int(s.Position.GetY())+(s.Height), barSize, s, false, color)
+	base.DisplayBar(int(s.Position.GetX())+(s.Width/2)-(barSize/2)-1, int(s.Position.GetY())+(s.Height), barSize, s, false, color, &s.Gun)
 	// -1 because there are the brackets []. So the barSize+[] which is + 2.
 }
 
@@ -167,16 +168,21 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 		if ev.Rune() == ' ' {
 			shootBeam()
 		}
-		if ev.Rune() == 'f' || ev.Rune() == 'F' {
+		if ev.Rune() == 'E' || ev.Rune() == 'e' {
 			if s.healthKitsOwned > 0 {
-				SetStatus(fmt.Sprintf("[F] Health: Consumed +%d", int(IncreaseHealthBy)))
+				SetStatus(fmt.Sprintf("[E] Health: Consumed +%d", int(IncreaseHealthBy)))
 				if s.IncreaseHealth(int(IncreaseHealthBy)) {
 					s.healthKitsOwned--
 					return
 				}
-				SetStatus("[F] Health: Can't use right now")
+				SetStatus("[E] Health: Can't use right now")
 			} else {
-				SetStatus("[F] Health: N/A")
+				SetStatus("[E] Health: N/A")
+			}
+		}
+		if ev.Rune() == 'R' || ev.Rune() == 'r' {
+			if s.GetLoaded() != s.GetCapacity() {
+				s.ReloadGun()
 			}
 		}
 
@@ -204,28 +210,38 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 
 	healthStr := []rune(fmt.Sprintf("[HP Kit: %d/%d]", s.healthKitsOwned, MaxHealthKitsToOwn))
 	for i, r := range healthStr {
-		window.SetContentWithStyle(i, h-9, r, whiteColor)
+		window.SetContentWithStyle(i, h-10, r, whiteColor)
 	}
 
-	base.DisplayHealth(0, h-8, 10, s, true, whiteColor)
+	base.DisplayBar(0, h-9, 10, s, true, whiteColor, &s.Gun)
 
-	for i, r := range []rune(fmt.Sprintf("[Level: %d", level)) {
+	for i, r := range []rune(fmt.Sprintf("[Level:     %d", level)) {
+		window.SetContentWithStyle(i, h-8, r, whiteColor)
+	}
+
+	reloadAnimation := []rune("•○")
+	str := fmt.Sprintf("[CAP:    %d/%d", s.GetLoaded(), s.GetCapacity())
+
+	if s.IsReloading() {
+		frame := int(time.Now().UnixNano()/300_000_000) % len(reloadAnimation)
+		str += " " + string(reloadAnimation[frame]) + " RELOADING"
+	}
+	for i, r := range []rune(str) {
 		window.SetContentWithStyle(i, h-7, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("[CAP:   %d/%d", len(s.GetBeams()), s.GetCapacity())) {
+	for i, r := range []rune(fmt.Sprintf("[POW:    %d", s.GetPower())) {
 		window.SetContentWithStyle(i, h-6, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("[POW:   %d", s.GetPower())) {
+	for i, r := range []rune(fmt.Sprintf("[SPD:    %d", int(s.Gun.GetSpeed()))) {
 		window.SetContentWithStyle(i, h-5, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("[SPD:   %d", s.GetSpeed())) {
+	for i, r := range []rune(fmt.Sprintf("[CD:     %d ms", int(s.GetCooldown()))) {
 		window.SetContentWithStyle(i, h-4, r, whiteColor)
 	}
-
-	for i, r := range []rune(fmt.Sprintf("[CD:   %d ms", int(s.GetCooldown()))) {
+	for i, r := range []rune(fmt.Sprintf("[RLD:    %d ms", int(s.GetReloadCooldown()))) {
 		window.SetContentWithStyle(i, h-3, r, whiteColor)
 	}
 }
@@ -236,8 +252,13 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 			// check alien shooting the spaceship
 			for _, alienBeam := range alien.GetBeams() {
 				if s.isHit(alienBeam.GetPosition(), alien.GetPower()) {
+					s.TakeDamage(alien.GetPower())
 					alien.RemoveBeam(alienBeam)
 				}
+			}
+			if base.Crash(&s.ObjectBase, &alien.ObjectBase) {
+				s.TakeDamage(1)
+				alien.TakeDamage(5)
 			}
 		}
 	}
@@ -245,9 +266,15 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 		if b.BossAlien != nil {
 			for _, bossBeam := range b.BossAlien.GetBeams() {
 				if s.isHit(bossBeam.GetPosition(), b.BossAlien.GetPower()) {
+					s.TakeDamage(b.BossAlien.GetPower())
 					b.BossAlien.RemoveBeam(bossBeam)
 				}
 			}
+			if base.Crash(&s.ObjectBase, &b.BossAlien.ObjectBase) {
+				s.TakeDamage(1)
+				b.BossAlien.TakeDamage(5)
+			}
+
 		}
 	}
 }
