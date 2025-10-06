@@ -15,14 +15,20 @@ type Design struct {
 	Color        string   `json:"color"`
 }
 
+type HealthDesign struct {
+	Design
+	ModifyHealthConsumble int `json:"modify_health_consumble"`
+}
+
 type ModifierDesign struct {
 	Design
-	ModifyHealth      int  `json:"modify_health"`
-	ModifyLevel       bool `json:"modify_level"`
-	ModifyGunPower    int  `json:"modify_gun_power"`
-	ModifyGunCap      int  `json:"modify_gun_cap"`
-	ModifyGunSpeed    int  `json:"modify_gun_speed"`
-	ModifyGunCoolDown int  `json:"modify_gun_cooldown"`
+	ModifyHealth            int  `json:"modify_health"`
+	ModifyLevel             bool `json:"modify_level"`
+	ModifyGunPower          int  `json:"modify_gun_power"`
+	ModifyGunCap            int  `json:"modify_gun_cap"`
+	ModifyGunSpeed          int  `json:"modify_gun_speed"`
+	ModifyGunCoolDown       int  `json:"modify_gun_cooldown"`
+	ModifyGunReloadCoolDown int  `json:"modify_gun_reload_cooldown"`
 }
 
 type SpaceshipDesign struct {
@@ -39,8 +45,27 @@ type AlienshipDesign struct {
 	Speed int `json:"speed"`
 }
 
+type Designable interface {
+	GetColor() tcell.Color
+	GetHealth() int
+	GetName() string
+	GetShape() []string
+}
+
 func (d *Design) GetColor() tcell.Color {
 	return HexToColor(d.Color)
+}
+
+func (d *Design) GetHealth() int {
+	return d.EntityHealth
+}
+
+func (d *Design) GetShape() []string {
+	return d.Shape
+}
+
+func (d *Design) GetName() string {
+	return d.Name
 }
 
 func LoadAsset[T any](filePath string) (T, error) {
