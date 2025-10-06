@@ -296,14 +296,15 @@ func (s *SpaceShip) isHit(pointBeam base.PointInterface) bool {
 		r      rune
 		style  tcell.Style
 	}{
-		{-1, 0, tcell.RuneBoard, yellowColor},
-		{1, 0, tcell.RuneBoard, yellowColor},
-		{0, -1, tcell.RuneBoard, grayColor},
-		{0, 1, tcell.RuneBoard, grayColor},
-		{-1, -1, tcell.RuneCkBoard, grayColor},
-		{1, -1, tcell.RuneCkBoard, grayColor},
-		{-1, 1, tcell.RuneCkBoard, redColor},
-		{1, 1, tcell.RuneBoard, grayColor},
+		{0, 0, '*', yellowColor},
+		{-1, 0, '-', yellowColor},
+		{1, 0, '-', yellowColor},
+		{0, -1, '|', grayColor},
+		{0, 1, '|', grayColor},
+		{-1, -1, '\\', grayColor},
+		{1, -1, '/', grayColor},
+		{-1, 1, '/', redColor},
+		{1, 1, '\\', grayColor},
 	}
 
 	if int(pointBeam.GetX()) >= int(s.Position.GetX()) &&
