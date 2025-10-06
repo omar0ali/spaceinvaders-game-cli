@@ -53,10 +53,9 @@ func (b *BossProducer) Draw(gc *game.GameContext) {
 	if b.BossAlien == nil {
 		return
 	}
-	colorHealth := base.StyleIt(tcell.ColorReset, tcell.ColorIndianRed)
 	color := base.StyleIt(tcell.ColorReset, b.BossAlien.GetColor())
 
-	b.BossAlien.DisplayHealth(6, true, colorHealth, &b.BossAlien.Gun)
+	b.BossAlien.DisplayHealth(6, true, color, &b.BossAlien.Gun)
 
 	b.BossAlien.Draw(gc, b.BossAlien.GetColor())
 
