@@ -9,13 +9,13 @@ import (
 const defaultConfig = `
 [spaceship]
 max_level = 50
-next_level_score = 300
-gun_max_cap = 15
-gun_max_speed = 75
+next_level_score = 200
+gun_max_cap = 40
+gun_max_speed = 70
 
 [stars] 
 limit = 10
-speed = 45
+speed = 50
 `
 
 type GameConfig struct {
