@@ -14,7 +14,7 @@ var (
 	previousLevel  int = 0
 	nextLevelScore int = 0
 	kills          int = 0
-	level          int = 0
+	Level          int = 0
 	score          int = 0
 )
 
@@ -62,10 +62,8 @@ func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
 	previousLevel = 0
 	nextLevelScore = 0
 	kills = 0
-	level = 0
+	Level = 0
 	score = 0
-	ModifierHealth = 5
-	IncreaseHealthBy = 3
 
 	designs, err := game.LoadListOfAssets[game.SpaceshipDesign]("spaceships.json")
 	if err != nil {
@@ -108,7 +106,7 @@ func (s *SpaceShip) Update(gc *game.GameContext, delta float64) {
 		}
 	}
 	if score >= nextLevelScore {
-		level++
+		Level++
 		nextLevelScore *= 2
 	}
 	s.LevelUp()
@@ -169,10 +167,12 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 		}
 		if ev.Rune() == 'E' || ev.Rune() == 'e' {
 			if s.healthKitsOwned > 0 {
-				SetStatus(fmt.Sprintf("[E] Health: Consumed +%d", int(IncreaseHealthBy)))
-				if s.IncreaseHealth(int(IncreaseHealthBy)) {
-					s.healthKitsOwned--
-					return
+				if p, ok := gc.FindEntity("producer").(*ModifierProducer); ok {
+					SetStatus(fmt.Sprintf("[E] Health: Consumed +%d", p.ConsumbleHealth))
+					if s.IncreaseHealth(p.ConsumbleHealth) {
+						s.healthKitsOwned--
+						return
+					}
 				}
 				SetStatus("[E] Health: Can't use right now")
 			} else {
@@ -214,7 +214,7 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 
 	base.DisplayBar(0, h-9, 10, s, true, whiteColor, &s.Gun)
 
-	for i, r := range []rune(fmt.Sprintf("[Level:     %d", level)) {
+	for i, r := range []rune(fmt.Sprintf("[Level:  %d", Level)) {
 		base.SetContentWithStyle(i, h-8, r, whiteColor)
 	}
 
@@ -250,7 +250,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 		for _, alien := range a.Aliens {
 			// check alien shooting the spaceship
 			for _, alienBeam := range alien.GetBeams() {
-				if s.isHit(alienBeam.GetPosition(), alien.GetPower()) {
+				if s.isHit(alienBeam.GetPosition()) {
 					s.TakeDamage(alien.GetPower())
 					alien.RemoveBeam(alienBeam)
 				}
@@ -264,11 +264,12 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 	if b, ok := gc.FindEntity("boss").(*BossProducer); ok {
 		if b.BossAlien != nil {
 			for _, bossBeam := range b.BossAlien.GetBeams() {
-				if s.isHit(bossBeam.GetPosition(), b.BossAlien.GetPower()) {
+				if s.isHit(bossBeam.GetPosition()) {
 					s.TakeDamage(b.BossAlien.GetPower())
 					b.BossAlien.RemoveBeam(bossBeam)
 				}
 			}
+
 			if base.Crash(&s.ObjectBase, &b.BossAlien.ObjectBase) {
 				s.TakeDamage(1)
 				b.BossAlien.TakeDamage(5)
@@ -278,7 +279,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 	}
 }
 
-func (s *SpaceShip) isHit(pointBeam base.PointInterface, power int) bool {
+func (s *SpaceShip) isHit(pointBeam base.PointInterface) bool {
 	grayColor := base.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
 	redColor := base.StyleIt(tcell.ColorReset, tcell.ColorRed)
 	yellowColor := base.StyleIt(tcell.ColorReset, tcell.ColorYellow)
@@ -304,8 +305,6 @@ func (s *SpaceShip) isHit(pointBeam base.PointInterface, power int) bool {
 		int(pointBeam.GetY()) >= int(s.Position.GetY()) &&
 		int(pointBeam.GetY()) <= int(s.Position.GetY())+s.Height {
 
-		s.Health -= power // update health of the falling object
-
 		for _, p := range pattern {
 			base.SetContentWithStyle(
 				int(pointBeam.GetX())+p.dx,
@@ -320,19 +319,14 @@ func (s *SpaceShip) isHit(pointBeam base.PointInterface, power int) bool {
 }
 
 func (s *SpaceShip) LevelUp() {
-	if level > previousLevel {
-
-		// TODO: Refactor
-		ModifierHealth += 5
-		IncreaseHealthBy += 0.3
-
-		if s.cfg.SpaceShipConfig.MaxLevel <= level {
+	if Level > previousLevel {
+		if s.cfg.SpaceShipConfig.MaxLevel <= Level {
 			return // skip when reaching max level, will not increase any elements of other objects
 		}
 		for _, fn := range s.OnLevelUp {
-			fn(level)
+			fn(Level)
 		}
-		previousLevel = level
+		previousLevel = Level
 	}
 }
 
