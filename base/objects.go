@@ -8,7 +8,6 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
-	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
 const (
@@ -24,7 +23,7 @@ type HealthBar interface {
 type ObjectBase struct {
 	Health        int
 	MaxHealth     int
-	Position      game.PointFloat
+	Position      PointFloat
 	Width, Height int
 	Speed         float64
 }
@@ -49,10 +48,59 @@ func (f *ObjectBase) IsDead() bool {
 	return f.Health <= 0
 }
 
-func (f *ObjectBase) IsHit(pointBeam game.PointInterface, power int) bool {
-	grayColor := window.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
-	redColor := window.StyleIt(tcell.ColorReset, tcell.ColorRed)
-	yellowColor := window.StyleIt(tcell.ColorReset, tcell.ColorYellow)
+func Crash(c1, c2 Movable) bool {
+	grayColor := StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
+	redColor := StyleIt(tcell.ColorReset, tcell.ColorRed)
+	yellowColor := StyleIt(tcell.ColorReset, tcell.ColorYellow)
+
+	pattern := []struct {
+		dx, dy int
+		r      rune
+		style  tcell.Style
+	}{
+		{-1, 0, tcell.RuneBoard, yellowColor},
+		{1, 0, tcell.RuneBoard, yellowColor},
+		{0, -1, tcell.RuneBoard, grayColor},
+		{0, 1, tcell.RuneBoard, grayColor},
+		{-1, -1, tcell.RuneCkBoard, grayColor},
+		{1, -1, tcell.RuneCkBoard, grayColor},
+		{-1, 1, tcell.RuneCkBoard, redColor},
+		{1, 1, tcell.RuneBoard, grayColor},
+	}
+
+	x1 := int(math.Round(c1.GetPosition().GetX()))
+	y1 := int(math.Round(c1.GetPosition().GetY()))
+	w1 := c1.GetWidth()
+	h1 := c1.GetHeight()
+
+	x2 := int(math.Round(c2.GetPosition().GetX()))
+	y2 := int(math.Round(c2.GetPosition().GetY()))
+	w2 := c2.GetWidth()
+	h2 := c2.GetHeight()
+
+	if x1 < x2+w2 &&
+		x1+w1 > x2 &&
+		y1 < y2+h2 &&
+		y1+h1 > y2 {
+
+		for _, p := range pattern {
+			SetContentWithStyle(x1+(w1/2)+3+p.dx, y1+p.dy, p.r, p.style)
+			SetContentWithStyle(x2+(w2/2)+3+p.dx, y2+p.dy, p.r, p.style)
+		}
+		return true
+	}
+
+	return false
+}
+
+func (f *ObjectBase) TakeDamage(by int) {
+	f.Health -= by
+}
+
+func GettingHit(m Movable, beam PointableInt) bool {
+	grayColor := StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
+	redColor := StyleIt(tcell.ColorReset, tcell.ColorRed)
+	yellowColor := StyleIt(tcell.ColorReset, tcell.ColorYellow)
 
 	// draw flash when hitting
 	pattern := []struct {
@@ -71,80 +119,125 @@ func (f *ObjectBase) IsHit(pointBeam game.PointInterface, power int) bool {
 		{1, 1, '\\', grayColor},
 	}
 
-	px := int(math.Round(pointBeam.GetX()))
-	py := int(math.Round(pointBeam.GetY()))
-	ox := int(math.Round(f.Position.X))
-	oy := int(math.Round(f.Position.Y))
+	px := int(math.Round(beam.GetPosition().GetX()))
+	py := int(math.Round(beam.GetPosition().GetY()))
+	ox := int(math.Round(m.GetPosition().GetX()))
+	oy := int(math.Round(m.GetPosition().GetY()))
 
-	if px >= ox && px < ox+f.Width &&
-		py >= oy && py < oy+f.Height {
-
-		f.Health -= power // update health of the falling object
+	if px >= ox && px < ox+m.GetWidth() &&
+		py >= oy && py < oy+m.GetHeight() {
 
 		for _, p := range pattern {
-			window.SetContentWithStyle(
-				int(pointBeam.GetX())+p.dx,
-				int(pointBeam.GetY())+p.dy,
+			SetContentWithStyle(
+				int(beam.GetPosition().GetX())+p.dx,
+				int(beam.GetPosition().GetY())+p.dy,
 				p.r, p.style,
 			)
 		}
-
 		return true
 	}
 	return false
 }
 
-func (f *FallingObjectBase) Move(delta float64) {
-	distance := f.Speed * delta
-	f.Position.AppendY(distance)
+func (f *ObjectBase) GetWidth() int {
+	return f.Width
 }
 
-func MoveTo(from, to *ObjectBase, delta float64, gc *game.GameContext) {
-	distance := from.Speed * delta
+func (f *ObjectBase) GetHeight() int {
+	return f.Height
+}
+
+type PointableInt interface {
+	GetPosition() *Point
+}
+
+type PointableFloat interface {
+	GetPosition() *PointFloat
+}
+
+type Sizeable interface {
+	GetWidth() int
+	GetHeight() int
+}
+
+type Movable interface {
+	Sizeable
+	PointableFloat
+	AppendPositionY(float64)
+	GetSpeed() float64
+}
+
+func (f *ObjectBase) GetSpeed() float64 {
+	return f.Speed
+}
+
+func (f *ObjectBase) GetPosition() *PointFloat {
+	return &f.Position
+}
+
+func (f *ObjectBase) AppendPositionY(y float64) {
+	f.Position.AppendY(y)
+}
+
+func Move(m Movable, delta float64) {
+	distance := m.GetSpeed() * delta
+	m.AppendPositionY(distance)
+}
+
+func MoveTo(from, to Movable, delta float64, gc *game.GameContext) {
+	distance := from.GetSpeed() * delta
 
 	const toleranceX = 2
 	const toleranceY = 5
 
-	bossCenterX := from.Position.X + float64(from.Width)/2
-	shipCenterX := to.Position.X + float64(to.Width)/2 + 2
+	bossCenterX := from.GetPosition().X + float64(from.GetWidth())/2
+	shipCenterX := to.GetPosition().X + float64(to.GetWidth())/2 + 2
 
 	if math.Abs(bossCenterX-shipCenterX) > toleranceX {
 		if bossCenterX > shipCenterX {
-			from.Position.AppendX(-distance)
+			from.GetPosition().AppendX(-distance)
 		} else {
-			from.Position.AppendX(distance)
+			from.GetPosition().AppendX(distance)
 		}
 	}
-	targetY := to.Position.Y - float64(to.Height) - 18
+
+	targetY := to.GetPosition().Y - float64(to.GetHeight()) - 10
 	if targetY < -5 {
 		targetY = -5
 	}
 
-	if math.Abs(from.Position.Y-targetY) > toleranceY {
-		if from.Position.Y > targetY {
-			from.Position.AppendY(-distance)
+	if math.Abs(from.GetPosition().Y-targetY) > toleranceY {
+		if from.GetPosition().Y > targetY {
+			from.GetPosition().AppendY(-distance)
 		} else {
-			from.Position.AppendY(distance)
+			from.GetPosition().AppendY(distance)
 		}
 	}
 }
 
-func (f *ObjectBase) DisplayHealth(barSize int, showStats bool, style tcell.Style) {
-	DisplayHealth(
+func (f *ObjectBase) DisplayHealth(barSize int, showStats bool, style tcell.Style, gun Gunner) {
+	DisplayBar(
 		int(f.Position.GetX())+(f.Width/2)-(barSize/2)-1,
 		int(f.Position.GetY()-1),
 		barSize,
 		f,
 		showStats,
 		style,
+		gun,
 	)
 }
 
-func DisplayHealth(xPos, yPos, barSize int, h HealthBar, showStats bool, style tcell.Style) {
+func DisplayBar(xPos, yPos, barSize int, h HealthBar, showStats bool, style tcell.Style, gun Gunner) {
+	reloadAnimation := []rune("•○")
+	if gun != nil && gun.IsReloading() {
+		frame := int(time.Now().UnixNano()/300_000_000) % len(reloadAnimation)
+		SetContentWithStyle(xPos-2, yPos, reloadAnimation[frame], style)
+	}
+
 	trackXPossition := xPos
 	// pre draw health
 	for _, r := range string("[") {
-		window.SetContentWithStyle(trackXPossition, yPos, r, style)
+		SetContentWithStyle(trackXPossition, yPos, r, style)
 		trackXPossition++
 	}
 	// draw health
@@ -153,21 +246,20 @@ func DisplayHealth(xPos, yPos, barSize int, h HealthBar, showStats bool, style t
 
 	for i := range barSize {
 		if i < filled {
-			window.SetContentWithStyle(trackXPossition+i, yPos, HealthBoxStyle, style)
+			SetContentWithStyle(trackXPossition+i, yPos, HealthBoxStyle, style)
 		} else {
-			window.SetContentWithStyle(trackXPossition+i, yPos, HealthBoxEmptyStyle, style)
+			SetContentWithStyle(trackXPossition+i, yPos, HealthBoxEmptyStyle, style)
 		}
 	}
+	SetContentWithStyle(trackXPossition+barSize, yPos, ']', style)
 	if !showStats {
-		// end with a bracket
-		window.SetContentWithStyle(trackXPossition+barSize, yPos, ']', style)
 		return
 	}
 	// or end with showing stats (total health)
 	trackXPossition += barSize
 	// last
-	for i, r := range []rune(fmt.Sprintf("] %d/%d", h.GetHealth(), h.GetMaxHealth())) {
-		window.SetContentWithStyle(trackXPossition+i, yPos, r, style)
+	for i, r := range []rune(fmt.Sprintf(" %d/%d", h.GetHealth(), h.GetMaxHealth())) {
+		SetContentWithStyle(trackXPossition+i+1, yPos, r, style)
 	}
 }
 
@@ -184,5 +276,15 @@ func DoEvery(interval time.Duration, fn func(), done <-chan struct{}) {
 		case <-done:
 			return
 		}
+	}
+}
+
+func DoOnce(delay time.Duration, fn func(), done <-chan struct{}) {
+	select {
+	case <-time.After(delay):
+		fn() // run the function after the delay
+	case <-done:
+		// stop early if done signal received
+		return
 	}
 }

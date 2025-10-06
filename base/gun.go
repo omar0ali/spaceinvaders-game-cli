@@ -6,7 +6,6 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
-	"github.com/omar0ali/spaceinvaders-game-cli/window"
 )
 
 type Direction = int
@@ -17,12 +16,12 @@ const (
 )
 
 type beam struct {
-	position  game.Point
+	position  Point
 	Symbol    rune
 	Direction Direction
 }
 
-func (b *beam) GetPosition() *game.Point {
+func (b *beam) GetPosition() *Point {
 	return &b.position
 }
 
@@ -50,6 +49,10 @@ func NewGun(cap, power, speed int, cooldown, reloadCooldown int) Gun {
 		cooldown:       time.Duration(cooldown) * time.Millisecond,
 		reloadCooldown: time.Duration(reloadCooldown) * time.Millisecond,
 	}
+}
+
+type Gunner interface {
+	IsReloading() bool
 }
 
 func (g *Gun) GetPower() int {
@@ -136,11 +139,15 @@ func (g *Gun) ReloadGun() {
 	}
 }
 
-func (g *Gun) InitBeam(pos game.Point, dir Direction) {
+func (g *Gun) InitBeam(pos Point, dir Direction) {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 
-	if time.Since(g.lastShot) < g.cooldown || g.IsReloading() {
+	if g.IsReloading() {
+		return
+	}
+
+	if time.Since(g.lastShot) < g.cooldown {
 		return
 	}
 
@@ -155,7 +162,7 @@ func (g *Gun) InitBeam(pos game.Point, dir Direction) {
 	}
 
 	beam := beam{
-		position: game.Point{
+		position: Point{
 			X: pos.X,
 			Y: pos.Y,
 		},
@@ -178,7 +185,7 @@ func (g *Gun) RemoveBeam(beam *beam) {
 
 func (g *Gun) Update(gc *game.GameContext, delta float64) {
 	// update the coordinates of the beam
-	_, h := window.GetSize()
+	_, h := GetSize()
 	var activeBeams []*beam
 	for _, beam := range g.beams {
 		distance := int(float64(g.speed) * delta)
@@ -198,10 +205,10 @@ func (g *Gun) Update(gc *game.GameContext, delta float64) {
 
 func (g *Gun) Draw(gc *game.GameContext, color tcell.Color) {
 	// draw the beam new position
-	style := window.StyleIt(tcell.ColorReset, color)
+	style := StyleIt(tcell.ColorReset, color)
 
 	for _, beam := range g.beams {
-		window.SetContentWithStyle(beam.position.X, beam.position.Y, beam.Symbol, style)
+		SetContentWithStyle(beam.position.X, beam.position.Y, beam.Symbol, style)
 	}
 }
 
