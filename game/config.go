@@ -15,7 +15,7 @@ gun_max_speed = 75
 
 [stars] 
 limit = 10
-speed = 50
+speed = 45
 `
 
 type GameConfig struct {

@@ -65,9 +65,10 @@ func (u *UI) Draw(gc *game.GameContext) {
 
 				**** Controls ****
 				[LM] Or [Space] to shoot coming alien-ships.
-				[F] Consume Health Kit.
+				[E] Consume Health Kit.
+				[Ctrl+R] to restart the game.
 				[P] To pause the game.
-				[Q] To quit the game.
+				[Ctrl+Q] To quit the game.
 
 				Press [S] to start the game
 			`,
@@ -110,14 +111,17 @@ func (u *UI) Draw(gc *game.GameContext) {
 						// draw details of the spaceship
 						str := []string{
 							fmt.Sprintf("[%s]", shape.Name),
-							fmt.Sprintf("* Spaceship HP: %d", shape.EntityHealth),
-							fmt.Sprintf("* Gun Power: %d", shape.GunPower),
-							fmt.Sprintf("* Gun Capacity: %d", shape.GunCap),
-							fmt.Sprintf("* Gun Speed: %d", shape.GunSpeed),
+							fmt.Sprintf("* HP:         %d", shape.EntityHealth),
+							fmt.Sprintf("* Gun PWD:    %d", shape.GunPower),
+							fmt.Sprintf("* Gun CAP:    %d", shape.GunCap),
+							fmt.Sprintf("* Gun SPD:    %d", shape.GunSpeed),
+							fmt.Sprintf("* Gun CD:     %d ms", shape.GunCooldown),
+							fmt.Sprintf("* Gun RLD CD: %d ms", shape.GunReloadCooldown),
 						}
+
 						for j, line := range str {
 							for i, r := range line {
-								window.SetContentWithStyle(initX+colIndex+(gap*5)+i, initY+j, r, color)
+								window.SetContentWithStyle(initX+colIndex+(gap*4)+i, initY+j, r, color)
 							}
 						}
 					}
@@ -132,23 +136,26 @@ func (u *UI) Draw(gc *game.GameContext) {
 				fmt.Sprintf(`
 				(*) Level: %d
 
-				(*) Choose a stat to upgrade:--------------------
+				(*) Choose a stat to upgrade:                  
 
 				[A] (%d) Increase Gun Power by %d
 				[S] (%d/%d) Increase Gun Speed by %d
 				[D] (%d/%d) Increase Gun Capacity by %d
-				[C] (%d) Decrease Gun Cooldown by %d
+				[F] (%d) Decrease Gun Cooldown by %d
+				[G] (%d) Decrease Gun Reload Cooldown by %d
 				[H] (%d/%d) Restore Full Health
 				`, level,
 					s.GetPower(),
 					IncreaseGunPowerBy,
-					s.GetSpeed(),
+					int(s.Gun.GetSpeed()),
 					s.cfg.SpaceShipConfig.GunMaxSpeed,
 					IncreaseGunSpeedBy,
 					s.GetCapacity(),
 					s.cfg.SpaceShipConfig.GunMaxCap,
 					IncreaseGunCapBy,
 					s.GetCooldown(),
+					DecreaseGunCooldownBy,
+					s.GetReloadCooldown(),
 					DecreaseGunCooldownBy,
 					s.Health,
 					s.SelectedSpaceship.EntityHealth),
@@ -158,7 +165,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 
 	// show controls at the bottom of the screen
 	_, h := window.GetSize()
-	for i, r := range []rune("[LM] or [Space] Shoot Beams ◆ [F] Consume Health Kit ◆ [P] Pause Game ◆ [R] Restart Game ◆ [Q] Quit") {
+	for i, r := range []rune("[LM] or [Space] Shoot Beams ◆ [E] Consume Health Kit ◆ [R] Reload Gun ◆ [P] Pause Game ◆ [Ctrl+R] Restart Game ◆ [Ctrl+Q] Quit") {
 		window.SetContentWithStyle(i, h-1, r, whiteColor)
 	}
 
@@ -207,8 +214,8 @@ func (u *UI) Draw(gc *game.GameContext) {
 				- Kills: %d
 				- Level: %d
 
-				[R] To restart the game.
-				[Q] To quit the game.
+				[Ctrl+R] To restart the game.
+				[Ctrl+Q] To quit the game.
 				[P] To continue the game.
 			`, s.Health, score, kills, level),
 				"Paused",
@@ -229,8 +236,8 @@ func (u *UI) Draw(gc *game.GameContext) {
 
 				Would you like to play again?
 
-				[R] To restart the game.
-				[Q] To quit the game.
+				[Ctrl+R] To restart the game.
+				[Ctrl+Q] To quit the game.
 
 			`, score, kills, level),
 			"Game Over",
@@ -301,18 +308,11 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 					}
 					if ev.Rune() == 'D' || ev.Rune() == 'd' {
 						upgrade(func() bool {
-							SetStatus(fmt.Sprintf("[D] Gun Cap: +%d", IncreaseGunCapBy))
+							SetStatus(fmt.Sprintf("[D] Gun Capcity: +%d", IncreaseGunCapBy))
 							return s.IncreaseGunCap(IncreaseGunCapBy, s.cfg.SpaceShipConfig.GunMaxCap)
 						})
 					}
-					if ev.Rune() == 'H' || ev.Rune() == 'h' {
-						upgrade(func() bool {
-							SetStatus("[H] Spaceship health has been restored!")
-							return s.RestoreFullHealth()
-						})
-					}
-
-					if ev.Rune() == 'C' || ev.Rune() == 'c' {
+					if ev.Rune() == 'F' || ev.Rune() == 'f' {
 						upgrade(func() bool {
 							if s.DecreaseCooldown(DecreaseGunCooldownBy) {
 								SetStatus(fmt.Sprintf("[C] Gun Cooldown: -%d", DecreaseGunCooldownBy))
@@ -320,6 +320,24 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 							}
 							SetStatus("[C] Gun Cooldown: Maxed Out!")
 							return false
+						})
+					}
+
+					if ev.Rune() == 'G' || ev.Rune() == 'g' {
+						upgrade(func() bool {
+							if s.DecreaseGunReloadCooldown(DecreaseGunCooldownBy) {
+								SetStatus(fmt.Sprintf("[G] Gun Reload Cooldown: -%d", DecreaseGunCooldownBy))
+								return true
+							}
+							SetStatus("[G] Gun Reload Cooldown: Maxed Out!")
+							return false
+						})
+					}
+
+					if ev.Rune() == 'H' || ev.Rune() == 'h' {
+						upgrade(func() bool {
+							SetStatus("[H] Spaceship health has been restored!")
+							return s.RestoreFullHealth()
 						})
 					}
 

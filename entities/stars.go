@@ -52,7 +52,7 @@ func (s *StarProducer) Update(gc *game.GameContext, delta float64) {
 
 	// Update the coordinates of the stars.
 	for _, star := range s.Stars {
-		star.Move(delta)
+		base.Move(&star.ObjectBase, delta)
 	}
 
 	// -------- this will ensure to clean up stars --------

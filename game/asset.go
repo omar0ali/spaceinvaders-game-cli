@@ -27,10 +27,11 @@ type ModifierDesign struct {
 
 type SpaceshipDesign struct {
 	Design
-	GunPower    int `json:"gun_power"`
-	GunSpeed    int `json:"gun_speed"`
-	GunCap      int `json:"gun_cap"`
-	GunCooldown int `json:"gun_cooldown"`
+	GunPower          int `json:"gun_power"`
+	GunSpeed          int `json:"gun_speed"`
+	GunCap            int `json:"gun_cap"`
+	GunCooldown       int `json:"gun_cooldown"`
+	GunReloadCooldown int `json:"gun_reload_cooldown"`
 }
 
 type AlienshipDesign struct {
