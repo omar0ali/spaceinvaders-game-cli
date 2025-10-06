@@ -27,23 +27,28 @@ func (b *beam) GetPosition() *game.Point {
 }
 
 type Gun struct {
-	beams []*beam
-	cap   int
-	power int
-	speed int
+	beams  []*beam
+	cap    int
+	loaded int
+	power  int
+	speed  int
 
-	mu       sync.Mutex
-	lastShot time.Time
-	cooldown time.Duration
+	reloading      bool
+	mu             sync.Mutex
+	lastShot       time.Time
+	cooldown       time.Duration
+	reloadCooldown time.Duration
 }
 
-func NewGun(cap, power, speed int, cooldown int) Gun {
+func NewGun(cap, power, speed int, cooldown, reloadCooldown int) Gun {
 	return Gun{
-		beams:    []*beam{},
-		cap:      cap,
-		power:    power,
-		speed:    speed,
-		cooldown: time.Duration(cooldown) * time.Millisecond,
+		beams:          []*beam{},
+		cap:            cap,
+		loaded:         cap,
+		power:          power,
+		speed:          speed,
+		cooldown:       time.Duration(cooldown) * time.Millisecond,
+		reloadCooldown: time.Duration(reloadCooldown) * time.Millisecond,
 	}
 }
 
@@ -57,6 +62,10 @@ func (g *Gun) GetSpeed() int {
 
 func (g *Gun) GetCooldown() time.Duration {
 	return g.cooldown / time.Millisecond
+}
+
+func (g *Gun) GetReloadCooldown() time.Duration {
+	return g.reloadCooldown / time.Millisecond
 }
 
 func (g *Gun) IncreaseGunSpeed(i, limit int) bool {
@@ -81,6 +90,14 @@ func (g *Gun) DecreaseCooldown(i int) bool {
 	return true
 }
 
+func (g *Gun) DecreaseGunReloadCooldown(i int) bool {
+	if g.reloadCooldown < 30 {
+		return false
+	}
+	g.reloadCooldown -= time.Duration(i) * time.Millisecond
+	return true
+}
+
 func (g *Gun) IncreaseGunCap(i, limit int) bool {
 	if g.cap < limit {
 		g.cap += i
@@ -94,19 +111,41 @@ func (g *Gun) GetCapacity() int {
 	return g.cap
 }
 
+func (g *Gun) GetLoaded() int {
+	return g.loaded
+}
+
 func (g *Gun) GetBeams() []*beam {
 	return g.beams
+}
+
+func (g *Gun) IsReloading() bool {
+	return g.reloading
+}
+
+func (g *Gun) ReloadGun() {
+	if !g.reloading {
+		g.reloading = true
+		done := make(chan struct{})
+		go DoOnce(2*time.Second, func() {
+			g.mu.Lock()
+			defer g.mu.Unlock()
+			g.loaded = g.cap
+			g.reloading = false
+		}, done)
+	}
 }
 
 func (g *Gun) InitBeam(pos game.Point, dir Direction) {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 
-	if time.Since(g.lastShot) < g.cooldown {
+	if time.Since(g.lastShot) < g.cooldown || g.IsReloading() {
 		return
 	}
 
-	if len(g.beams) >= g.cap {
+	if g.loaded <= 0 {
+		g.ReloadGun()
 		return
 	}
 
@@ -125,6 +164,7 @@ func (g *Gun) InitBeam(pos game.Point, dir Direction) {
 	}
 	g.beams = append(g.beams, &beam)
 	g.lastShot = time.Now()
+	g.loaded -= 1
 }
 
 func (g *Gun) RemoveBeam(beam *beam) {
