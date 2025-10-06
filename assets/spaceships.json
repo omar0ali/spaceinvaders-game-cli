@@ -6,8 +6,8 @@
         "gun_power": 2,
         "gun_speed": 44,
         "gun_cap": 10,
-        "gun_cooldown": 150,
-        "gun_reload_cooldown": 600,
+        "gun_cooldown": 200,
+        "gun_reload_cooldown": 800,
         "shape": [
             "  ^  ",
             " /|\\ ",
@@ -21,8 +21,8 @@
         "gun_power": 5,
         "gun_speed": 42,
         "gun_cap": 10,
-        "gun_cooldown": 180,
-        "gun_reload_cooldown": 800,
+        "gun_cooldown": 250,
+        "gun_reload_cooldown": 900,
         "shape": [
             " [ |^| ] ",
             "   /|\\   ",
@@ -54,8 +54,8 @@
         "gun_power": 15,
         "gun_speed": 38,
         "gun_cap": 10,
-        "gun_cooldown": 700,
-        "gun_reload_cooldown": 1500,
+        "gun_cooldown": 750,
+        "gun_reload_cooldown": 1800,
         "shape": [
             "    |    ",
             "   +^+   ",
@@ -71,8 +71,8 @@
         "gun_power": 15,
         "gun_speed": 35,
         "gun_cap": 20,
-        "gun_cooldown": 800,
-        "gun_reload_cooldown": 2500,
+        "gun_cooldown": 850,
+        "gun_reload_cooldown": 2800,
         "shape": [
             "      |      ",
             "     +^+     ",

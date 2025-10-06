@@ -130,7 +130,7 @@ func (g *Gun) ReloadGun() {
 	if !g.reloading {
 		g.reloading = true
 		done := make(chan struct{})
-		go DoOnce(2*time.Second, func() {
+		go DoOnce(g.reloadCooldown, func() {
 			g.mu.Lock()
 			defer g.mu.Unlock()
 			g.loaded = g.cap
