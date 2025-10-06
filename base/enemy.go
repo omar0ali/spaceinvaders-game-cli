@@ -43,11 +43,11 @@ func Deploy(fileDesigns string, level float64) *Enemy {
 			},
 		},
 		Gun: NewGun(
-			design.GunCap+int(level),
-			design.GunPower+int(level),
+			design.GunCap+int(level)-1,
+			design.GunPower+int(level)-1,
 			design.GunSpeed+int(level),
-			design.GunCooldown+int(level),
-			design.GunReloadCooldown+int(level)),
+			design.GunCooldown-int(level),
+			design.GunReloadCooldown-int(level)),
 		AlienshipDesign: design,
 	}
 

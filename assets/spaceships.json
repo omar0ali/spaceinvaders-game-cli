@@ -7,7 +7,7 @@
         "gun_speed": 44,
         "gun_cap": 10,
         "gun_cooldown": 200,
-        "gun_reload_cooldown": 800,
+        "gun_reload_cooldown": 1000,
         "shape": [
             "  ^  ",
             " /|\\ ",
@@ -22,7 +22,7 @@
         "gun_speed": 42,
         "gun_cap": 10,
         "gun_cooldown": 250,
-        "gun_reload_cooldown": 900,
+        "gun_reload_cooldown": 1100,
         "shape": [
             " [ |^| ] ",
             "   /|\\   ",
@@ -38,7 +38,7 @@
         "gun_speed": 43,
         "gun_cap": 7,
         "gun_cooldown": 400,
-        "gun_reload_cooldown": 950,
+        "gun_reload_cooldown": 1200,
         "shape": [
             "   ^   ",
             "  /|\\  ",
