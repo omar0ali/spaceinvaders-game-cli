@@ -10,17 +10,26 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
-var (
-	previousLevel  int = 0
-	nextLevelScore int = 0
-	kills          int = 0
-	Level          int = 0
-	score          int = 0
-)
+type Score struct {
+	Score          int
+	Level          int
+	Kills          int
+	PreviousLevel  int
+	NextLevelScore int
+}
+
+func (s *Score) GetCurrent() int {
+	return s.Score
+}
+
+func (s *Score) GetMax() int {
+	return s.NextLevelScore
+}
 
 type SpaceShip struct {
 	base.Gun
 	base.ObjectBase
+	Score
 	cfg               game.GameConfig
 	OnLevelUp         []func(newLevel int)
 	SelectedSpaceship *game.SpaceshipDesign
@@ -58,19 +67,10 @@ func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
 		Y: float64(h - 3),
 	}
 
-	// reset values
-	previousLevel = 0
-	nextLevelScore = 0
-	kills = 0
-	Level = 0
-	score = 0
-
 	designs, err := game.LoadListOfAssets[game.SpaceshipDesign]("spaceships.json")
 	if err != nil {
 		panic(err)
 	}
-
-	nextLevelScore = cfg.SpaceShipConfig.NextLevelScore
 
 	return &SpaceShip{
 		ObjectBase: base.ObjectBase{
@@ -79,6 +79,9 @@ func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
 		ListOfSpaceships: designs,
 		cfg:              cfg,
 		healthKitsOwned:  1,
+		Score: Score{
+			NextLevelScore: cfg.SpaceShipConfig.NextLevelScore,
+		},
 	}
 }
 
@@ -105,10 +108,11 @@ func (s *SpaceShip) Update(gc *game.GameContext, delta float64) {
 			ui.GameOverScreen = true
 		}
 	}
-	if score >= nextLevelScore {
-		Level++
-		nextLevelScore *= 2
+	if s.Score.Score >= s.NextLevelScore {
+		s.Level++
+		s.NextLevelScore += s.cfg.SpaceShipConfig.NextLevelScore
 	}
+
 	s.LevelUp()
 
 	s.MovementAndCollision(delta, gc)
@@ -196,11 +200,13 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 	const padding, startY = 2, 2
 	whiteColor := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 
-	for i, r := range []rune(fmt.Sprintf("* Score: %d/%d", score, nextLevelScore)) {
+	for i, r := range []rune("* Score: ") {
 		base.SetContentWithStyle(padding+i, startY, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("* Kills: %d", kills)) {
+	base.DisplayBar(padding+9, startY, 10, &s.Score, true, whiteColor, nil)
+
+	for i, r := range []rune(fmt.Sprintf("* Kills: %d", s.Kills)) {
 		base.SetContentWithStyle(padding+i, startY+1, r, whiteColor)
 	}
 
@@ -214,7 +220,7 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 
 	base.DisplayBar(0, h-9, 10, s, true, whiteColor, &s.Gun)
 
-	for i, r := range []rune(fmt.Sprintf("[Level:  %d", Level)) {
+	for i, r := range []rune(fmt.Sprintf("[Level:  %d", s.Level)) {
 		base.SetContentWithStyle(i, h-8, r, whiteColor)
 	}
 
@@ -319,34 +325,35 @@ func (s *SpaceShip) isHit(pointBeam base.PointInterface) bool {
 }
 
 func (s *SpaceShip) LevelUp() {
-	if Level > previousLevel {
-		if s.cfg.SpaceShipConfig.MaxLevel <= Level {
+	if s.Level > s.PreviousLevel {
+		if s.cfg.SpaceShipConfig.MaxLevel <= s.Level {
 			return // skip when reaching max level, will not increase any elements of other objects
 		}
 		for _, fn := range s.OnLevelUp {
-			fn(Level)
+			fn(s.Level)
 		}
-		previousLevel = Level
+		s.PreviousLevel = s.Level
+		s.Score.Score = 0
 	}
 }
 
-func ScoreKill() {
-	kills += 1
-	score += kills
+func (s *SpaceShip) ScoreKill() {
+	s.Kills += 1
+	s.Score.Score += s.Kills
 }
 
 func (s *SpaceShip) ScoreHit() {
-	score += s.GetPower() * 2
+	s.Score.Score += s.GetPower()
 }
 
 func (s *SpaceShip) GetType() string {
 	return "spaceship"
 }
 
-func (s *SpaceShip) GetHealth() int {
+func (s *SpaceShip) GetCurrent() int {
 	return s.Health
 }
 
-func (s *SpaceShip) GetMaxHealth() int {
+func (s *SpaceShip) GetMax() int {
 	return s.MaxHealth
 }
