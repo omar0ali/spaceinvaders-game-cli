@@ -123,7 +123,7 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 			spaceship.TakeDamage(1)
 		}
 		if alien.IsDead() {
-			ScoreKill()
+			spaceship.ScoreKill()
 		}
 		if !alien.IsDead() && !alien.IsOffScreen(h) { // still flying
 			activeAliens = append(activeAliens, alien)

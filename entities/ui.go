@@ -149,7 +149,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 				[F] (%d) Decrease Gun Cooldown by %d
 				[G] (%d) Decrease Gun Reload Cooldown by %d
 				[H] (%d/%d) Restore Full Health
-				`, Level,
+				`, s.Level,
 					s.GetPower(),
 					IncreaseGunPowerBy,
 					int(s.Gun.GetSpeed()),
@@ -212,7 +212,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 				[Ctrl+Q] To quit the game.
 
 				[P] To continue the game.
-			`, s.Health, score, kills, Level),
+			`, s.Health, s.Score.Score, s.Kills, s.Level),
 				"Paused",
 			)
 			return
@@ -220,9 +220,10 @@ func (u *UI) Draw(gc *game.GameContext) {
 	}
 	// game over ui
 	if u.GameOverScreen {
-		u.MessageBox(
-			base.GetCenterPoint(),
-			fmt.Sprintf(`
+		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+			u.MessageBox(
+				base.GetCenterPoint(),
+				fmt.Sprintf(`
 				Thank you for playing :)
 
 				- Score: %d
@@ -234,9 +235,10 @@ func (u *UI) Draw(gc *game.GameContext) {
 				[Ctrl+R] To restart the game.
 				[Ctrl+Q] To quit the game.
 
-			`, score, kills, Level),
-			"Game Over",
-		)
+			`, s.Score.Score, s.Kills, s.Level),
+				"Game Over",
+			)
+		}
 		return
 	}
 

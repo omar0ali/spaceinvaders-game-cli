@@ -94,11 +94,10 @@ func (b *BossProducer) MovementAndCollision(delta float64, gc *game.GameContext)
 				spaceship.RemoveBeam(beam)
 			}
 		}
-	}
-
-	if b.BossAlien.IsDead() {
-		ScoreKill()
-		SetStatus("Threat neutralized. Returning to standby.")
-		b.BossAlien = nil
+		if b.BossAlien.IsDead() {
+			spaceship.ScoreKill()
+			SetStatus("Threat neutralized. Returning to standby.")
+			b.BossAlien = nil
+		}
 	}
 }
