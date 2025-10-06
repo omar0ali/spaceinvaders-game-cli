@@ -1,11 +1,13 @@
 [
     {
         "name": "Interceptor",
-        "health": 15,
+        "health": 20,
         "color": "c4ffc2",
-        "gun_power": 4,
+        "gun_power": 2,
         "gun_speed": 44,
-        "gun_cap": 4,
+        "gun_cap": 10,
+        "gun_cooldown": 150,
+        "gun_reload_cooldown": 600,
         "shape": [
             "  ^  ",
             " /|\\ ",
@@ -14,24 +16,29 @@
     },
     {
         "name": "Scout",
-        "health": 20,
+        "health": 25,
         "color": "c2fffc",
-        "gun_power": 7,
+        "gun_power": 5,
         "gun_speed": 42,
-        "gun_cap": 4,
+        "gun_cap": 10,
+        "gun_cooldown": 180,
+        "gun_reload_cooldown": 800,
         "shape": [
-            "  ^  ",
-            " /|\\ ",
-            "/_|_\\"
+            " [ |^| ] ",
+            "   /|\\   ",
+            "  /_|_\\  ",
+            "  v V v  "
         ]
     },
     {
         "name": "Fighter",
-        "health": 25,
+        "health": 30,
         "color": "c2c8ff",
-        "gun_power": 10,
-        "gun_speed": 40,
-        "gun_cap": 2,
+        "gun_power": 8,
+        "gun_speed": 43,
+        "gun_cap": 7,
+        "gun_cooldown": 400,
+        "gun_reload_cooldown": 950,
         "shape": [
             "   ^   ",
             "  /|\\  ",
@@ -42,11 +49,13 @@
     },
     {
         "name": "Destroyer",
-        "health": 30,
+        "health": 35,
         "color": "fbc2ff",
         "gun_power": 15,
         "gun_speed": 38,
-        "gun_cap": 2,
+        "gun_cap": 5,
+        "gun_cooldown": 700,
+        "gun_reload_cooldown": 1000,
         "shape": [
             "    |    ",
             "   +^+   ",
@@ -57,11 +66,13 @@
     },
     {
         "name": "Battleship",
-        "health": 35,
+        "health": 40,
         "color": "ffc2c2",
-        "gun_power": 20,
+        "gun_power": 15,
         "gun_speed": 35,
-        "gun_cap": 2,
+        "gun_cap": 20,
+        "gun_cooldown": 800,
+        "gun_reload_cooldown": 1100,
         "shape": [
             "      |      ",
             "     +^+     ",

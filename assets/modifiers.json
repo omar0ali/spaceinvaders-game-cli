@@ -1,9 +1,9 @@
 [
     {
-        "name": "Health +1",
-        "health": 30,
+        "name": "Health +2",
+        "health": 25,
         "color": "008000",
-        "modify_health": 1,
+        "modify_health": 2,
         "modify_level": false,
         "modify_gun_cap": 0,
         "modify_gun_speed": 0,
@@ -12,10 +12,9 @@
         "shape": [
             " __________ ",
             "|  ______  |",
-            "| |__+___| |",
-            "| |      | |",
+            "| |=-=-=-| |",
+            "| |||||||| ",
             "| |______| |",
-            "|          |",
             "|__________|",
             "|  HEALTH  |",
             "|____++____|"
@@ -28,8 +27,8 @@
         "modify_health": 3,
         "modify_level": true,
         "modify_gun_cap": 0,
-        "modify_gun_speed": 0,
-        "modify_gun_power": 0,
+        "modify_gun_speed": 1,
+        "modify_gun_power": 1,
         "modify_gun_cooldown": 0,
         "shape": [
             " -------- ",
@@ -45,15 +44,38 @@
         ]
     },
     {
+        "name": "Gun Reload Cooldown -3",
+        "health": 40,
+        "color": "00BFFF",
+        "modify_health": 0,
+        "modify_level": false,
+        "modify_gun_cap": 0,
+        "modify_gun_speed": 0,
+        "modify_gun_power": 0,
+        "modify_reload_cooldown": 3,
+        "shape": [
+            " __________ ",
+            "|    __    |",
+            "|  / __ \\  |",
+            "| | (__) | |",
+            "|  \\____/  |",
+            "|    ||    |",
+            "|__________|",
+            "|  RELOAD  |",
+            "| COOLDOWN |",
+            "|____--____|"
+        ]
+    },
+    {
         "name": "Gun Cooldown -3",
-        "health": 80,
+        "health": 40,
         "color": "FF8000",
         "modify_health": 0,
         "modify_level": false,
         "modify_gun_cap": 0,
         "modify_gun_speed": 0,
         "modify_gun_power": 0,
-        "modify_gun_cooldown": -3,
+        "modify_gun_cooldown": 3,
         "shape": [
             " __________ ",
             "|    __    |",
@@ -67,7 +89,7 @@
     },
     {
         "name": "Gun Capacity +1",
-        "health": 100,
+        "health": 30,
         "color": "8B8000",
         "modify_health": 0,
         "modify_level": false,
@@ -76,18 +98,17 @@
         "modify_gun_power": 0,
         "modify_gun_cooldown": 0,
         "shape": [
-            " _________  ",
-            "| [] [] []| ",
-            "| [] [] []| ",
-            "| [] [] []| ",
-            "|_________| ",
-            "|   CAP   | ",
-            "|____+____| "
+            "  _________  ",
+            " | [] [] []| ",
+            " | [] [] []| ",
+            " |_________| ",
+            " |   CAP   | ",
+            " |____+____| "
         ]
     },
     {
         "name": "Gun Speed +1",
-        "health": 80,
+        "health": 30,
         "color": "E49B0F",
         "modify_health": 0,
         "modify_level": false,
@@ -97,9 +118,9 @@
         "modify_gun_cooldown": 0,
         "shape": [
             " ---------",
+            "|  | | |  |",
             "|  |||||  |",
-            "|  |||||  |",
-            "|  |||||  |",
+            "|  | | |  |",
             "|   |||   |",
             "|    |    |",
             "|_________|",
@@ -109,7 +130,7 @@
     },
     {
         "name": "Gun Power +1",
-        "health": 200,
+        "health": 70,
         "color": "93C572",
         "modify_health": 0,
         "modify_level": false,

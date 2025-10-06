@@ -39,7 +39,7 @@ func main() {
 		func(event tcell.Event) {
 			switch ev := event.(type) {
 			case *tcell.EventKey:
-				if ev.Rune() == 'r' || ev.Rune() == 'R' {
+				if ev.Key() == tcell.KeyCtrlR {
 					gameContext.RemoveAllEntities()
 					DeployEntities(&gameContext, cfg)
 				}
