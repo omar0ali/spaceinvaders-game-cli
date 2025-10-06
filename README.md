@@ -69,7 +69,7 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] Both the player and the enemy can take damage when crashing the ships.
 - [X] Gun Reload.
     - [X] Gun Reload Level Up.
-- [ ] Display a score bar
+- [ ] Display a score bar top left.
 ### Controls
 
 | Control            | Action                                |
@@ -85,6 +85,8 @@ The game is an endless space shooter where players face increasingly difficult w
 | F                  | Upgrade Gun Cooldown                  |
 | G                  | Upgrade Gun Reload Cooldown           |
 | H                  | Restore Heatlh                        |
+| Ctrl+R             | Restart game                          |
+| Ctrl+Q             | Quit qame                             |
 
 ### Default Configuration File
 Configuration file added for the player to freely change/update entity's attributes. The config file saved as `config.toml`.
