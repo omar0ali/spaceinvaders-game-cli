@@ -25,7 +25,7 @@ func NewModifierProducer(gc *game.GameContext) *ModifierProducer {
 	}
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		spaceship.OnLevelUp = append(spaceship.OnLevelUp, func(newLevel int) {
-			p.Level += 0.1
+			p.Level += 0.2
 		})
 	}
 	return p
@@ -99,75 +99,6 @@ func (p *ModifierProducer) Draw(gc *game.GameContext) {
 	}
 }
 
-// func (p *Producer) DeployModifiers() {
-// 	if p.Modifiers != nil {
-// 		return
-// 	}
-// 	w, _ := base.GetSize()
-// 	distance := (w - (15 * 2))
-// 	xPos := rand.Intn(distance) + 15
-//
-// 	designs, err := game.LoadListOfAssets[game.ModifierDesign]("modifiers.json")
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	design := designs[rand.Intn(len(designs))]
-//
-// 	width := len(design.Shape[0])
-// 	height := len(design.Shape)
-//
-// 	randSpeed := rand.Float64()*float64(2) + 1
-//
-// 	m := &Modifier{
-// 		FallingObjectBase: base.FallingObjectBase{
-// 			ObjectBase: base.ObjectBase{
-// 				Health:    design.EntityHealth + ModifierHealth,
-// 				MaxHealth: design.EntityHealth + ModifierHealth,
-// 				Position:  base.PointFloat{X: float64(xPos), Y: -5},
-// 				Width:     width,
-// 				Height:    height,
-// 				Speed:     randSpeed,
-// 			},
-// 		},
-// 		ModifierDesign: design,
-// 	}
-//
-// 	p.Modifiers = m
-// }
-
-// func (p *Producer) DeployHealthKit() {
-// 	if p.HealthKit != nil {
-// 		return
-// 	}
-// 	w, _ := base.GetSize()
-// 	distance := (w - (15 * 2))
-// 	xPos := rand.Intn(distance) + 15
-//
-// 	design, err := game.LoadAsset[game.Design]("health_kit.json")
-// 	if err != nil {
-// 		panic(err)
-// 	}
-//
-// 	width := len(design.Shape[0])
-// 	height := len(design.Shape)
-//
-// 	randSpeed := rand.Float64()*float64(4) + 2
-//
-// 	p.HealthKit = &Health{
-// 		FallingObjectBase: base.FallingObjectBase{
-// 			ObjectBase: base.ObjectBase{
-// 				Health:    design.EntityHealth + ModifierHealth,
-// 				MaxHealth: design.EntityHealth + ModifierHealth,
-// 				Position:  base.PointFloat{X: float64(xPos), Y: -5},
-// 				Width:     width,
-// 				Height:    height,
-// 				Speed:     randSpeed,
-// 			},
-// 		},
-// 		Design: design,
-// 	}
-// }
-
 func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameContext) {
 	var spaceship *SpaceShip
 	if ship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -186,24 +117,23 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 	}
 	if p.Modifiers != nil {
 		p.Modifiers.MovementAndColision(delta, &spaceship.Gun, func(isDead bool) {
-			if !isDead {
-				return
-			}
-			spaceship.ScoreHit()
-			if m, ok := p.Modifiers.Design.(*game.ModifierDesign); ok {
-				spaceship.IncreaseHealth(m.ModifyHealth)
-				spaceship.IncreaseGunCap(m.ModifyGunCap, spaceship.cfg.SpaceShipConfig.GunMaxCap)
-				spaceship.IncreaseGunPower(m.ModifyGunPower)
-				spaceship.IncreaseGunSpeed(m.ModifyGunSpeed, spaceship.cfg.SpaceShipConfig.GunMaxSpeed)
-				spaceship.DecreaseCooldown(m.ModifyGunCoolDown)
-				spaceship.DecreaseGunReloadCooldown(m.ModifyGunReloadCoolDown)
-				if m.ModifyLevel {
-					SetStatus("Free Upgrade!")
-					if u, ok := gc.FindEntity("ui").(*UI); ok {
-						u.LevelUpScreen = true
+			if isDead {
+				spaceship.ScoreHit()
+				if m, ok := p.Modifiers.Design.(*game.ModifierDesign); ok {
+					spaceship.IncreaseHealth(m.ModifyHealth)
+					spaceship.IncreaseGunCap(m.ModifyGunCap, spaceship.cfg.SpaceShipConfig.GunMaxCap)
+					spaceship.IncreaseGunPower(m.ModifyGunPower)
+					spaceship.IncreaseGunSpeed(m.ModifyGunSpeed, spaceship.cfg.SpaceShipConfig.GunMaxSpeed)
+					spaceship.DecreaseCooldown(m.ModifyGunCoolDown)
+					spaceship.DecreaseGunReloadCooldown(m.ModifyGunReloadCoolDown)
+					if m.ModifyLevel {
+						SetStatus("Free Upgrade!")
+						if u, ok := gc.FindEntity("ui").(*UI); ok {
+							u.LevelUpScreen = true
+						}
+					} else {
+						SetStatus(fmt.Sprintf("Modifier %s Applied!", m.Name))
 					}
-				} else {
-					SetStatus(fmt.Sprintf("Modifier %s Applied!", m.Name))
 				}
 			}
 			p.Modifiers = nil
