@@ -63,11 +63,16 @@ func (u *UI) Draw(gc *game.GameContext) {
 				a higher score while managing health through occasional drop-down health packs that
 				restore the spaceship health.
 
-				**** Controls ****
-				[LM] Or [Space] to shoot coming alien-ships.
+				 -----------------
+				(*) Controls
+				 -----------------
+
+				[LM] Or [Space] to shoot a beam to coming alien-ships.
+
 				[E] Consume Health Kit.
-				[Ctrl+R] to restart the game.
 				[P] To pause the game.
+
+				[Ctrl+R] to restart the game.
 				[Ctrl+Q] To quit the game.
 
 				Press [S] to start the game
@@ -144,7 +149,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 				[F] (%d) Decrease Gun Cooldown by %d
 				[G] (%d) Decrease Gun Reload Cooldown by %d
 				[H] (%d/%d) Restore Full Health
-				`, level,
+				`, Level,
 					s.GetPower(),
 					IncreaseGunPowerBy,
 					int(s.Gun.GetSpeed()),
@@ -185,17 +190,6 @@ func (u *UI) Draw(gc *game.GameContext) {
 		s.UISpaceshipData(gc)
 	}
 
-	// TODO: This should be moved to modifiers.go / health.go
-	if producer, ok := gc.FindEntity("producer").(*Producer); ok {
-		if nextMinute < minutes {
-			producer.DeployHealthKit()
-			nextMinute++
-		}
-		if seconds == 20 || seconds == 50 {
-			producer.DeployModifiers()
-		}
-	}
-
 	// display aliens details
 	if aliens, ok := gc.FindEntity("alien").(*AlienProducer); ok {
 		aliens.UIAlienShipData(gc)
@@ -216,8 +210,9 @@ func (u *UI) Draw(gc *game.GameContext) {
 
 				[Ctrl+R] To restart the game.
 				[Ctrl+Q] To quit the game.
+
 				[P] To continue the game.
-			`, s.Health, score, kills, level),
+			`, s.Health, score, kills, Level),
 				"Paused",
 			)
 			return
@@ -239,7 +234,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 				[Ctrl+R] To restart the game.
 				[Ctrl+Q] To quit the game.
 
-			`, score, kills, level),
+			`, score, kills, Level),
 			"Game Over",
 		)
 		return
