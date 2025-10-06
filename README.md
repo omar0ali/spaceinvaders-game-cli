@@ -73,20 +73,20 @@ The game is an endless space shooter where players face increasingly difficult w
 ### Controls
 
 | Control            | Action                                |
-|-------------------|----------------------------------------|
+|--------------------|---------------------------------------|
 | Left Mouse Click / Space Bar | Shoot beams                 |
 | Mouse Movement     | Move the spaceship                    |
 | E                  | Consume health kit (increase spaceship's health) |
 | P                  | Pause the game                        |
 | S                  | Start the game                        |
-| A                  | Upgrade Gun Power                     |
-| S                  | Upgrade Gun Speed                     |
-| D                  | Upgrade Gun Capacity                  |
-| F                  | Upgrade Gun Cooldown                  |
-| G                  | Upgrade Gun Reload Cooldown           |
-| H                  | Restore Heatlh                        |
+| A                  | Upgrade Gun Power  (in upgrade menu)  |
+| S                  | Upgrade Gun Speed    (in upgrade menu)|
+| D                  | Upgrade Gun Capacity   (in upgrade menu) |
+| F                  | Upgrade Gun Cooldown    (in upgrade menu) |
+| G                  | Upgrade Gun Reload Cooldown    (in upgrade menu)|
+| H                  | Restore Heatlh    (in upgrade menu    |
 | Ctrl+R             | Restart game                          |
-| Ctrl+Q             | Quit qame                             |
+| Ctrl+Q             | Quit game                             |
 
 ### Default Configuration File
 Configuration file added for the player to freely change/update entity's attributes. The config file saved as `config.toml`.
