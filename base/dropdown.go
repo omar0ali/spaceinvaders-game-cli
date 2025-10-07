@@ -8,7 +8,7 @@ import (
 
 const (
 	MaxHealthKitsToOwn = 5
-	MaxSpeed           = 4
+	MaxSpeed           = 3
 )
 
 type DropDown struct {
