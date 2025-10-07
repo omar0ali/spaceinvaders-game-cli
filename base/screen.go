@@ -2,7 +2,6 @@
 package base
 
 import (
-	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -137,10 +136,6 @@ func Update(exitCha chan struct{}, updates func(delta float64)) {
 				last = now
 
 				screen.Clear()
-
-				for i, r := range []rune(fmt.Sprintf("FPS: %.2f", (1 / Delta))) {
-					screen.SetContent(i, 0, r, nil, style)
-				}
 
 				updates(Delta)
 

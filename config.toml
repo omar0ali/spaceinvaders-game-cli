@@ -1,5 +1,6 @@
 [dev]
 debug = true
+fps_counter = false
 
 [spaceship]
 max_level = 50

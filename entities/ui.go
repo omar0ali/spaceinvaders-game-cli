@@ -178,11 +178,10 @@ func (u *UI) Draw(gc *game.GameContext) {
 	minutes = int(u.timeElapsed) / 60
 	seconds = int(u.timeElapsed) % 60
 
-	w, _ := base.GetSize()
-	timeStr := []rune(fmt.Sprintf("Time: %02d:%02d", minutes, seconds))
+	timeStr := []rune(fmt.Sprintf("  * Time: %02d:%02d", minutes, seconds))
 	// display objects details
 	for i, r := range timeStr {
-		base.SetContent((w-len(timeStr))+i, 0, r)
+		base.SetContentWithStyle(i, 1, r, whiteColor)
 	}
 
 	// display spacehsip details - Also drop a health kit every minute

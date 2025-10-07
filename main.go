@@ -2,6 +2,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gdamore/tcell/v2"
@@ -63,7 +64,12 @@ func main() {
 	base.Update(exit,
 		func(delta float64) {
 			// update game
-
+			if cfg.Dev.FPSCounter {
+				// fps
+				for i, r := range []rune(fmt.Sprintf("FPS: %.2f", (1 / delta))) {
+					base.SetContent(i, 0, r)
+				}
+			}
 			// only let ui to be displayed
 			if gameContext.Halt {
 				if star, ok := gameContext.FindEntity("star").(*entities.StarProducer); ok {
