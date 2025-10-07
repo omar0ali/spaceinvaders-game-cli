@@ -25,7 +25,7 @@ func NewModifierProducer(gc *game.GameContext) *ModifierProducer {
 	}
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		spaceship.OnLevelUp = append(spaceship.OnLevelUp, func(newLevel int) {
-			p.Level += 0.2
+			p.Level += 1
 		})
 	}
 	return p
@@ -95,7 +95,7 @@ func (p *ModifierProducer) Draw(gc *game.GameContext) {
 				}
 			}
 		}
-		p.Modifiers.DisplayHealth(6, true, color, nil)
+		p.Modifiers.DisplayHealth(8, true, color, nil)
 	}
 }
 
@@ -108,6 +108,10 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 	if p.HealthKit != nil {
 		p.HealthKit.MovementAndColision(delta, &spaceship.Gun, func(isDead bool) {
 			if isDead {
+				if spaceship.healthKitsOwned >= MaxHealthKitsToOwn {
+					SetStatus("Health: Health kits maxed out!")
+					return
+				}
 				spaceship.healthKitsOwned += 1
 				spaceship.ScoreHit()
 				SetStatus("Health: Health kit +1")
@@ -140,70 +144,6 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 		})
 	}
 }
-
-// func movementAndCollision(delta float64, gc *game.GameContext, spaceship *SpaceShip, gun base.Gunner) bool {
-// 	_, hight := base.GetSize()
-// 	base.Move(&m.ObjectBase, delta)
-// 	for _, beam := range spaceship.GetBeams() {
-// 		if base.GettingHit(&m.ObjectBase, beam) {
-// 			m.TakeDamage(spaceship.GetPower())
-// 			spaceship.ScoreHit()
-// 			spaceship.RemoveBeam(beam)
-// 		}
-// 	}
-//
-// 	var u *UI
-// 	if ui, ok := gc.FindEntity("ui").(*UI); ok {
-// 		u = ui
-// 	}
-//
-// 	if m.IsDead() {
-// 		spaceship.IncreaseHealth(m.ModifyHealth)
-// 		spaceship.IncreaseGunCap(m.ModifyGunCap, spaceship.cfg.SpaceShipConfig.GunMaxCap)
-// 		spaceship.IncreaseGunPower(m.ModifyGunPower)
-// 		spaceship.IncreaseGunSpeed(m.ModifyGunSpeed, spaceship.cfg.SpaceShipConfig.GunMaxSpeed)
-// 		spaceship.DecreaseCooldown(m.ModifyGunCoolDown)
-// 		spaceship.DecreaseGunReloadCooldown(m.ModifyGunReloadCoolDown)
-//
-// 		if m.ModifyLevel {
-// 			SetStatus("Free Upgrade!")
-// 			u.LevelUpScreen = true
-// 			return true
-// 		}
-// 		SetStatus(fmt.Sprintf("Modifier %s Applied!", m.Name))
-// 		return true
-// 	}
-//
-// 	if m.IsOffScreen(hight) {
-// 		return true
-// 	}
-// 	return false
-// }
-
-// func (h *Health) movementAndCollision(delta float64, spaceship *SpaceShip) bool {
-// 	_, hight := base.GetSize()
-//
-// 	base.Move(&h.ObjectBase, delta)
-//
-// 	for _, beam := range spaceship.GetBeams() {
-// 		if base.GettingHit(&h.ObjectBase, beam) {
-// 			h.TakeDamage(spaceship.GetPower())
-// 			spaceship.ScoreHit()
-// 			spaceship.RemoveBeam(beam)
-// 		}
-// 	}
-//
-// 	if h.IsDead() {
-// 		spaceship.healthKitsOwned += 1
-// 		SetStatus("Health: Health kit +1")
-// 		return true
-// 	}
-//
-// 	if h.IsOffScreen(hight) {
-// 		return true
-// 	}
-// 	return false
-// }
 
 func (p *ModifierProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 	// This code used for testing
