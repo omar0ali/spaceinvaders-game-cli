@@ -92,6 +92,9 @@ The game is an endless space shooter where players face increasingly difficult w
 Configuration file added for the player to freely change/update entity's attributes. The config file saved as `config.toml`.
 
 ```toml
+[dev]
+debug = false
+
 [spaceship]
 max_level = 50
 next_level_score = 200

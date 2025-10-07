@@ -7,6 +7,9 @@ import (
 )
 
 const defaultConfig = `
+[dev]
+debug = false
+
 [spaceship]
 max_level = 50
 next_level_score = 100
@@ -29,16 +32,23 @@ type GameConfig struct {
 		Limit int `toml:"limit"`
 		Speed int `toml:"speed"`
 	} `toml:"stars"`
+	Dev struct {
+		Debug bool `toml:"debug"`
+	} `toml:"dev"`
 }
 
 func LoadConfig() GameConfig {
 	var cfg GameConfig
 	if _, err := toml.DecodeFile("config.toml", &cfg); err == nil {
+		Log(Info, "Loaded: config.toml")
 		return cfg
 	}
 	if _, err := toml.Decode(defaultConfig, &cfg); err == nil {
+		Log(Info, "Loaded: default config")
 		return cfg
 	}
+
+	Log(Error, "Failed to load configuration or invalid defaultConfig")
 	log.Fatal("Failed to load configuration or invalid defaultConfig")
 	return GameConfig{}
 }

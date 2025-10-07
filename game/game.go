@@ -2,7 +2,19 @@
 package game
 
 import (
+	"log"
+	"os"
+
 	"github.com/gdamore/tcell/v2"
+)
+
+type LogType string
+
+const (
+	Info  LogType = "INFO"
+	Warn  LogType = "WARN"
+	Error LogType = "ERROR"
+	Debug LogType = "DEBUG"
 )
 
 type (
@@ -47,4 +59,20 @@ func (gc *GameContext) FindEntity(typeName string) Entity {
 		}
 	}
 	return nil
+}
+
+func Log(logType LogType, format string, v ...any) {
+	log.Printf(string("["+logType+"] ")+format, v...)
+}
+
+func SetupLogs() *os.File {
+	f, err := os.Create("debug.log")
+	if err != nil {
+		panic(err)
+	}
+
+	log.SetOutput(f)
+	log.SetFlags(log.LstdFlags | log.Lshortfile) // optional: timestamp + file info
+	log.Println("Starting game...")
+	return f
 }

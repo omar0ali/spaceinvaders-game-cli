@@ -2,6 +2,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities"
@@ -19,12 +21,19 @@ func DeployEntities(gc *game.GameContext, cfg game.GameConfig) {
 }
 
 func main() {
+	cfg := game.LoadConfig()
+
+	// setup logs
+	if cfg.Dev.Debug {
+		logFile := game.SetupLogs()
+		defer logFile.Close()
+	}
+
 	exit := make(chan struct{})
 
 	// ------------------------------- Setup ------------------------------------
 	screen := base.InitScreen(base.EnableMouse)
 	screen.SetTitle("Space Invader Game")
-	cfg := game.LoadConfig()
 
 	// ------------------------------------- Objects ----------------------------------
 	gameContext := game.GameContext{
@@ -32,6 +41,7 @@ func main() {
 	}
 	// ---------------------------------- entities --------------------------------------
 
+	log.Println("Game running...")
 	DeployEntities(&gameContext, cfg)
 
 	// ----------------------------------------- window ------------------------------------
