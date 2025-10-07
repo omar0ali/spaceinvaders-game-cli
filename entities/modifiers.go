@@ -113,6 +113,7 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 			if isDead {
 				if spaceship.healthKitsOwned >= MaxHealthKitsToOwn {
 					SetStatus("Health: Health kits maxed out!")
+					p.HealthKit = nil
 					return
 				}
 				spaceship.healthKitsOwned += 1
