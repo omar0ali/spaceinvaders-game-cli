@@ -68,8 +68,9 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] Gun Cool-down.
 - [X] Both the player and the enemy can take damage when crashing the ships.
 - [X] Gun Reload.
-    - [X] Gun Reload Level Up.
 - [X] Display a score bar top left.
+
+
 ### Controls
 
 | Control            | Action                                |
@@ -94,6 +95,7 @@ Configuration file added for the player to freely change/update entity's attribu
 ```toml
 [dev]
 debug = false
+fps_counter = false
 
 [spaceship]
 max_level = 50
