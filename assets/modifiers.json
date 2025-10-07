@@ -1,7 +1,7 @@
 [
     {
         "name": "Health +2",
-        "health": 20,
+        "health": 25,
         "color": "008000",
         "modify_health": 2,
         "modify_level": false,
@@ -47,7 +47,7 @@
     },
     {
         "name": "Gun Reload Cooldown -3",
-        "health": 40,
+        "health": 50,
         "color": "00BFFF",
         "modify_health": 0,
         "modify_level": false,
@@ -70,7 +70,7 @@
     },
     {
         "name": "Gun Cooldown -3",
-        "health": 40,
+        "health": 50,
         "color": "FF8000",
         "modify_health": 0,
         "modify_level": false,
@@ -92,7 +92,7 @@
     },
     {
         "name": "Gun Capacity +1",
-        "health": 30,
+        "health": 40,
         "color": "8B8000",
         "modify_health": 0,
         "modify_level": false,
@@ -112,7 +112,7 @@
     },
     {
         "name": "Gun Speed +1",
-        "health": 30,
+        "health": 35,
         "color": "E49B0F",
         "modify_health": 0,
         "modify_level": false,
@@ -135,7 +135,7 @@
     },
     {
         "name": "Gun Power +1",
-        "health": 50,
+        "health": 55,
         "color": "93C572",
         "modify_health": 0,
         "modify_level": false,

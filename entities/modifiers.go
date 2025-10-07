@@ -9,23 +9,26 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
-const MaxHealthKitsToOwn = 5
+const (
+	MaxHealthKitsToOwn  = 5
+	MaxConsumableHealth = 7
+)
 
 type ModifierProducer struct {
-	Modifiers       *base.DropDown
-	HealthKit       *base.DropDown
-	Level           float64
-	ConsumbleHealth int
+	Modifiers        *base.DropDown
+	HealthKit        *base.DropDown
+	Level            float64
+	ConsumableHealth int
 }
 
 func NewModifierProducer(gc *game.GameContext) *ModifierProducer {
 	p := &ModifierProducer{
-		Level:           1.0,
-		ConsumbleHealth: 3,
+		Level:            1.0,
+		ConsumableHealth: 2,
 	}
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		spaceship.OnLevelUp = append(spaceship.OnLevelUp, func(newLevel int) {
-			p.Level += 1
+			p.Level += 0.5
 		})
 	}
 	return p
@@ -40,7 +43,7 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 		if err != nil {
 			panic(err)
 		}
-		p.ConsumbleHealth = design.ModifyHealthConsumble + int(p.Level)
+		p.ConsumableHealth = min(design.ModifyHealthConsumble+int(p.Level), MaxConsumableHealth)
 		p.HealthKit = base.DeployDropDown(&design, p.Level)
 		nextMinute++
 	}
