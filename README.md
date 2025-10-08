@@ -70,8 +70,8 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] Boss Fights every 3 minutes.
 - [X] Gun Cool-down.
 - [X] Both the player and the enemy can take damage when crashing the ships.
-- [X] Gun Reload.
-- [X] Display a score bar top left.
+- [X] Gun Reload + cooldown.
+- [X] Adding Asteroids.
 
 
 ### Controls
