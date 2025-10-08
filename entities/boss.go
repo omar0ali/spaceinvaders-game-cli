@@ -6,11 +6,10 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
-var everyThreeMinutes = 2
-
 type BossProducer struct {
-	BossAlien *base.Enemy
-	Level     float64
+	BossAlien       *base.Enemy
+	Level           float64
+	deploymentTimer int
 }
 
 func (b *BossProducer) GetType() string {
@@ -32,10 +31,10 @@ func NewBossAlienProducer(gc *game.GameContext) *BossProducer {
 }
 
 func (b *BossProducer) Update(gc *game.GameContext, delta float64) {
-	if b.BossAlien == nil && everyThreeMinutes == minutes {
+	if b.BossAlien == nil && b.deploymentTimer == minutes {
 		SetStatus("Warning: Massive energy spike detected.")
 		b.BossAlien = base.Deploy("bossships.json", b.Level)
-		everyThreeMinutes += 3
+		b.deploymentTimer += 3
 	}
 
 	if b.BossAlien != nil {
