@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	MaxAsteroidsDeployed = 6
+	MaxAsteroidsDeployed = 4
 	MaxSpeed             = 6
 )
 

@@ -502,7 +502,7 @@ func SetStatus(text string) {
 	showStatus = true
 	status = text
 	go func() {
-		time.Sleep(3 * time.Second)
+		time.Sleep(4 * time.Second)
 		showStatus = false
 	}()
 }

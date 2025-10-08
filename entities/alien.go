@@ -59,7 +59,7 @@ func (a *AlienProducer) Draw(gc *game.GameContext) {
 		color := base.StyleIt(tcell.ColorReset, alien.GetColor())
 		alien.Draw(gc, alien.GetColor())
 
-		alien.DisplayHealth(6, true, color, &alien.Gun)
+		alien.DisplayHealth(5, true, color, &alien.Gun)
 
 		// draw shape
 		for rowIndex, line := range alien.Shape {
@@ -115,6 +115,11 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 			}
 		}
 
+		// only if destroyed by the spaceship (player) not an asteroid.
+		if alien.IsDead() {
+			spaceship.ScoreKill()
+		}
+
 		// can collid with a asteroid
 		if a, ok := gc.FindEntity("asteroid").(*AsteroidProducer); ok {
 			for _, asteroid := range a.Asteroids {
@@ -131,9 +136,6 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 		_, h := base.GetSize()
 		if alien.IsOffScreen(h) {
 			spaceship.TakeDamage(1)
-		}
-		if alien.IsDead() {
-			spaceship.ScoreKill()
 		}
 		if !alien.IsDead() && !alien.IsOffScreen(h) { // still flying
 			activeAliens = append(activeAliens, alien)
