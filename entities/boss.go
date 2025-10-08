@@ -18,7 +18,8 @@ func (b *BossProducer) GetType() string {
 
 func NewBossAlienProducer(gc *game.GameContext) *BossProducer {
 	b := &BossProducer{
-		Level: 1.0,
+		Level:           1.0,
+		deploymentTimer: 2,
 	}
 
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {

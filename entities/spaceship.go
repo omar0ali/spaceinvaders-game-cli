@@ -136,8 +136,21 @@ func (s *SpaceShip) Draw(gc *game.GameContext) {
 			}
 		}
 	}
+
+	// display health bar at the bottom of the spaceship
 	barSize := 5
-	base.DisplayBar(int(s.Position.GetX())+(s.Width/2)-(barSize/2)-1, int(s.Position.GetY())+(s.Height), barSize, s, false, color, &s.Gun)
+	base.DisplayBar(
+		s,
+		base.WithPosition(
+			int(s.Position.GetX())+(s.Width/2)-(barSize/2)-1,
+			int(s.Position.GetY())+(s.Height),
+		),
+		base.WithBarSize(barSize),
+		base.WithStatus(true),
+		base.WithStyle(color),
+		base.WithGun(&s.Gun),
+	)
+
 	// -1 because there are the brackets []. So the barSize+[] which is + 2.
 }
 
@@ -204,7 +217,14 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 		base.SetContentWithStyle(padding+i, startY, r, whiteColor)
 	}
 
-	base.DisplayBar(padding+9, startY, 10, &s.Score, true, whiteColor, nil)
+	// display score
+	base.DisplayBar(
+		&s.Score,
+		base.WithPosition(padding+9, startY),
+		base.WithBarSize(10),
+		base.WithStatus(false),
+		base.WithStyle(whiteColor),
+	)
 
 	for i, r := range []rune(fmt.Sprintf("* Kills: %d", s.Kills)) {
 		base.SetContentWithStyle(padding+i, startY+1, r, whiteColor)
@@ -218,7 +238,15 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 		base.SetContentWithStyle(i, h-10, r, whiteColor)
 	}
 
-	base.DisplayBar(0, h-9, 10, s, true, whiteColor, &s.Gun)
+	// display health bar of the spaceship at bottom left of the screen
+	base.DisplayBar(
+		s,
+		base.WithPosition(0, h-9),
+		base.WithBarSize(10),
+		base.WithStatus(false),
+		base.WithStyle(whiteColor),
+		base.WithGun(&s.Gun),
+	)
 
 	for i, r := range []rune(fmt.Sprintf("[Level:  %d", s.Level)) {
 		base.SetContentWithStyle(i, h-8, r, whiteColor)

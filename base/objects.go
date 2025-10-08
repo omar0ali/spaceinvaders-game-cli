@@ -2,23 +2,12 @@
 package base
 
 import (
-	"fmt"
 	"math"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
-
-const (
-	HealthBoxStyle      = '■'
-	HealthBoxEmptyStyle = '□'
-)
-
-type Meter interface {
-	GetCurrent() int
-	GetMax() int
-}
 
 type ObjectBase struct {
 	Health        int
@@ -215,53 +204,63 @@ func MoveTo(from, to Movable, delta float64, gc *game.GameContext) {
 	}
 }
 
-func (f *ObjectBase) DisplayHealth(barSize int, showStats bool, style tcell.Style, gun Gunner) {
+func (f *ObjectBase) DisplayHealth(barSize int, showPercentage bool, style tcell.Style, gun Gunner) {
 	DisplayBar(
-		int(f.Position.GetX())+(f.Width/2)-(barSize/2)-1,
-		int(f.Position.GetY()-1),
-		barSize,
 		f,
-		showStats,
-		style,
-		gun,
+		WithPosition(
+			int(f.Position.GetX())+(f.Width/2)-(barSize/2)-1,
+			int(f.Position.GetY()-1),
+		),
+		WithBarSize(barSize),
+		WithStatus(showPercentage),
+		WithStyle(style),
+		WithGun(gun),
 	)
 }
 
-func DisplayBar(xPos, yPos, barSize int, h Meter, showStats bool, style tcell.Style, gun Gunner) {
-	reloadAnimation := []rune("•○")
-	if gun != nil && gun.IsReloading() {
-		frame := int(time.Now().UnixNano()/300_000_000) % len(reloadAnimation)
-		SetContentWithStyle(xPos-2, yPos, reloadAnimation[frame], style)
-	}
-
-	trackXPossition := xPos
-	// pre draw health
-	for _, r := range string("[") {
-		SetContentWithStyle(trackXPossition, yPos, r, style)
-		trackXPossition++
-	}
-	// draw health
-	ratio := float64(h.GetCurrent()) / float64(h.GetMax())
-	filled := int(ratio * float64(barSize))
-
-	for i := range barSize {
-		if i < filled {
-			SetContentWithStyle(trackXPossition+i, yPos, HealthBoxStyle, style)
-		} else {
-			SetContentWithStyle(trackXPossition+i, yPos, HealthBoxEmptyStyle, style)
-		}
-	}
-	SetContentWithStyle(trackXPossition+barSize, yPos, ']', style)
-	if !showStats {
-		return
-	}
-	// or end with showing stats (total health)
-	trackXPossition += barSize
-	// last
-	for i, r := range []rune(fmt.Sprintf(" %d/%d", h.GetCurrent(), h.GetMax())) {
-		SetContentWithStyle(trackXPossition+i+1, yPos, r, style)
-	}
-}
+//
+// func DisplayBar(xPos, yPos, barSize int, h Meter, showStats bool, inPercent bool, style tcell.Style, gun Gunner) {
+// 	reloadAnimation := []rune("•○")
+// 	if gun != nil && gun.IsReloading() {
+// 		frame := int(time.Now().UnixNano()/300_000_000) % len(reloadAnimation)
+// 		SetContentWithStyle(xPos-2, yPos, reloadAnimation[frame], style)
+// 	}
+//
+// 	trackXPossition := xPos
+// 	// pre draw health
+// 	for _, r := range string("[") {
+// 		SetContentWithStyle(trackXPossition, yPos, r, style)
+// 		trackXPossition++
+// 	}
+// 	// draw health
+// 	ratio := float64(h.GetCurrent()) / float64(h.GetMax())
+// 	filled := int(ratio * float64(barSize))
+//
+// 	for i := range barSize {
+// 		if i < filled {
+// 			SetContentWithStyle(trackXPossition+i, yPos, HealthBoxStyle, style)
+// 		} else {
+// 			SetContentWithStyle(trackXPossition+i, yPos, HealthBoxEmptyStyle, style)
+// 		}
+// 	}
+//
+// 	SetContentWithStyle(trackXPossition+barSize, yPos, ']', style)
+// 	if showStats {
+// 		// or end with showing stats (total health)
+// 		trackXPossition += barSize
+//
+// 		if inPercent {
+// 			for i, r := range []rune(fmt.Sprintf(" %2.f%%", (float64(h.GetCurrent())/float64(h.GetMax()))*100)) {
+// 				SetContentWithStyle(trackXPossition+i+1, yPos, r, style)
+// 			}
+//
+// 			return
+// 		}
+// 		for i, r := range []rune(fmt.Sprintf(" %d/%d", h.GetCurrent(), h.GetMax())) {
+// 			SetContentWithStyle(trackXPossition+i+1, yPos, r, style)
+// 		}
+// 	}
+// }
 
 // Will use this for i.e alien ship shooting every # seconds
 
