@@ -276,11 +276,21 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 				}
 			}
 
+			// can collid with a asteroid
+
 			if base.Crash(&s.ObjectBase, &b.BossAlien.ObjectBase) {
 				s.TakeDamage(1)
 				b.BossAlien.TakeDamage(5)
 			}
 
+		}
+	}
+	if a, ok := gc.FindEntity("asteroid").(*AsteroidProducer); ok {
+		for _, asteroid := range a.Asteroids {
+			if base.Crash(&s.ObjectBase, &asteroid.ObjectBase) {
+				s.TakeDamage(2)
+				asteroid.TakeDamage(4)
+			}
 		}
 	}
 }

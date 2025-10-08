@@ -16,7 +16,7 @@ func Deploy(fileDesigns string, level float64) *Enemy {
 	w, _ := GetSize()
 	const padding = 23
 	distance := (w - (padding * 2))
-	xPos := rand.Intn(distance) + padding // starting from 18
+	xPos := rand.Intn(distance) + padding
 
 	designs, err := game.LoadListOfAssets[game.AlienshipDesign](fileDesigns)
 	if err != nil {

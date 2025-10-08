@@ -19,6 +19,7 @@ func DeployEntities(gc *game.GameContext, cfg game.GameConfig) {
 	gc.AddEntity(entities.NewModifierProducer(gc))
 	gc.AddEntity(entities.NewStarsProducer(cfg))
 	gc.AddEntity(entities.NewUI(gc))
+	gc.AddEntity(entities.NewAsteroidProducer(gc))
 }
 
 func main() {

@@ -1,0 +1,43 @@
+[
+    {
+        "name": "asteroid_rough",
+        "health": 250,
+        "color": "5a554c",
+        "shape": [
+            "    __    ",
+            "  ,'  `.  ",
+            " ( .--. ) ",
+            "  `.__.'  "
+        ]
+    },
+    {
+        "name": "asteroid_boulder",
+        "health": 350,
+        "color": "93928c",
+        "shape": [
+            "  .--.  ",
+            " ( o  ) ",
+            "  `--'  "
+        ]
+    },
+    {
+        "name": "asteroid_fragment",
+        "health": 180,
+        "color": "5d1212",
+        "shape": [
+            "  .-.  ",
+            " ( * ) ",
+            "  '-'  "
+        ]
+    },
+    {
+        "name": "asteroid_spiked",
+        "health": 280,
+        "color": "dedede",
+        "shape": [
+            "  _  ",
+            " (_) ",
+            "     "
+        ]
+    }
+]

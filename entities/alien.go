@@ -95,7 +95,7 @@ func (a *AlienProducer) UIAlienShipData(gc *game.GameContext) {
 	}
 }
 
-func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext) *SpaceShip {
+func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext) {
 	var activeAliens []*base.Enemy
 	var spaceship *SpaceShip
 
@@ -115,6 +115,16 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 			}
 		}
 
+		// can collid with a asteroid
+		if a, ok := gc.FindEntity("asteroid").(*AsteroidProducer); ok {
+			for _, asteroid := range a.Asteroids {
+				if base.Crash(&alien.ObjectBase, &asteroid.ObjectBase) {
+					alien.TakeDamage(1)
+					asteroid.TakeDamage(3)
+				}
+			}
+		}
+
 		// check the alien ship height position
 		// check the health of each alien
 
@@ -130,7 +140,6 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 		}
 	}
 	a.Aliens = activeAliens
-	return spaceship
 }
 
 func (a *AlienProducer) GetType() string {
