@@ -78,7 +78,7 @@ The game is an endless space shooter where players face increasingly difficult w
 
 | Control            | Action                                |
 |--------------------|---------------------------------------|
-| Left Mouse Click / Space Bar | Shoot beams                 |
+| Left Mouse Pressed | Shoot beams                           |
 | Mouse Movement     | Move the spaceship                    |
 | E                  | Consume health kit (increase spaceship's health) |
 | P                  | Pause the game                        |

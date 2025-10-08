@@ -67,7 +67,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 				(*) Controls
 				 -----------------
 
-				[LM] Or [Space] to shoot a beam to coming alien-ships.
+				[LM] hold to shoot a beam to coming alien-ships.
 
 				[E] Consume Health Kit.
 				[P] To pause the game.
@@ -170,7 +170,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 
 	// show controls at the bottom of the screen
 	_, h := base.GetSize()
-	for i, r := range []rune("[LM] or [Space] Shoot Beams ◆ [E] Consume Health Kit ◆ [R] Reload Gun ◆ [P] Pause Game ◆ [Ctrl+R] Restart Game ◆ [Ctrl+Q] Quit") {
+	for i, r := range []rune("[LM] Shoot Beams ◆ [E] Consume Health Kit ◆ [R] Reload Gun ◆ [P] Pause Game ◆ [Ctrl+R] Restart Game ◆ [Ctrl+Q] Quit") {
 		base.SetContentWithStyle(i, h-1, r, whiteColor)
 	}
 

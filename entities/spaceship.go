@@ -35,6 +35,7 @@ type SpaceShip struct {
 	SelectedSpaceship *game.SpaceshipDesign
 	ListOfSpaceships  []game.SpaceshipDesign
 	healthKitsOwned   int
+	mouseDown         bool
 }
 
 func (s *SpaceShip) RestoreFullHealth() bool {
@@ -113,6 +114,10 @@ func (s *SpaceShip) Update(gc *game.GameContext, delta float64) {
 		s.NextLevelScore += s.cfg.SpaceShipConfig.NextLevelScore
 	}
 
+	if s.mouseDown {
+		s.shootBeam()
+	}
+
 	s.LevelUp()
 
 	s.MovementAndCollision(delta, gc)
@@ -164,23 +169,23 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 		s.Position.Y = float64(y - (s.Height / 2))
 	}
 
-	shootBeam := func() {
-		x := int(s.Position.GetX()) + s.Width/2
-		y := int(s.Position.Y)
-		s.InitBeam(base.Point{X: x, Y: y}, base.Up)
-	}
-
 	switch ev := event.(type) {
 	case *tcell.EventMouse:
 		x, y := ev.Position()
 		moveMouse(x, y)
 
-		if ev.Buttons() == tcell.Button1 {
-			shootBeam()
+		// buttons() contains (0000 0001, 0000 0100, 0000 0101)
+		// & symbol keeps only bits that are on in both
+		// Button1 = 0000 0001 and if that pressed and if any bit remains it will equal to true
+		if ev.Buttons()&tcell.Button1 != 0 {
+			s.mouseDown = true
+		} else {
+			s.mouseDown = false
 		}
+
 	case *tcell.EventKey:
 		if ev.Rune() == ' ' {
-			shootBeam()
+			s.mouseDown = true
 		}
 		if ev.Rune() == 'E' || ev.Rune() == 'e' {
 			if s.healthKitsOwned > 0 {
@@ -391,6 +396,12 @@ func (s *SpaceShip) GetType() string {
 
 func (s *SpaceShip) GetCurrent() int {
 	return s.Health
+}
+
+func (s *SpaceShip) shootBeam() {
+	x := int(s.Position.GetX()) + s.Width/2
+	y := int(s.Position.Y)
+	s.InitBeam(base.Point{X: x, Y: y}, base.Up)
 }
 
 func (s *SpaceShip) GetMax() int {
