@@ -24,7 +24,7 @@
         "gun_cooldown": 250,
         "gun_reload_cooldown": 1100,
         "shape": [
-            " [ |^| ] ",
+            " [-|^|-] ",
             "   /|\\   ",
             "  /_|_\\  ",
             "  v V v  "

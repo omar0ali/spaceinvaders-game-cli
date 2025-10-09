@@ -97,12 +97,13 @@ Configuration file added for the player to freely change/update entity's attribu
 
 ```toml
 [dev]
-debug = false
+debug = true
 fps_counter = false
+asteroids = true
 
 [spaceship]
 max_level = 50
-next_level_score = 200
+next_level_score = 100
 gun_max_cap = 40
 gun_max_speed = 70
 
