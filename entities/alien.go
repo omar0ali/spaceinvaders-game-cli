@@ -117,6 +117,10 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 
 		// only if destroyed by the spaceship (player) not an asteroid.
 		if alien.IsDead() {
+			style := base.StyleIt(tcell.ColorReset, tcell.ColorYellow)
+			if ps, ok := gc.FindEntity("particles").(*ParticleSystem); ok {
+				ps.ParticleProducer.NewExplosion(4, int(alien.Position.X), int(alien.Position.Y), alien.Width, alien.Height, style)
+			}
 			spaceship.ScoreKill()
 		}
 

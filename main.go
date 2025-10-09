@@ -21,6 +21,7 @@ func DeployEntities(gc *game.GameContext, cfg game.GameConfig) {
 	if cfg.Dev.Asteroids { // includeing asteroids is optional
 		gc.AddEntity(entities.NewAsteroidProducer(gc))
 	}
+	gc.AddEntity(entities.NewParticleSystem())
 	gc.AddEntity(entities.NewUI(gc))
 }
 

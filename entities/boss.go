@@ -95,6 +95,11 @@ func (b *BossProducer) MovementAndCollision(delta float64, gc *game.GameContext)
 			}
 		}
 		if b.BossAlien.IsDead() {
+			style := base.StyleIt(tcell.ColorReset, tcell.ColorYellow)
+			if ps, ok := gc.FindEntity("particles").(*ParticleSystem); ok {
+				ps.ParticleProducer.NewExplosion(30, int(b.BossAlien.Position.X), int(b.BossAlien.Position.Y), b.BossAlien.Width, b.BossAlien.Height, style)
+			}
+
 			spaceship.ScoreKill()
 			SetStatus("Threat neutralized. Returning to standby.")
 			b.BossAlien = nil

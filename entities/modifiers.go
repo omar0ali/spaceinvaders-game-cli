@@ -111,6 +111,11 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 	if p.HealthKit != nil {
 		p.HealthKit.MovementAndColision(delta, &spaceship.Gun, func(isDead bool) {
 			if isDead {
+				style := base.StyleIt(tcell.ColorReset, p.HealthKit.Design.GetColor())
+				if ps, ok := gc.FindEntity("particles").(*ParticleSystem); ok {
+					ps.ParticleProducer.NewExplosion(4, int(p.HealthKit.Position.X), int(p.HealthKit.Position.Y), p.HealthKit.Width, p.HealthKit.Height, style)
+				}
+
 				if spaceship.healthKitsOwned >= MaxHealthKitsToOwn {
 					SetStatus("Health: Health kits maxed out!")
 					p.HealthKit = nil
@@ -126,6 +131,11 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 	if p.Modifiers != nil {
 		p.Modifiers.MovementAndColision(delta, &spaceship.Gun, func(isDead bool) {
 			if isDead {
+				style := base.StyleIt(tcell.ColorReset, p.Modifiers.Design.GetColor())
+				if ps, ok := gc.FindEntity("particles").(*ParticleSystem); ok {
+					ps.ParticleProducer.NewExplosion(10, int(p.Modifiers.Position.X), int(p.Modifiers.Position.Y), p.Modifiers.Width, p.Modifiers.Height, style)
+				}
+
 				spaceship.ScoreHit()
 				if m, ok := p.Modifiers.Design.(*game.ModifierDesign); ok {
 					spaceship.IncreaseHealth(m.ModifyHealth)

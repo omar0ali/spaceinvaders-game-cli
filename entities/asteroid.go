@@ -112,6 +112,11 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 		_, h := base.GetSize()
 
 		if asteroid.IsDead() {
+			style := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+			if ps, ok := gc.FindEntity("particles").(*ParticleSystem); ok {
+				ps.ParticleProducer.NewExplosion(5, int(asteroid.Position.X), int(asteroid.Position.Y), asteroid.Width, asteroid.Height, style)
+			}
+
 			spaceship.ScoreHit()
 		}
 
