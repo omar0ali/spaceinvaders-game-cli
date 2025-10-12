@@ -63,11 +63,11 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 	}
 
 	if p.Modifiers != nil {
-		base.Move(&p.Modifiers.ObjectBase, delta)
+		Move(&p.Modifiers.ObjectBase, delta)
 	}
 
 	if p.HealthKit != nil {
-		base.Move(&p.HealthKit.ObjectBase, delta)
+		Move(&p.HealthKit.ObjectBase, delta)
 	}
 
 	p.MovementAndCollision(delta, gc)
@@ -109,13 +109,16 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 	}
 
 	if p.HealthKit != nil {
-		p.HealthKit.MovementAndColision(delta, &spaceship.Gun, func(isDead bool) {
-			if isDead {
-				style := base.StyleIt(tcell.ColorReset, p.HealthKit.Design.GetColor())
-				if ps, ok := gc.FindEntity("particles").(*ParticleSystem); ok {
-					ps.ParticleProducer.NewExplosion(4, int(p.HealthKit.Position.X), int(p.HealthKit.Position.Y), p.HealthKit.Width, p.HealthKit.Height, style)
-				}
+		Move(&p.HealthKit.ObjectBase, delta)
+		for _, beam := range spaceship.GetBeams() {
+			if GettingHit(&p.HealthKit.ObjectBase, beam, gc) {
+				p.HealthKit.TakeDamage(spaceship.GetPower())
+				spaceship.RemoveBeam(beam)
+			}
+		}
 
+		p.HealthKit.MovementAndColision(delta, func(isDead bool) {
+			if isDead {
 				if spaceship.healthKitsOwned >= MaxHealthKitsToOwn {
 					SetStatus("Health: Health kits maxed out!")
 					p.HealthKit = nil
@@ -129,13 +132,16 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 		})
 	}
 	if p.Modifiers != nil {
-		p.Modifiers.MovementAndColision(delta, &spaceship.Gun, func(isDead bool) {
-			if isDead {
-				style := base.StyleIt(tcell.ColorReset, p.Modifiers.Design.GetColor())
-				if ps, ok := gc.FindEntity("particles").(*ParticleSystem); ok {
-					ps.ParticleProducer.NewExplosion(10, int(p.Modifiers.Position.X), int(p.Modifiers.Position.Y), p.Modifiers.Width, p.Modifiers.Height, style)
-				}
+		Move(&p.Modifiers.ObjectBase, delta)
+		for _, beam := range spaceship.GetBeams() {
+			if GettingHit(&p.Modifiers.ObjectBase, beam, gc) {
+				p.Modifiers.TakeDamage(spaceship.GetPower())
+				spaceship.RemoveBeam(beam)
+			}
+		}
 
+		p.Modifiers.MovementAndColision(delta, func(isDead bool) {
+			if isDead {
 				spaceship.ScoreHit()
 				if m, ok := p.Modifiers.Design.(*game.ModifierDesign); ok {
 					spaceship.IncreaseHealth(m.ModifyHealth)

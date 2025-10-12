@@ -7,6 +7,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
+	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
@@ -289,12 +290,12 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 		for _, alien := range a.Aliens {
 			// check alien shooting the spaceship
 			for _, alienBeam := range alien.GetBeams() {
-				if s.isHit(alienBeam.GetPosition()) {
+				if s.isHit(alienBeam.GetPosition(), gc) {
 					s.TakeDamage(alien.GetPower())
 					alien.RemoveBeam(alienBeam)
 				}
 			}
-			if base.Crash(&s.ObjectBase, &alien.ObjectBase) {
+			if Crash(&s.ObjectBase, &alien.ObjectBase, gc) {
 				s.TakeDamage(1)
 				alien.TakeDamage(5)
 			}
@@ -303,7 +304,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 	if b, ok := gc.FindEntity("boss").(*BossProducer); ok {
 		if b.BossAlien != nil {
 			for _, bossBeam := range b.BossAlien.GetBeams() {
-				if s.isHit(bossBeam.GetPosition()) {
+				if s.isHit(bossBeam.GetPosition(), gc) {
 					s.TakeDamage(b.BossAlien.GetPower())
 					b.BossAlien.RemoveBeam(bossBeam)
 				}
@@ -311,7 +312,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 
 			// can collid with a asteroid
 
-			if base.Crash(&s.ObjectBase, &b.BossAlien.ObjectBase) {
+			if Crash(&s.ObjectBase, &b.BossAlien.ObjectBase, gc) {
 				s.TakeDamage(1)
 				b.BossAlien.TakeDamage(5)
 			}
@@ -320,7 +321,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 	}
 	if a, ok := gc.FindEntity("asteroid").(*AsteroidProducer); ok {
 		for _, asteroid := range a.Asteroids {
-			if base.Crash(&s.ObjectBase, &asteroid.ObjectBase) {
+			if Crash(&s.ObjectBase, &asteroid.ObjectBase, gc) {
 				s.TakeDamage(2)
 				asteroid.TakeDamage(4)
 			}
@@ -328,38 +329,23 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 	}
 }
 
-func (s *SpaceShip) isHit(pointBeam base.PointInterface) bool {
-	grayColor := base.StyleIt(tcell.ColorReset, tcell.ColorDarkGray)
-	redColor := base.StyleIt(tcell.ColorReset, tcell.ColorRed)
-	yellowColor := base.StyleIt(tcell.ColorReset, tcell.ColorYellow)
-
-	// draw flash when hitting
-	pattern := []struct {
-		dx, dy int
-		r      rune
-		style  tcell.Style
-	}{
-		{0, 0, '*', yellowColor},
-		{-1, 0, '-', yellowColor},
-		{1, 0, '-', yellowColor},
-		{0, -1, '|', grayColor},
-		{0, 1, '|', grayColor},
-		{-1, -1, '\\', grayColor},
-		{1, -1, '/', grayColor},
-		{-1, 1, '/', redColor},
-		{1, 1, '\\', grayColor},
-	}
-
+func (s *SpaceShip) isHit(pointBeam base.PointInterface, gc *game.GameContext) bool {
 	if int(pointBeam.GetX()) >= int(s.Position.GetX()) &&
 		int(pointBeam.GetX()) <= int(s.Position.GetX())+s.Width &&
 		int(pointBeam.GetY()) >= int(s.Position.GetY()) &&
 		int(pointBeam.GetY()) <= int(s.Position.GetY())+s.Height {
 
-		for _, p := range pattern {
-			base.SetContentWithStyle(
-				int(pointBeam.GetX())+p.dx,
-				int(pointBeam.GetY())+p.dy,
-				p.r, p.style,
+		if p, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
+			p.AddParticles(
+				particles.InitExplosion(3,
+					particles.WithDimensions(
+						pointBeam.GetX(),
+						pointBeam.GetY(),
+						0,
+						0,
+					),
+					particles.WithSymbols([]rune("0%*;.")),
+				),
 			)
 		}
 

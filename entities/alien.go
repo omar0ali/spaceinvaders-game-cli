@@ -5,6 +5,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
+	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
@@ -96,7 +97,7 @@ func (a *AlienProducer) UIAlienShipData(gc *game.GameContext) {
 }
 
 func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext) {
-	var activeAliens []*base.Enemy
+	activeAliens := a.Aliens[:0]
 	var spaceship *SpaceShip
 
 	if ship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -106,32 +107,40 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 	// on each alien avaiable check its position and check if the beam is at the same position
 	for _, alien := range a.Aliens {
 		// Update the coordinates of the aliens.
-		base.Move(&alien.ObjectBase, delta)
+		Move(&alien.ObjectBase, delta)
 		for _, beam := range spaceship.GetBeams() {
-			if base.GettingHit(&alien.ObjectBase, beam) {
+			if GettingHit(&alien.ObjectBase, beam, gc) {
 				alien.TakeDamage(spaceship.GetPower())
 				spaceship.ScoreHit()
 				spaceship.RemoveBeam(beam) // removing a beam when hitting the ship
 			}
 		}
 
-		// only if destroyed by the spaceship (player) not an asteroid.
-		if alien.IsDead() {
-			style := base.StyleIt(tcell.ColorReset, tcell.ColorYellow)
-			if ps, ok := gc.FindEntity("particles").(*ParticleSystem); ok {
-				ps.ParticleProducer.NewExplosion(4, int(alien.Position.X), int(alien.Position.Y), alien.Width, alien.Height, style)
-			}
-			spaceship.ScoreKill()
-		}
-
 		// can collid with a asteroid
 		if a, ok := gc.FindEntity("asteroid").(*AsteroidProducer); ok {
 			for _, asteroid := range a.Asteroids {
-				if base.Crash(&alien.ObjectBase, &asteroid.ObjectBase) {
+				if Crash(&alien.ObjectBase, &asteroid.ObjectBase, gc) {
 					alien.TakeDamage(1)
-					asteroid.TakeDamage(3)
+					asteroid.TakeDamage(2)
 				}
 			}
+		}
+
+		// only if destroyed by the spaceship (player) not an asteroid.
+		if alien.IsDead() {
+			if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
+				ps.AddParticles(
+					particles.InitExplosion(10,
+						particles.WithDimensions(
+							alien.Position.X,
+							alien.Position.Y,
+							alien.Width,
+							alien.Height,
+						),
+					),
+				)
+			}
+			spaceship.ScoreKill()
 		}
 
 		// check the alien ship height position

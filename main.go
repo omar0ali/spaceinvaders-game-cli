@@ -8,6 +8,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities"
+	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
@@ -21,7 +22,7 @@ func DeployEntities(gc *game.GameContext, cfg game.GameConfig) {
 	if cfg.Dev.Asteroids { // includeing asteroids is optional
 		gc.AddEntity(entities.NewAsteroidProducer(gc))
 	}
-	gc.AddEntity(entities.NewParticleSystem())
+	gc.AddEntity(particles.NewParticleSystem())
 	gc.AddEntity(entities.NewUI(gc))
 }
 

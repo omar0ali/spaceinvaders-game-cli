@@ -3,6 +3,7 @@ package entities
 import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
+	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
@@ -85,19 +86,40 @@ func (b *BossProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 func (b *BossProducer) MovementAndCollision(delta float64, gc *game.GameContext) {
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 
-		base.MoveTo(&b.BossAlien.ObjectBase, &spaceship.ObjectBase, delta, gc)
+		MoveTo(&b.BossAlien.ObjectBase, &spaceship.ObjectBase, delta, gc)
 
 		for _, beam := range spaceship.GetBeams() {
-			if base.GettingHit(&b.BossAlien.ObjectBase, beam) {
+			if GettingHit(&b.BossAlien.ObjectBase, beam, gc) {
 				b.BossAlien.TakeDamage(spaceship.GetPower())
 				spaceship.ScoreHit()
 				spaceship.RemoveBeam(beam)
 			}
 		}
+
+		// can collid with a asteroid
+		if a, ok := gc.FindEntity("asteroid").(*AsteroidProducer); ok {
+			for _, asteroid := range a.Asteroids {
+				if Crash(&b.BossAlien.ObjectBase, &asteroid.ObjectBase, gc) {
+					b.BossAlien.TakeDamage(1)
+					asteroid.TakeDamage(100)
+				}
+			}
+		}
+
 		if b.BossAlien.IsDead() {
-			style := base.StyleIt(tcell.ColorReset, tcell.ColorYellow)
-			if ps, ok := gc.FindEntity("particles").(*ParticleSystem); ok {
-				ps.ParticleProducer.NewExplosion(30, int(b.BossAlien.Position.X), int(b.BossAlien.Position.Y), b.BossAlien.Width, b.BossAlien.Height, style)
+			style := base.StyleIt(tcell.ColorReset, b.BossAlien.GetColor())
+			if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
+				ps.AddParticles(
+					particles.InitExplosion(15,
+						particles.WithDimensions(
+							b.BossAlien.Position.X,
+							b.BossAlien.Position.Y,
+							b.BossAlien.Width,
+							b.BossAlien.Height,
+						),
+						particles.WithStyle(style),
+					),
+				)
 			}
 
 			spaceship.ScoreKill()
