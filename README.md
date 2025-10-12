@@ -72,6 +72,7 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] Both the player and the enemy can take damage when crashing the ships.
 - [X] Gun Reload + cooldown.
 - [X] Adding Asteroids.
+- [X] New Particle System: Added simple animation of an explosion
 
 
 ### Controls
