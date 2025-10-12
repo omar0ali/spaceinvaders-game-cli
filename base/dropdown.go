@@ -46,15 +46,8 @@ func DeployDropDown(design game.Designable, level float64) *DropDown {
 	return dropdown
 }
 
-func (d *DropDown) MovementAndColision(delta float64, gun *Gun, fn func(isDead bool)) {
+func (d *DropDown) MovementAndColision(delta float64, fn func(isDead bool)) {
 	_, hight := GetSize()
-	Move(&d.ObjectBase, delta)
-	for _, beam := range gun.GetBeams() {
-		if GettingHit(&d.ObjectBase, beam) {
-			d.TakeDamage(gun.GetPower())
-			gun.RemoveBeam(beam)
-		}
-	}
 
 	if d.IsDead() {
 		fn(true)
