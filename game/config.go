@@ -10,7 +10,7 @@ const defaultConfig = `
 [dev]
 debug = false
 fps_counter = false
-asteroids = false
+asteroids = true
 
 [spaceship]
 max_level = 50
