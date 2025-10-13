@@ -91,8 +91,32 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 
 	activeAsteroids := a.Asteroids[:0]
 
-	for _, asteroid := range a.Asteroids {
+	for i, asteroid := range a.Asteroids {
+		for j, asteroid2 := range a.Asteroids {
+			if i >= j {
+				continue
+			}
+			if Crash(&asteroid.ObjectBase, &asteroid2.ObjectEntity, gc) {
+				asteroid.TakeDamage(40)
+				asteroid2.TakeDamage(40)
+			}
+		}
 		Move(&asteroid.ObjectBase, delta)
+
+		// can collid with a meteroid
+		if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
+			for _, p := range ps.ParticleProducable {
+				switch p.(type) {
+				case *particles.MeteroidProducer:
+					for _, m := range p.GetParticles() {
+						if Crash(&asteroid.ObjectBase, &m.ObjectEntity, gc) {
+							asteroid.TakeDamage(1)
+							p.RemoveParticle(m)
+						}
+					}
+				}
+			}
+		}
 
 		// get get hit from the spaceship
 		for _, beam := range spaceship.GetBeams() {
@@ -167,12 +191,12 @@ func (a *AsteroidProducer) Draw(gc *game.GameContext) {
 func (a *AsteroidProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 	// testing mode
 
-	// switch ev := event.(type) {
-	// case *tcell.EventKey:
-	// 	if ev.Rune() == 'i' { // dev mode to create a star
-	// 		s.Deployment()
-	// 	}
-	// }
+	switch ev := event.(type) {
+	case *tcell.EventKey:
+		if ev.Rune() == 'i' { // dev mode to create a star
+			a.Deploy()
+		}
+	}
 }
 
 func (a *AsteroidProducer) GetType() string {

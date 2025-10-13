@@ -36,10 +36,10 @@ func InitMeteroids(opts ...ParticleOption) *MeteroidProducer {
 	po := &Particle{
 		ObjectEntity: base.ObjectEntity{
 			Position: base.PointFloat{X: 0, Y: 0},
-			Speed:    float64(rand.Intn(16)) + 8,
+			Speed:    float64(rand.Intn(10) + 5),
 		},
 		Style:  base.StyleIt(tcell.ColorReset, tcell.ColorWhite),
-		Symbol: []rune("OoO0Oo"),
+		Symbol: []rune("Oo0"),
 	}
 
 	for _, o := range opts {
@@ -47,17 +47,18 @@ func InitMeteroids(opts ...ParticleOption) *MeteroidProducer {
 	}
 
 	for dir := Up; dir <= DownRight; dir++ { // for each direction
-		particle := &Particle{
-			ObjectEntity: base.ObjectEntity{
-				Speed:    po.Speed + float64(dir)*2,
-				Position: po.Position,
-			},
-			Symbol:    po.Symbol,
-			Direction: dir,
-			Style:     po.Style,
+		for i := range 2 {
+			particle := &Particle{
+				ObjectEntity: base.ObjectEntity{
+					Speed:    po.Speed + float64(i)*3,
+					Position: po.Position,
+				},
+				Symbol:    po.Symbol,
+				Direction: dir,
+				Style:     po.Style,
+			}
+			listOfParticles = append(listOfParticles, particle)
 		}
-		listOfParticles = append(listOfParticles, particle)
-
 	}
 
 	return &MeteroidProducer{
