@@ -191,12 +191,12 @@ func (a *AsteroidProducer) Draw(gc *game.GameContext) {
 func (a *AsteroidProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 	// testing mode
 
-	switch ev := event.(type) {
-	case *tcell.EventKey:
-		if ev.Rune() == 'i' { // dev mode to create a star
-			a.Deploy()
-		}
-	}
+	// switch ev := event.(type) {
+	// case *tcell.EventKey:
+	// 	if ev.Rune() == 'i' { // dev mode to create a star
+	// 		a.Deploy()
+	// 	}
+	// }
 }
 
 func (a *AsteroidProducer) GetType() string {
