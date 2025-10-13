@@ -10,12 +10,13 @@ import (
 type ParticleProducable interface {
 	Update(gc *game.GameContext, delta float64)
 	Draw(gc *game.GameContext)
-	GetParticles() int
+	GetTotalParticles() int
+	GetParticles() []*Particle
+	RemoveParticle(particle *Particle)
 }
 
 type Particle struct {
-	Speed     float64
-	Position  base.PointFloat
+	base.ObjectEntity
 	Symbol    []rune
 	Direction Direction
 	Style     tcell.Style
@@ -79,7 +80,7 @@ func (ps *ParticleSystem) Update(gc *game.GameContext, delta float64) {
 	activeProducers := ps.ParticleProducable[:0]
 	for _, p := range ps.ParticleProducable {
 		p.Update(gc, delta)
-		if p.GetParticles() > 0 {
+		if p.GetTotalParticles() > 0 {
 			activeProducers = append(activeProducers, p)
 		}
 	}

@@ -126,6 +126,21 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 			}
 		}
 
+		// can collid with a meteroid
+		if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
+			for _, p := range ps.ParticleProducable {
+				switch p.(type) {
+				case *particles.MeteroidProducer:
+					for _, m := range p.GetParticles() {
+						if Crash(&alien.ObjectBase, &m.ObjectEntity, gc) {
+							alien.TakeDamage(1)
+							p.RemoveParticle(m)
+						}
+					}
+				}
+			}
+		}
+
 		// only if destroyed by the spaceship (player) not an asteroid.
 		if alien.IsDead() {
 			if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {

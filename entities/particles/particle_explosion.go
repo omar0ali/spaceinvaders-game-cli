@@ -10,18 +10,33 @@ type ExplosionProducer struct {
 	Particles []*Particle
 }
 
-func (e *ExplosionProducer) GetParticles() int {
+func (e *ExplosionProducer) GetTotalParticles() int {
 	return len(e.Particles)
+}
+
+func (e *ExplosionProducer) GetParticles() []*Particle {
+	return e.Particles
+}
+
+func (e *ExplosionProducer) RemoveParticle(particle *Particle) {
+	for i, p := range e.Particles {
+		if particle == p {
+			e.Particles = append(e.Particles[:i], e.Particles[i+1:]...)
+			break
+		}
+	}
 }
 
 func InitExplosion(scale int, opts ...ParticleOption) *ExplosionProducer {
 	var listOfParticles []*Particle
 
 	po := &Particle{
-		Position: base.PointFloat{X: 0, Y: 0},
-		Style:    base.StyleIt(tcell.ColorReset, tcell.ColorYellow),
-		Symbol:   []rune{'0', 'O', 'o', '*', ';', '.'},
-		Speed:    10,
+		ObjectEntity: base.ObjectEntity{
+			Position: base.PointFloat{X: 0, Y: 0},
+			Speed:    10,
+		},
+		Style:  base.StyleIt(tcell.ColorReset, tcell.ColorYellow),
+		Symbol: []rune{'0', 'O', 'o', '*', ';', '.'},
 	}
 
 	for _, o := range opts {
@@ -31,8 +46,10 @@ func InitExplosion(scale int, opts ...ParticleOption) *ExplosionProducer {
 	for dir := Up; dir <= DownRight; dir++ { // for each direction
 		for i := range scale {
 			particle := &Particle{
-				Speed:     po.Speed + float64(i)*2,
-				Position:  po.Position,
+				ObjectEntity: base.ObjectEntity{
+					Speed:    po.Speed + float64(i)*2,
+					Position: po.Position,
+				},
 				Symbol:    po.Symbol,
 				Direction: dir,
 				Style:     po.Style,
@@ -40,6 +57,7 @@ func InitExplosion(scale int, opts ...ParticleOption) *ExplosionProducer {
 			listOfParticles = append(listOfParticles, particle)
 		}
 	}
+
 	return &ExplosionProducer{
 		Particles: listOfParticles,
 	}

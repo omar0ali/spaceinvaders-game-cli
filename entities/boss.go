@@ -106,6 +106,21 @@ func (b *BossProducer) MovementAndCollision(delta float64, gc *game.GameContext)
 			}
 		}
 
+		// can collid with a meteroid
+		if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
+			for _, p := range ps.ParticleProducable {
+				switch p.(type) {
+				case *particles.MeteroidProducer:
+					for _, m := range p.GetParticles() {
+						if Crash(&b.BossAlien.ObjectBase, &m.ObjectEntity, gc) {
+							b.BossAlien.TakeDamage(1)
+							p.RemoveParticle(m)
+						}
+					}
+				}
+			}
+		}
+
 		if b.BossAlien.IsDead() {
 			style := base.StyleIt(tcell.ColorReset, b.BossAlien.GetColor())
 			if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {

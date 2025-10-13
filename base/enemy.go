@@ -36,10 +36,12 @@ func Deploy(fileDesigns string, level float64) *Enemy {
 			ObjectBase: ObjectBase{
 				Health:    design.EntityHealth * int(level),
 				MaxHealth: design.EntityHealth * int(level),
-				Width:     width,
-				Height:    height,
-				Position:  PointFloat{X: float64(xPos), Y: -5},
-				Speed:     randSpeed,
+				ObjectEntity: ObjectEntity{
+					Width:    width,
+					Height:   height,
+					Position: PointFloat{X: float64(xPos), Y: -5},
+					Speed:    randSpeed,
+				},
 			},
 		},
 		Gun: NewGun(

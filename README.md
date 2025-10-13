@@ -73,7 +73,8 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] Gun Reload + cooldown.
 - [X] Adding Asteroids.
 - [X] New Particle System: Added simple animation of an explosion
-
+- [X] Added meteoroids — when an asteroid explodes, it scatters meteoroids.
+    - They damage spaceships, alien ships, and boss ships.
 
 ### Controls
 

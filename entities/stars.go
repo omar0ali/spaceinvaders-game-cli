@@ -33,11 +33,13 @@ func (s *StarProducer) Deploy() {
 	s.Stars = append(s.Stars, &Star{
 		FallingObjectBase: base.FallingObjectBase{
 			ObjectBase: base.ObjectBase{
-				Health:   1,
-				Position: base.PointFloat{X: float64(xPos), Y: -5},
-				Width:    1,
-				Height:   1,
-				Speed:    randSpeed,
+				Health: 1,
+				ObjectEntity: base.ObjectEntity{
+					Position: base.PointFloat{X: float64(xPos), Y: -5},
+					Width:    1,
+					Height:   1,
+					Speed:    randSpeed,
+				},
 			},
 		},
 	})

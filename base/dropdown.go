@@ -34,10 +34,12 @@ func DeployDropDown(design game.Designable, level float64) *DropDown {
 			ObjectBase: ObjectBase{
 				Health:    design.GetHealth() + int(level),
 				MaxHealth: design.GetHealth() + int(level),
-				Position:  PointFloat{X: float64(xPos), Y: -5},
-				Width:     width,
-				Height:    height,
-				Speed:     speed,
+				ObjectEntity: ObjectEntity{
+					Position: PointFloat{X: float64(xPos), Y: -5},
+					Width:    width,
+					Height:   height,
+					Speed:    speed,
+				},
 			},
 		},
 		Design: design,

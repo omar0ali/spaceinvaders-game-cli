@@ -76,7 +76,9 @@ func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
 
 	return &SpaceShip{
 		ObjectBase: base.ObjectBase{
-			Position: origin,
+			ObjectEntity: base.ObjectEntity{
+				Position: origin,
+			},
 		},
 		ListOfSpaceships: designs,
 		cfg:              cfg,
@@ -273,7 +275,7 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 		base.SetContentWithStyle(i, h-6, r, whiteColor)
 	}
 
-	for i, r := range []rune(fmt.Sprintf("[SPD:    %d", int(s.Gun.GetSpeed()))) {
+	for i, r := range []rune(fmt.Sprintf("[SPD:    %d", int(s.GetSpeed()))) {
 		base.SetContentWithStyle(i, h-5, r, whiteColor)
 	}
 
@@ -301,6 +303,22 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 			}
 		}
 	}
+
+	// can collid with a meteroid
+	if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
+		for _, p := range ps.ParticleProducable {
+			switch p.(type) {
+			case *particles.MeteroidProducer:
+				for _, m := range p.GetParticles() {
+					if Crash(&s.ObjectBase, &m.ObjectEntity, gc) {
+						s.TakeDamage(2)
+						p.RemoveParticle(m)
+					}
+				}
+			}
+		}
+	}
+
 	if b, ok := gc.FindEntity("boss").(*BossProducer); ok {
 		if b.BossAlien != nil {
 			for _, bossBeam := range b.BossAlien.GetBeams() {

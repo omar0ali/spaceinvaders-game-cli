@@ -7,12 +7,16 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type ObjectBase struct {
-	Health        int
-	MaxHealth     int
+type ObjectEntity struct {
 	Position      PointFloat
 	Width, Height int
 	Speed         float64
+}
+
+type ObjectBase struct {
+	ObjectEntity
+	Health    int
+	MaxHealth int
 }
 
 type FallingObjectBase struct {
@@ -39,23 +43,23 @@ func (f *ObjectBase) TakeDamage(by int) {
 	f.Health -= by
 }
 
-func (f *ObjectBase) GetWidth() int {
+func (f *ObjectEntity) GetWidth() int {
 	return f.Width
 }
 
-func (f *ObjectBase) GetHeight() int {
+func (f *ObjectEntity) GetHeight() int {
 	return f.Height
 }
 
-func (f *ObjectBase) GetSpeed() float64 {
+func (f *ObjectEntity) GetSpeed() float64 {
 	return f.Speed
 }
 
-func (f *ObjectBase) GetPosition() *PointFloat {
+func (f *ObjectEntity) GetPosition() *PointFloat {
 	return &f.Position
 }
 
-func (f *ObjectBase) AppendPositionY(y float64) {
+func (f *ObjectEntity) AppendPositionY(y float64) {
 	f.Position.AppendY(y)
 }
 

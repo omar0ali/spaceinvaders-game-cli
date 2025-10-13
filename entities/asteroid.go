@@ -61,10 +61,12 @@ func (a *AsteroidProducer) Deploy() {
 			ObjectBase: base.ObjectBase{
 				Health:    design.EntityHealth + int(a.Level),
 				MaxHealth: design.EntityHealth + int(a.Level),
-				Position:  base.PointFloat{X: float64(xPos), Y: -5},
-				Width:     width,
-				Height:    height,
-				Speed:     speed,
+				ObjectEntity: base.ObjectEntity{
+					Position: base.PointFloat{X: float64(xPos), Y: -5},
+					Width:    width,
+					Height:   height,
+					Speed:    speed,
+				},
 			},
 		},
 		Design: design,
@@ -124,6 +126,14 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 						), particles.WithStyle(base.StyleIt(tcell.ColorReset, tcell.ColorWhite)),
 					),
 				)
+
+				ps.AddParticles(particles.InitMeteroids(
+					particles.WithDimensions(
+						asteroid.Position.X,
+						asteroid.Position.Y,
+						asteroid.Width,
+						asteroid.Height,
+					)))
 			}
 
 			spaceship.ScoreHit()
