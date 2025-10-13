@@ -121,7 +121,7 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 			for _, asteroid := range a.Asteroids {
 				if Crash(&alien.ObjectBase, &asteroid.ObjectBase, gc) {
 					alien.TakeDamage(1)
-					asteroid.TakeDamage(2)
+					asteroid.TakeDamage(3)
 				}
 			}
 		}
@@ -145,7 +145,7 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 		if alien.IsDead() {
 			if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
 				ps.AddParticles(
-					particles.InitExplosion(10,
+					particles.InitExplosion(8,
 						particles.WithDimensions(
 							alien.Position.X,
 							alien.Position.Y,

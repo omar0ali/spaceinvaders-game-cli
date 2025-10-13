@@ -39,7 +39,7 @@ func InitMeteroids(opts ...ParticleOption) *MeteroidProducer {
 			Speed:    float64(rand.Intn(10) + 3),
 		},
 		Style:  base.StyleIt(tcell.ColorReset, tcell.ColorWhite),
-		Symbol: []rune("Oo0"),
+		Symbol: []rune("O○o"),
 	}
 
 	for _, o := range opts {
@@ -47,7 +47,7 @@ func InitMeteroids(opts ...ParticleOption) *MeteroidProducer {
 	}
 
 	for dir := Up; dir <= DownRight; dir++ { // for each direction
-		for i := range 2 {
+		for i := range 1 {
 			particle := &Particle{
 				ObjectEntity: base.ObjectEntity{
 					Speed:    po.Speed + float64(i)*3,
@@ -98,6 +98,9 @@ func (m *MeteroidProducer) Update(gc *game.GameContext, delta float64) {
 			int(p.Position.Y) >= 0 && int(p.Position.Y) < h {
 			activeParticles = append(activeParticles, p)
 		}
+
+		// move meteroids towards the spaceship
+		p.AppendPositionY(float64(p.Speed-2) * delta)
 	}
 
 	m.Particles = activeParticles

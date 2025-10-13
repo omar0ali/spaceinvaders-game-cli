@@ -11,7 +11,7 @@ import (
 
 const (
 	MaxAsteroidsDeployed = 4
-	MaxSpeed             = 6
+	MaxSpeed             = 7
 )
 
 type Asteroid struct {
@@ -141,7 +141,7 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 		if asteroid.IsDead() {
 			if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
 				ps.AddParticles(
-					particles.InitExplosion(5,
+					particles.InitExplosion(10,
 						particles.WithDimensions(
 							asteroid.Position.X,
 							asteroid.Position.Y,

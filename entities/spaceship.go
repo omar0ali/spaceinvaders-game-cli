@@ -250,7 +250,7 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 	base.DisplayBar(
 		s,
 		base.WithPosition(0, h-9),
-		base.WithBarSize(10),
+		base.WithBarSize(11),
 		base.WithStatus(false),
 		base.WithStyle(whiteColor),
 		base.WithGun(&s.Gun),
