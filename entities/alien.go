@@ -92,7 +92,7 @@ func (a *AlienProducer) UIAlienShipData(gc *game.GameContext) {
 	whiteColor := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	aliensStr := []rune(fmt.Sprintf("Enemy Level: %d * ", int(a.Level)))
 	for i, r := range aliensStr {
-		base.SetContentWithStyle(w+i-len(aliensStr), 2, r, whiteColor)
+		base.SetContentWithStyle(w+i-len(aliensStr), 1, r, whiteColor)
 	}
 }
 

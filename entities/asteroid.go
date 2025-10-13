@@ -32,7 +32,7 @@ func NewAsteroidProducer(gc *game.GameContext) *AsteroidProducer {
 
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
-			a.Level += 0.2
+			a.Level += 0.1
 		})
 	}
 
