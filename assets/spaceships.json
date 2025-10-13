@@ -1,13 +1,14 @@
 [
     {
         "name": "Interceptor",
-        "health": 20,
+        "role": "Fast Harasser",
+        "health": 15,
         "color": "c4ffc2",
-        "gun_power": 1,
-        "gun_speed": 44,
-        "gun_cap": 10,
-        "gun_cooldown": 250,
-        "gun_reload_cooldown": 1300,
+        "gun_power": 3,
+        "gun_speed": 50,
+        "gun_cap": 12,
+        "gun_cooldown": 180,
+        "gun_reload_cooldown": 1000,
         "shape": [
             "  ^  ",
             " /|\\ ",
@@ -16,13 +17,14 @@
     },
     {
         "name": "Scout",
+        "role": "Agile All-Rounder",
         "health": 25,
         "color": "c2fffc",
         "gun_power": 3,
-        "gun_speed": 42,
+        "gun_speed": 45,
         "gun_cap": 10,
-        "gun_cooldown": 250,
-        "gun_reload_cooldown": 1100,
+        "gun_cooldown": 220,
+        "gun_reload_cooldown": 900,
         "shape": [
             " [-|^|-] ",
             "   /|\\   ",
@@ -32,13 +34,14 @@
     },
     {
         "name": "Fighter",
+        "role": "DPS Skirmisher",
         "health": 30,
         "color": "c2c8ff",
-        "gun_power": 8,
+        "gun_power": 6,
         "gun_speed": 43,
-        "gun_cap": 7,
-        "gun_cooldown": 400,
-        "gun_reload_cooldown": 1200,
+        "gun_cap": 8,
+        "gun_cooldown": 320,
+        "gun_reload_cooldown": 1100,
         "shape": [
             "   ^   ",
             "  /|\\  ",
@@ -49,13 +52,14 @@
     },
     {
         "name": "Destroyer",
-        "health": 35,
+        "role": "Burst Damage",
+        "health": 40,
         "color": "fbc2ff",
-        "gun_power": 15,
+        "gun_power": 20,
         "gun_speed": 38,
-        "gun_cap": 10,
-        "gun_cooldown": 750,
-        "gun_reload_cooldown": 1800,
+        "gun_cap": 6,
+        "gun_cooldown": 600,
+        "gun_reload_cooldown": 1600,
         "shape": [
             "    |    ",
             "   +^+   ",
@@ -66,13 +70,14 @@
     },
     {
         "name": "Battleship",
-        "health": 40,
+        "role": "Tanky Artillery",
+        "health": 45,
         "color": "ffc2c2",
-        "gun_power": 15,
+        "gun_power": 25,
         "gun_speed": 35,
-        "gun_cap": 20,
-        "gun_cooldown": 850,
-        "gun_reload_cooldown": 2800,
+        "gun_cap": 12,
+        "gun_cooldown": 800,
+        "gun_reload_cooldown": 2500,
         "shape": [
             "      |      ",
             "     +^+     ",
@@ -81,6 +86,23 @@
             "  //|||||\\\\  ",
             " < ||||||| > ",
             " //|||||||\\\\ "
+        ]
+    },
+    {
+        "name": "Spectre",
+        "health": 25,
+        "color": "e2c2ff",
+        "gun_power": 1,
+        "gun_speed": 55,
+        "gun_cap": 25,
+        "gun_cooldown": 80,
+        "gun_reload_cooldown": 1800,
+        "shape": [
+            "   .   ",
+            "  /^\\  ",
+            " <o|o> ",
+            "  \\_/  ",
+            " - V - "
         ]
     }
 ]

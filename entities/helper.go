@@ -82,7 +82,7 @@ func GettingHit(m Movable, beam PointableInt, gc *game.GameContext) bool {
 						0,
 						0,
 					),
-					particles.WithSymbols([]rune("0%*;.")),
+					particles.WithSymbols([]rune("Oo;.")),
 				),
 			)
 		}
@@ -116,7 +116,7 @@ func Crash(c1, c2 Movable, gc *game.GameContext) bool {
 						c1.GetWidth(),
 						c1.GetHeight(),
 					),
-					particles.WithSymbols([]rune("0%*;.")),
+					particles.WithSymbols([]rune(".oO0*;.")),
 				),
 			)
 			p.AddParticles(
@@ -127,7 +127,7 @@ func Crash(c1, c2 Movable, gc *game.GameContext) bool {
 						c2.GetWidth(),
 						c2.GetHeight(),
 					),
-					particles.WithSymbols([]rune("0%*;.")),
+					particles.WithSymbols([]rune(".oO0*;.")),
 				),
 			)
 

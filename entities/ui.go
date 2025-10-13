@@ -281,7 +281,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 				if ev.Key() == tcell.KeyRune {
 					n := int(ev.Rune() - '0')
 					switch n {
-					case 1, 2, 3, 4, 5:
+					case 1, 2, 3, 4, 5, 6:
 						name := s.SpaceshipSelection(n - 1)
 						SetStatus(fmt.Sprintf("[%d] %s Selected", n, name))
 						u.SpaceShipSelection = false
