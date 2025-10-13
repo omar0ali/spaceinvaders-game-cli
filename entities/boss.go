@@ -122,7 +122,6 @@ func (b *BossProducer) MovementAndCollision(delta float64, gc *game.GameContext)
 		}
 
 		if b.BossAlien.IsDead() {
-			style := base.StyleIt(tcell.ColorReset, b.BossAlien.GetColor())
 			if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
 				ps.AddParticles(
 					particles.InitExplosion(15,
@@ -132,7 +131,6 @@ func (b *BossProducer) MovementAndCollision(delta float64, gc *game.GameContext)
 							b.BossAlien.Width,
 							b.BossAlien.Height,
 						),
-						particles.WithStyle(style),
 					),
 				)
 			}

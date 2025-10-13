@@ -174,7 +174,7 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 func (a *AsteroidProducer) Draw(gc *game.GameContext) {
 	for _, asteroid := range a.Asteroids {
 		color := base.StyleIt(tcell.ColorReset, asteroid.GetColor())
-		asteroid.DisplayHealth(5, true, color, nil)
+		// asteroid.DisplayHealth(5, true, color, nil)
 		for rowIndex, line := range asteroid.Shape {
 			for colIndex, char := range line {
 				if char != ' ' {

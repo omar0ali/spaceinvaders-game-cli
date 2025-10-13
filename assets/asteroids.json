@@ -1,43 +1,102 @@
 [
     {
-        "name": "asteroid_rough",
+        "name": "asteroid_large",
+        "health": 400,
+        "color": "93928c",
+        "shape": [
+            "    ___    ",
+            "  .'   '.  ",
+            " /       \\ ",
+            " |       | ",
+            "  \\_____/  "
+        ]
+    },
+    {
+        "name": "asteroid_medium",
         "health": 250,
         "color": "93928c",
         "shape": [
-            "    __   ",
-            "  ,'  `. ",
-            " ( .--. )",
-            "  `.__.' "
+            "   .--.   ",
+            "  (    )  ",
+            "   `--'   "
         ]
     },
     {
-        "name": "asteroid_boulder",
-        "health": 350,
+        "name": "asteroid_small",
+        "health": 150,
         "color": "93928c",
         "shape": [
-            "  .--. ",
-            " ( o  )",
-            "  `--' "
+            "  .-.  ",
+            " (   ) ",
+            "  '-'  "
         ]
     },
     {
-        "name": "asteroid_fragment",
-        "health": 180,
+        "name": "asteroid_irregular",
+        "health": 300,
         "color": "93928c",
         "shape": [
             "   _   ",
-            " ( _ ) ",
-            "       "
+            "  ( )  ",
+            "   -   "
         ]
     },
     {
-        "name": "asteroid_spiked",
+        "name": "asteroid_chunky",
+        "health": 350,
+        "color": "93928c",
+        "shape": [
+            "  ___  ",
+            " [   ] ",
+            "  ---  "
+        ]
+    },
+    {
+        "name": "asteroid_crystalline",
         "health": 280,
         "color": "dedede",
         "shape": [
-            "  _  ",
-            " (_) ",
-            "     "
+            "   /\\   ",
+            "  <  >  ",
+            "   \\/   "
+        ]
+    },
+    {
+        "name": "asteroid_angular",
+        "health": 320,
+        "color": "93928c",
+        "shape": [
+            "   /\\   ",
+            "  /  \\  ",
+            "  \\__/  "
+        ]
+    },
+    {
+        "name": "asteroid_debris",
+        "health": 100,
+        "color": "93928c",
+        "shape": [
+            "  .-.  ",
+            "  '-'  "
+        ]
+    },
+    {
+        "name": "asteroid_rocky",
+        "health": 380,
+        "color": "93928c",
+        "shape": [
+            "  .---. ",
+            " (     )",
+            "  `---' "
+        ]
+    },
+    {
+        "name": "asteroid_pitted",
+        "health": 220,
+        "color": "93928c",
+        "shape": [
+            "  ( )  ",
+            "   -   "
         ]
     }
 ]
