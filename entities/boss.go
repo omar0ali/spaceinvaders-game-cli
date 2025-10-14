@@ -54,9 +54,23 @@ func (b *BossProducer) Draw(gc *game.GameContext) {
 	if b.BossAlien == nil {
 		return
 	}
+
+	w, _ := base.GetSize()
 	color := base.StyleIt(tcell.ColorReset, b.BossAlien.GetColor())
 
-	b.BossAlien.DisplayHealth(7, true, color, &b.BossAlien.Gun)
+	// b.BossAlien.DisplayHealth(7, true, color, &b.BossAlien.Gun)
+	name := string(b.BossAlien.Name)
+	for i, r := range name {
+		base.SetContentWithStyle((w/2)-(len(name)/2)+i, 0, r, color)
+	}
+	base.DisplayBar(
+		b.BossAlien,
+		base.WithGun(&b.BossAlien.Gun),
+		base.WithBarSize(20),
+		base.WithPosition((w/2)-(24/2), 1),
+		base.WithStatus(true),
+		base.WithStyle(color),
+	)
 
 	b.BossAlien.Draw(gc, b.BossAlien.GetColor())
 
