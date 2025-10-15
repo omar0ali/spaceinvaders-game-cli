@@ -39,7 +39,7 @@ func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
 		}
 	}
 	if len(a.Aliens) < int(a.Level) {
-		a.Aliens = append(a.Aliens, base.Deploy("alienships.json", a.Level))
+		a.Aliens = append(a.Aliens, base.Deploy("alienships.json", a.Level, a.Aliens...))
 	}
 
 	// go through each alien's gun and shoot

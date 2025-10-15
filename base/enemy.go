@@ -12,11 +12,33 @@ type Enemy struct {
 	game.AlienshipDesign
 }
 
-func Deploy(fileDesigns string, level float64) *Enemy {
+func Deploy(fileDesigns string, level float64, ships ...*Enemy) *Enemy {
 	w, _ := GetSize()
 	const padding = 23
+
 	distance := (w - (padding * 2))
-	xPos := rand.Intn(distance) + padding
+
+	// choosing the position to place the ship
+	var xPos int
+	const tolerance = 25 // how much space does it need each ship
+
+	for {
+		xPos = rand.Intn(distance) + padding
+		overlap := false
+
+		for _, ship := range ships {
+			start := int(ship.Position.X) - tolerance/2
+			end := int(ship.Position.X) + tolerance/2
+			if xPos > start && xPos < end {
+				overlap = true
+				break
+			}
+		}
+
+		if !overlap {
+			break
+		}
+	}
 
 	designs, err := game.LoadListOfAssets[game.AlienshipDesign](fileDesigns)
 	if err != nil {
@@ -31,7 +53,7 @@ func Deploy(fileDesigns string, level float64) *Enemy {
 	// will pick the first alienship as the min or starting point.
 	lowest := designs[0].Speed
 	randSpeed := rand.Float64()*float64(design.Speed) + float64(lowest) - 1
-	alien := &Enemy{
+	enemy := &Enemy{
 		FallingObjectBase: FallingObjectBase{
 			ObjectBase: ObjectBase{
 				Health:    design.EntityHealth * int(level),
@@ -53,5 +75,5 @@ func Deploy(fileDesigns string, level float64) *Enemy {
 		AlienshipDesign: design,
 	}
 
-	return alien
+	return enemy
 }

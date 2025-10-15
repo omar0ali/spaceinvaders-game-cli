@@ -39,7 +39,7 @@ func InitMeteroids(opts ...ParticleOption) *MeteroidProducer {
 			Speed:    float64(rand.Intn(10) + 3),
 		},
 		Style:  base.StyleIt(tcell.ColorReset, tcell.ColorWhite),
-		Symbol: []rune("O○o"),
+		Symbol: []rune("O○o○"),
 	}
 
 	for _, o := range opts {
@@ -109,7 +109,7 @@ func (m *MeteroidProducer) Update(gc *game.GameContext, delta float64) {
 func (m *MeteroidProducer) Draw(gc *game.GameContext) {
 	for _, p := range m.Particles {
 		t := time.Now().UnixNano() / int64(time.Millisecond)
-		idx := int(t/300) % len(p.Symbol)
+		idx := int(t/250) % len(p.Symbol)
 		symbol := p.Symbol[idx]
 		base.SetContentWithStyle(int(p.Position.X), int(p.Position.Y), symbol, p.Style)
 	}
