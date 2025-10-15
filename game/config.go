@@ -6,6 +6,8 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+var IsDebug = false
+
 const defaultConfig = `
 [dev]
 debug = false
@@ -44,9 +46,11 @@ type GameConfig struct {
 func LoadConfig() GameConfig {
 	var cfg GameConfig
 	if _, err := toml.DecodeFile("config.toml", &cfg); err == nil {
+		IsDebug = cfg.Dev.Debug
 		return cfg
 	}
 	if _, err := toml.Decode(defaultConfig, &cfg); err == nil {
+		IsDebug = cfg.Dev.Debug
 		return cfg
 	}
 

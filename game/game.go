@@ -62,8 +62,7 @@ func (gc *GameContext) FindEntity(typeName string) Entity {
 }
 
 func Log(logType LogType, format string, v ...any) {
-	cfg := LoadConfig()
-	if !cfg.Dev.Debug {
+	if !IsDebug {
 		return
 	}
 	log.Printf(string("["+logType+"] ")+format, v...)
