@@ -76,6 +76,7 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] Added meteoroids — when an asteroid explodes, it scatters meteoroids.
     - They damage spaceships, alien ships, and boss ships.
 
+
 ### Controls
 
 | Control            | Action                                |
@@ -99,7 +100,7 @@ Configuration file added for the player to freely change/update entity's attribu
 
 ```toml
 [dev]
-debug = true
+debug = false
 fps_counter = false
 asteroids = true
 
