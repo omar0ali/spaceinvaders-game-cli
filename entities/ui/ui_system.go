@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"time"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
@@ -16,6 +18,8 @@ type UIProducable interface {
 
 type UISystem struct {
 	UIProducable UIProducable
+	target       time.Time // this is used to give time before player can use the menu
+	// this used to avoiud accidents
 }
 
 func NewUISystem() *UISystem {
@@ -33,6 +37,9 @@ type Box struct {
 }
 
 func (ui *UISystem) SetLayout(layout UIProducable) {
+	now := time.Now()
+	ui.target = now.Add(2 * time.Second)
+
 	ui.UIProducable = layout
 }
 
@@ -49,8 +56,10 @@ func (ui *UISystem) Update(gc *game.GameContext, delta float64) {
 }
 
 func (ui *UISystem) InputEvents(events tcell.Event, gc *game.GameContext) {
-	if ui.UIProducable != nil {
-		ui.UIProducable.InputEvents(events, gc)
+	if time.Now().After(ui.target) {
+		if ui.UIProducable != nil {
+			ui.UIProducable.InputEvents(events, gc)
+		}
 	}
 }
 
