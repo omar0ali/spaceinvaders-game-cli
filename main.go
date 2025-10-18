@@ -9,6 +9,7 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
+	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
@@ -23,6 +24,7 @@ func DeployEntities(gc *game.GameContext, cfg game.GameConfig) {
 	gc.AddEntity(entities.NewAlienProducer(gc))
 	gc.AddEntity(entities.NewBossAlienProducer(gc))
 	gc.AddEntity(particles.NewParticleSystem())
+	gc.AddEntity(ui.NewUISystem())
 	gc.AddEntity(entities.NewUI(gc))
 }
 
@@ -85,6 +87,11 @@ func main() {
 					ui.Update(&gameContext, delta)
 					ui.Draw(&gameContext)
 				}
+				if layout, ok := gameContext.FindEntity("layout").(*ui.UISystem); ok {
+					layout.Update(&gameContext, delta)
+					layout.Draw(&gameContext)
+				}
+
 			} else { // update everything
 				for _, entity := range gameContext.GetEntities() {
 					entity.Draw(&gameContext)

@@ -75,7 +75,8 @@ The game is an endless space shooter where players face increasingly difficult w
 - [X] New Particle System: Added simple animation of an explosion
 - [X] Added meteoroids — when an asteroid explodes, it scatters meteoroids.
     - They damage spaceships, alien ships, and boss ships.
-
+- [X] Spaceship selection UI Redesign. Now can hover on cards of spaceships and show details.
+    - Can select a spaceship with Left Mouse Click.
 
 ### Controls
 

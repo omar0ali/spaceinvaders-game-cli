@@ -7,6 +7,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
+	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
@@ -80,68 +81,13 @@ func (u *UI) Draw(gc *game.GameContext) {
 			"Space Invaders Game")
 	}
 
-	if u.SpaceShipSelection {
-		w, _ := base.GetSize()
-		rectWidth := 45
-		rectHeight := 10
-		startPosY := 25
-		startPosX := (w / 2) - rectWidth/2
-		colGap := 54
-		rowGap := 10
-		columnsPerRow := 3
-
-		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-			for i, shape := range s.ListOfSpaceships {
-				rowIndex := i / columnsPerRow
-				colIndex := i % columnsPerRow
-
-				x := startPosX + colIndex*(rectWidth+colGap)
-				y := startPosY + rowIndex*(rectHeight+rowGap)
-
-				DrawRect(base.Point{X: x, Y: y}, rectWidth, rectHeight, func(initX int, initY int) {
-					// draw index (spaceship selection key)
-					for j, r := range fmt.Sprintf("[%d]", i+1) {
-						base.SetContent(initX+j, initY, r)
-					}
-
-					// draw the spaceship shape inside the rectangle
-					gap := 4
-					for rowIndex, line := range shape.Shape {
-						color := base.StyleIt(tcell.ColorReset, shape.GetColor())
-						for colIndex, char := range line {
-							if char != ' ' {
-								base.SetContentWithStyle(initX+colIndex+gap, initY+rowIndex, char, color)
-							}
-						}
-						// draw details of the spaceship
-						str := []string{
-							fmt.Sprintf("[%s]", shape.Name),
-							fmt.Sprintf("* HP:         %d", shape.EntityHealth),
-							fmt.Sprintf("* Gun PWD:    %d", shape.GunPower),
-							fmt.Sprintf("* Gun CAP:    %d", shape.GunCap),
-							fmt.Sprintf("* Gun SPD:    %d", shape.GunSpeed),
-							fmt.Sprintf("* Gun CD:     %d ms", shape.GunCooldown),
-							fmt.Sprintf("* Gun RLD CD: %d ms", shape.GunReloadCooldown),
-						}
-
-						for j, line := range str {
-							for i, r := range line {
-								base.SetContentWithStyle(initX+colIndex+(gap*4)+i, initY+j, r, color)
-							}
-						}
-					}
-				})
-			}
-		}
-	}
-
 	if u.LevelUpScreen {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 			u.MessageBox(base.GetCenterPoint(),
 				fmt.Sprintf(`
 				(*) Level: %d
 
-				(*) Choose a stat to upgrade:                  
+				(*) Choose a stat to upgrade:
 
 				[A] (%d) Increase Gun Power by %d
 				[S] (%d/%d) Increase Gun Speed by %d
@@ -152,7 +98,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 				`, s.Level,
 					s.GetPower(),
 					IncreaseGunPowerBy,
-					int(s.Gun.GetSpeed()),
+					int(s.GetSpeed()),
 					s.cfg.SpaceShipConfig.GunMaxSpeed,
 					IncreaseGunSpeedBy,
 					s.GetCapacity(),
@@ -265,8 +211,40 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 	case *tcell.EventKey:
 		if ev.Rune() == 's' || ev.Rune() == 'S' {
 			if u.MenuScreen {
-				SetStatus("Select a Spaceship (1 - 5)")
+				SetStatus("Select a Spaceship")
 				u.SpaceShipSelection = true
+				if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+					var boxes []*ui.Box
+					if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
+						for i, shipDesign := range s.ListOfSpaceships {
+							descriptions := []string{
+								fmt.Sprintf("- [%s]", shipDesign.Name),
+								fmt.Sprintf("* HP:         %d", shipDesign.EntityHealth),
+								fmt.Sprintf("* Gun PWD:    %d", shipDesign.GunPower),
+								fmt.Sprintf("* Gun CAP:    %d", shipDesign.GunCap),
+								fmt.Sprintf("* Gun SPD:    %d", shipDesign.GunSpeed),
+								fmt.Sprintf("* Gun CD:     %d ms", shipDesign.GunCooldown),
+								fmt.Sprintf("* Gun RLD CD: %d ms", shipDesign.GunReloadCooldown),
+							}
+
+							boxes = append(boxes, ui.NewUIBox(
+								shipDesign.Shape,
+								descriptions,
+								func() {
+									name := s.SpaceshipSelection(i)
+									SetStatus(fmt.Sprintf("%s Selected", name))
+									u.SpaceShipSelection = false
+									layout.SetLayout(nil)
+								},
+								nil,
+							))
+						}
+						layout.SetLayout(
+							ui.InitLayout(21, 10, boxes...),
+						)
+					}
+				}
+
 				u.MenuScreen = false
 			}
 		}
@@ -276,68 +254,56 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 			}
 			u.PauseScreen = !u.PauseScreen
 		}
-		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-			if u.SpaceShipSelection {
-				if ev.Key() == tcell.KeyRune {
-					n := int(ev.Rune() - '0')
-					switch n {
-					case 1, 2, 3, 4, 5, 6:
-						name := s.SpaceshipSelection(n - 1)
-						SetStatus(fmt.Sprintf("[%d] %s Selected", n, name))
-						u.SpaceShipSelection = false
-					}
+
+		if u.LevelUpScreen {
+			if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+				if ev.Rune() == 'A' || ev.Rune() == 'a' {
+					upgrade(func() bool {
+						SetStatus(fmt.Sprintf("[A] Gun Power: +%d", IncreaseGunPowerBy))
+						return s.IncreaseGunPower(IncreaseGunPowerBy)
+					})
 				}
-			}
-			if u.LevelUpScreen {
-				if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-					if ev.Rune() == 'A' || ev.Rune() == 'a' {
-						upgrade(func() bool {
-							SetStatus(fmt.Sprintf("[A] Gun Power: +%d", IncreaseGunPowerBy))
-							return s.IncreaseGunPower(IncreaseGunPowerBy)
-						})
-					}
-					if ev.Rune() == 'S' || ev.Rune() == 's' {
-						upgrade(func() bool {
-							SetStatus(fmt.Sprintf("[S] Gun Speed: +%d", IncreaseGunSpeedBy))
-							return s.IncreaseGunSpeed(IncreaseGunSpeedBy, s.cfg.SpaceShipConfig.GunMaxSpeed)
-						})
-					}
-					if ev.Rune() == 'D' || ev.Rune() == 'd' {
-						upgrade(func() bool {
-							SetStatus(fmt.Sprintf("[D] Gun Capcity: +%d", IncreaseGunCapBy))
-							return s.IncreaseGunCap(IncreaseGunCapBy, s.cfg.SpaceShipConfig.GunMaxCap)
-						})
-					}
-					if ev.Rune() == 'F' || ev.Rune() == 'f' {
-						upgrade(func() bool {
-							if s.DecreaseCooldown(DecreaseGunCooldownBy) {
-								SetStatus(fmt.Sprintf("[C] Gun Cooldown: -%d", DecreaseGunCooldownBy))
-								return true
-							}
-							SetStatus("[C] Gun Cooldown: Maxed Out!")
-							return false
-						})
-					}
-
-					if ev.Rune() == 'G' || ev.Rune() == 'g' {
-						upgrade(func() bool {
-							if s.DecreaseGunReloadCooldown(DecreaseGunCooldownBy) {
-								SetStatus(fmt.Sprintf("[G] Gun Reload Cooldown: -%d", DecreaseGunCooldownBy))
-								return true
-							}
-							SetStatus("[G] Gun Reload Cooldown: Maxed Out!")
-							return false
-						})
-					}
-
-					if ev.Rune() == 'H' || ev.Rune() == 'h' {
-						upgrade(func() bool {
-							SetStatus("[H] Spaceship health has been restored!")
-							return s.RestoreFullHealth()
-						})
-					}
-
+				if ev.Rune() == 'S' || ev.Rune() == 's' {
+					upgrade(func() bool {
+						SetStatus(fmt.Sprintf("[S] Gun Speed: +%d", IncreaseGunSpeedBy))
+						return s.IncreaseGunSpeed(IncreaseGunSpeedBy, s.cfg.SpaceShipConfig.GunMaxSpeed)
+					})
 				}
+				if ev.Rune() == 'D' || ev.Rune() == 'd' {
+					upgrade(func() bool {
+						SetStatus(fmt.Sprintf("[D] Gun Capcity: +%d", IncreaseGunCapBy))
+						return s.IncreaseGunCap(IncreaseGunCapBy, s.cfg.SpaceShipConfig.GunMaxCap)
+					})
+				}
+				if ev.Rune() == 'F' || ev.Rune() == 'f' {
+					upgrade(func() bool {
+						if s.DecreaseCooldown(DecreaseGunCooldownBy) {
+							SetStatus(fmt.Sprintf("[C] Gun Cooldown: -%d", DecreaseGunCooldownBy))
+							return true
+						}
+						SetStatus("[C] Gun Cooldown: Maxed Out!")
+						return false
+					})
+				}
+
+				if ev.Rune() == 'G' || ev.Rune() == 'g' {
+					upgrade(func() bool {
+						if s.DecreaseGunReloadCooldown(DecreaseGunCooldownBy) {
+							SetStatus(fmt.Sprintf("[G] Gun Reload Cooldown: -%d", DecreaseGunCooldownBy))
+							return true
+						}
+						SetStatus("[G] Gun Reload Cooldown: Maxed Out!")
+						return false
+					})
+				}
+
+				if ev.Rune() == 'H' || ev.Rune() == 'h' {
+					upgrade(func() bool {
+						SetStatus("[H] Spaceship health has been restored!")
+						return s.RestoreFullHealth()
+					})
+				}
+
 			}
 		}
 	}
@@ -437,40 +403,9 @@ func (u UI) wrapText(message string) []string {
 	return lines
 }
 
-func DrawRect(pos base.Point, width, height int, fn func(initX, initY int)) {
-	const padding = 2
-	centerOfW := pos.X / 2
-	centerOfH := pos.Y / 2
-	startX := centerOfW - (width / 2)
-	startY := centerOfH - (height / 2)
-	for i := range height {
-		for j := range width {
-			switch {
-			case j == 0 && i == 0:
-				base.SetContent(startX+j, startY+i, tcell.RuneULCorner)
-			case j == width-1 && i == 0:
-				base.SetContent(startX+j, startY+i, tcell.RuneURCorner)
-			case j == 0 && i == height-1:
-				base.SetContent(startX+j, startY+i, tcell.RuneLLCorner)
-			case j == width-1 && i == height-1:
-				base.SetContent(startX+j, startY+i, tcell.RuneLRCorner)
-
-			case i == 0 || i == height-1:
-				base.SetContent(startX+j, startY+i, tcell.RuneHLine)
-			case j == 0 || j == width-1:
-				base.SetContent(startX+j, startY+i, tcell.RuneVLine)
-
-			default:
-				base.SetContent(startX+j, startY+i, ' ')
-			}
-		}
-	}
-	fn(startX+padding, startY+padding)
-}
-
 func DrawRectCenter(width, height int, fn func(x, y int)) {
 	w, h := base.GetSize()
-	DrawRect(base.Point{X: w, Y: h}, width, height, func(x, y int) {
+	ui.DrawRect(base.Point{X: w, Y: h}, width, height, func(x, y int) {
 		fn(x, y)
 	})
 }
@@ -522,7 +457,7 @@ func DrawRectStatus(text string) {
 
 	width := maxLen + 4
 	height := len(lines) + 2 + bottomPadding
-	DrawRect(base.Point{X: (w * 2) - width - 6, Y: 15}, width, height, func(x, y int) {
+	ui.DrawRect(base.Point{X: (w * 2) - width - 6, Y: 15}, width, height, func(x, y int) {
 		for row, line := range lines {
 			for col, r := range line {
 				base.SetContentWithStyle(x+col, y+row, r, color)
