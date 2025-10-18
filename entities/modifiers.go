@@ -151,9 +151,10 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 					spaceship.DecreaseCooldown(m.ModifyGunCoolDown)
 					spaceship.DecreaseGunReloadCooldown(m.ModifyGunReloadCoolDown)
 					if m.ModifyLevel {
-						SetStatus("Free Upgrade!")
+						SetStatus("Free Level Up!")
 						if u, ok := gc.FindEntity("ui").(*UI); ok {
 							u.LevelUpScreen = true
+							LevelUpPopUp(gc, u, spaceship)
 						}
 					} else {
 						SetStatus(fmt.Sprintf("Modifier %s Applied!", m.Name))
@@ -171,12 +172,11 @@ func (p *ModifierProducer) InputEvents(event tcell.Event, gc *game.GameContext) 
 	// switch ev := event.(type) {
 	// case *tcell.EventKey:
 	// 	if ev.Rune() == 'y' {
-	// 		design, err := game.LoadAsset[game.HealthDesign]("health_kit.json")
+	// 		design, err := game.LoadListOfAssets[game.ModifierDesign]("modifiers.json")
 	// 		if err != nil {
 	// 			panic(err)
 	// 		}
-	// 		p.ConsumbleHealth = design.ModifyHealthConsumble + int(p.Level)
-	// 		p.HealthKit = base.DeployDropDown(&design, p.Level)
+	// 		p.Modifiers = base.DeployDropDown(&design[1], p.Level)
 	// 	}
 	// }
 }
