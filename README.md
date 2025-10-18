@@ -1,7 +1,12 @@
 # Space Invaders Game
 A terminal-based implementation of the classic space invaders game written in Go, using the [tcell](https://github.com/gdamore/tcell) library for handling terminal graphics and input.
 
+
 ## Install
+
+> [!IMPORTANT]  
+> You must install **Go version 1.24 or later**.
+
 
 > [!NOTE]
 > The game looks for `config.toml`, make sure that both the game executable and `config.toml` are located in the same folder and that you run the game from that folder. 
