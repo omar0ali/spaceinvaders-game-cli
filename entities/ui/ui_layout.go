@@ -21,12 +21,11 @@ func (u *UILayoutBoxesProducer) GetBoxes() []*Box {
 	return u.Boxes
 }
 
-func NewUIBox(shape, desc []string, onClick func(), onHover func()) *Box {
+func NewUIBox(shape, desc []string, onClick func()) *Box {
 	return &Box{
 		Description: desc,
 		Shape:       shape,
 		OnClick:     onClick,
-		OnHover:     onHover,
 	}
 }
 
@@ -42,20 +41,16 @@ func InitLayout(boxWidth, boxHeight int, boxes ...*Box) *UILayoutBoxesProducer {
 func (u *UILayoutBoxesProducer) Update(gc *game.GameContext, delta float64) {}
 
 func (u *UILayoutBoxesProducer) InputEvents(events tcell.Event, gc *game.GameContext) {
-	switch e := events.(type) {
+	switch ev := events.(type) {
 	case *tcell.EventMouse:
-		mx, my := e.Position()
-		btn := e.Buttons()
+		mx, my := ev.Position()
 		for _, b := range u.Boxes {
 			if mx >= b.Position.X && mx < b.Position.X+b.Width && my >= b.Position.Y && my < b.Position.Y+b.Height {
 				if !b.Hovered {
 					b.Hovered = true
 					u.selectedDesc = b.Description
-					if b.OnHover != nil {
-						b.OnHover()
-					}
 				}
-				if btn&tcell.Button1 != 0 && b.OnClick != nil {
+				if ev.Buttons() == tcell.Button1 {
 					b.OnClick()
 				}
 			} else {
@@ -85,9 +80,9 @@ func (u *UILayoutBoxesProducer) Draw(gc *game.GameContext) {
 		}
 
 		// draw the box using DrawRect
-		DrawBox(base.Point{X: b.Position.X, Y: b.Position.Y}, b.Width, b.Height, func(innerX, innerY int) {
+		DrawBoxHover(base.Point{X: b.Position.X, Y: b.Position.Y}, b.Width, b.Height, b.Hovered, func(innerX, innerY int) {
 			startX := (b.Width / 2) - len(b.Shape[0])/2
-			startY := (b.Height / 2) - len(b.Shape) + 1
+			startY := (b.Height / 2) - len(b.Shape)
 			for rowIndex, line := range b.Shape {
 				for colIndex, char := range line {
 					if char != ' ' {
@@ -102,7 +97,7 @@ func (u *UILayoutBoxesProducer) Draw(gc *game.GameContext) {
 	DrawRect(base.Point{X: w, Y: h + 15}, 50, 9, func(innerX, innerY int) {
 		for j, line := range u.selectedDesc {
 			for i, r := range line {
-				base.SetContentWithStyle(innerX+i-1, innerY+j-1, r, style)
+				base.SetContentWithStyle(innerX+i+1, innerY+j+1, r, style)
 			}
 		}
 	})

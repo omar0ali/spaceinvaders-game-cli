@@ -29,7 +29,6 @@ type Box struct {
 	Shape       []string
 	Description []string
 	OnClick     func()
-	OnHover     func()
 	Hovered     bool
 }
 
@@ -59,8 +58,11 @@ func (ui *UISystem) GetType() string {
 	return "layout"
 }
 
-func DrawBox(pos base.Point, width, height int, fn func(initX, initY int)) {
+func DrawBoxHover(pos base.Point, width, height int, hover bool, fn func(initX, initY int)) {
 	style := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	if hover {
+		style = base.StyleIt(tcell.ColorReset, tcell.ColorYellowGreen)
+	}
 	const padding = 2
 	startX := pos.X
 	startY := pos.Y
@@ -86,6 +88,39 @@ func DrawBox(pos base.Point, width, height int, fn func(initX, initY int)) {
 		}
 	}
 	fn(startX+padding, startY+padding)
+}
+
+func DrawBox(pos base.Point, width, height int, style tcell.Style) {
+	for i := range height {
+		for j := range width {
+			switch {
+			case j == 0 && i == 0:
+				base.SetContentWithStyle(pos.X+j, pos.Y+i, tcell.RuneULCorner, style)
+			case j == width-1 && i == 0:
+				base.SetContentWithStyle(pos.X+j, pos.Y+i, tcell.RuneURCorner, style)
+			case j == 0 && i == height-1:
+				base.SetContentWithStyle(pos.X+j, pos.Y+i, tcell.RuneLLCorner, style)
+			case j == width-1 && i == height-1:
+				base.SetContentWithStyle(pos.X+j, pos.Y+i, tcell.RuneLRCorner, style)
+			case i == 0 || i == height-1:
+				base.SetContentWithStyle(pos.X+j, pos.Y+i, tcell.RuneHLine, style)
+			case j == 0 || j == width-1:
+				base.SetContentWithStyle(pos.X+j, pos.Y+i, tcell.RuneVLine, style)
+
+			default:
+				base.SetContent(pos.X+j, pos.Y+i, ' ')
+			}
+		}
+	}
+}
+
+func DrawBoxOverlap(pos base.Point, width, height int, fn func(initX, initY int)) {
+	style := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	const padding = 2
+	startX := pos.X
+	startY := pos.Y
+	DrawBox(pos, width, height, style)
+	fn(startX, startY)
 }
 
 // TODO: Refactor
@@ -117,5 +152,5 @@ func DrawRect(pos base.Point, width, height int, fn func(initX, initY int)) {
 			}
 		}
 	}
-	fn(startX+padding, startY+padding)
+	fn(startX, startY)
 }

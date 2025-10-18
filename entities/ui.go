@@ -37,11 +37,154 @@ type UI struct {
 
 func NewUI(gc *game.GameContext) *UI {
 	nextMinute = 0
+
 	u := &UI{true, false, false, false, false, 0}
+
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
-			SetStatus("Level Up")
-			u.LevelUpScreen = true
+			if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
+
+				upgrade := func(up func() bool) {
+					if up() {
+						u.LevelUpScreen = false
+					}
+					layout.SetLayout(nil)
+				}
+
+				SetStatus("Level Up")
+				u.LevelUpScreen = true
+				boxes := []*ui.Box{
+					ui.NewUIBox(
+						[]string{
+							"     /\\      ",
+							"    /***\\    ",
+							"   | *+* |   ",
+							"    \\***/    ",
+							"     ||      ",
+							"    POWER    ",
+						},
+						[]string{
+							fmt.Sprintf("(%d) Increase Gun Power by %d", s.GetPower(), IncreaseGunPowerBy),
+						},
+						func() {
+							upgrade(func() bool {
+								SetStatus(fmt.Sprintf("Gun Power: +%d", IncreaseGunPowerBy))
+								return s.IncreaseGunPower(IncreaseGunPowerBy)
+							})
+						},
+					),
+
+					ui.NewUIBox(
+						[]string{
+							"     ___     ",
+							"    />>>\\    ",
+							"   |>>+>>|   ",
+							"    \\>>>/    ",
+							"     ~~~     ",
+							"    SPEED    ",
+						},
+						[]string{
+							fmt.Sprintf("(%d/%d) Increase Gun Speed by %d", int(s.GetSpeed()), s.cfg.SpaceShipConfig.GunMaxSpeed, IncreaseGunSpeedBy),
+						},
+						func() {
+							upgrade(func() bool {
+								SetStatus(fmt.Sprintf("Gun Speed: +%d", IncreaseGunSpeedBy))
+								return s.IncreaseGunSpeed(IncreaseGunSpeedBy, s.cfg.SpaceShipConfig.GunMaxSpeed)
+							})
+						},
+					),
+
+					ui.NewUIBox(
+						[]string{
+							"   _______   ",
+							"  |[1] [2]|  ",
+							"  |[3] [+]|  ",
+							"  |_______|  ",
+							"     CAP     ",
+						},
+						[]string{
+							fmt.Sprintf("(%d/%d) Increase Gun Capacity by %d", s.GetCapacity(), s.cfg.SpaceShipConfig.GunMaxCap, IncreaseGunCapBy),
+						},
+						func() {
+							upgrade(func() bool {
+								SetStatus(fmt.Sprintf("Gun Capcity: +%d", IncreaseGunCapBy))
+								return s.IncreaseGunCap(IncreaseGunCapBy, s.cfg.SpaceShipConfig.GunMaxCap)
+							})
+						},
+					),
+
+					ui.NewUIBox(
+						[]string{
+							"    _____    ",
+							"   | -=- |   ",
+							"   | -3- |   ",
+							"   |_____|   ",
+							"    \\___/    ",
+							"  COOL DOWN  ",
+						},
+						[]string{
+							fmt.Sprintf("(%d) Decrease Gun Cooldown by %d", s.GetCooldown(), DecreaseGunCooldownBy),
+						},
+						func() {
+							upgrade(func() bool {
+								if s.DecreaseCooldown(DecreaseGunCooldownBy) {
+									SetStatus(fmt.Sprintf("Gun Cooldown: -%d", DecreaseGunCooldownBy))
+									return true
+								}
+								SetStatus("Gun Cooldown: Maxed Out!")
+								return false
+							})
+						},
+					),
+
+					ui.NewUIBox(
+						[]string{
+							"    _____    ",
+							"   |\\___/|   ",
+							"   || - ||   ",
+							"   || 3 ||   ",
+							"   ||___||   ",
+							"   RLD CLD   ",
+						},
+						[]string{
+							fmt.Sprintf("(%d) Decrease Gun Reload Cooldown by %d", s.GetReloadCooldown(), DecreaseGunCooldownBy),
+						},
+						func() {
+							upgrade(func() bool {
+								if s.DecreaseGunReloadCooldown(DecreaseGunCooldownBy) {
+									SetStatus(fmt.Sprintf("Gun Reload Cooldown: -%d", DecreaseGunCooldownBy))
+									return true
+								}
+								SetStatus("Gun Reload Cooldown: Maxed Out!")
+								return false
+							})
+						},
+					),
+
+					ui.NewUIBox(
+						[]string{
+							"    _____    ",
+							"   / +++ \\   ",
+							"  | +100+ |  ",
+							"   \\ ___ /   ",
+							"    |___|    ",
+							"     HP%     ",
+						},
+						[]string{
+							fmt.Sprintf("(%d/%d) Restore Full Health", s.Health, s.SelectedSpaceship.EntityHealth),
+						},
+						func() {
+							upgrade(func() bool {
+								SetStatus("[H] Spaceship health has been restored!")
+								return s.RestoreFullHealth()
+							})
+						},
+					),
+				}
+				layout.SetLayout(
+					ui.InitLayout(21, 10, boxes...),
+				)
+			}
 		})
 	}
 	return u
@@ -79,39 +222,6 @@ func (u *UI) Draw(gc *game.GameContext) {
 				Press [S] to start the game
 			`,
 			"Space Invaders Game")
-	}
-
-	if u.LevelUpScreen {
-		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-			u.MessageBox(base.GetCenterPoint(),
-				fmt.Sprintf(`
-				(*) Level: %d
-
-				(*) Choose a stat to upgrade:
-
-				[A] (%d) Increase Gun Power by %d
-				[S] (%d/%d) Increase Gun Speed by %d
-				[D] (%d/%d) Increase Gun Capacity by %d
-				[F] (%d) Decrease Gun Cooldown by %d
-				[G] (%d) Decrease Gun Reload Cooldown by %d
-				[H] (%d/%d) Restore Full Health
-				`, s.Level,
-					s.GetPower(),
-					IncreaseGunPowerBy,
-					int(s.GetSpeed()),
-					s.cfg.SpaceShipConfig.GunMaxSpeed,
-					IncreaseGunSpeedBy,
-					s.GetCapacity(),
-					s.cfg.SpaceShipConfig.GunMaxCap,
-					IncreaseGunCapBy,
-					s.GetCooldown(),
-					DecreaseGunCooldownBy,
-					s.GetReloadCooldown(),
-					DecreaseGunCooldownBy,
-					s.Health,
-					s.SelectedSpaceship.EntityHealth),
-				"Level Up")
-		}
 	}
 
 	// show controls at the bottom of the screen
@@ -202,11 +312,6 @@ func (u *UI) Update(gc *game.GameContext, delta float64) {
 }
 
 func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
-	upgrade := func(up func() bool) {
-		if up() {
-			u.LevelUpScreen = false
-		}
-	}
 	switch ev := events.(type) {
 	case *tcell.EventKey:
 		if ev.Rune() == 's' || ev.Rune() == 'S' {
@@ -236,7 +341,6 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 									u.SpaceShipSelection = false
 									layout.SetLayout(nil)
 								},
-								nil,
 							))
 						}
 						layout.SetLayout(
@@ -253,58 +357,6 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 				return
 			}
 			u.PauseScreen = !u.PauseScreen
-		}
-
-		if u.LevelUpScreen {
-			if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-				if ev.Rune() == 'A' || ev.Rune() == 'a' {
-					upgrade(func() bool {
-						SetStatus(fmt.Sprintf("[A] Gun Power: +%d", IncreaseGunPowerBy))
-						return s.IncreaseGunPower(IncreaseGunPowerBy)
-					})
-				}
-				if ev.Rune() == 'S' || ev.Rune() == 's' {
-					upgrade(func() bool {
-						SetStatus(fmt.Sprintf("[S] Gun Speed: +%d", IncreaseGunSpeedBy))
-						return s.IncreaseGunSpeed(IncreaseGunSpeedBy, s.cfg.SpaceShipConfig.GunMaxSpeed)
-					})
-				}
-				if ev.Rune() == 'D' || ev.Rune() == 'd' {
-					upgrade(func() bool {
-						SetStatus(fmt.Sprintf("[D] Gun Capcity: +%d", IncreaseGunCapBy))
-						return s.IncreaseGunCap(IncreaseGunCapBy, s.cfg.SpaceShipConfig.GunMaxCap)
-					})
-				}
-				if ev.Rune() == 'F' || ev.Rune() == 'f' {
-					upgrade(func() bool {
-						if s.DecreaseCooldown(DecreaseGunCooldownBy) {
-							SetStatus(fmt.Sprintf("[C] Gun Cooldown: -%d", DecreaseGunCooldownBy))
-							return true
-						}
-						SetStatus("[C] Gun Cooldown: Maxed Out!")
-						return false
-					})
-				}
-
-				if ev.Rune() == 'G' || ev.Rune() == 'g' {
-					upgrade(func() bool {
-						if s.DecreaseGunReloadCooldown(DecreaseGunCooldownBy) {
-							SetStatus(fmt.Sprintf("[G] Gun Reload Cooldown: -%d", DecreaseGunCooldownBy))
-							return true
-						}
-						SetStatus("[G] Gun Reload Cooldown: Maxed Out!")
-						return false
-					})
-				}
-
-				if ev.Rune() == 'H' || ev.Rune() == 'h' {
-					upgrade(func() bool {
-						SetStatus("[H] Spaceship health has been restored!")
-						return s.RestoreFullHealth()
-					})
-				}
-
-			}
 		}
 	}
 }
@@ -445,7 +497,6 @@ func SetStatus(text string) {
 func DrawRectStatus(text string) {
 	w, _ := base.GetSize()
 	color := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
-	bottomPadding := 2
 	lines := strings.Split(text, "\n")
 
 	maxLen := 0
@@ -456,11 +507,11 @@ func DrawRectStatus(text string) {
 	}
 
 	width := maxLen + 4
-	height := len(lines) + 2 + bottomPadding
+	height := len(lines) + 4
 	ui.DrawRect(base.Point{X: (w * 2) - width - 6, Y: 15}, width, height, func(x, y int) {
 		for row, line := range lines {
 			for col, r := range line {
-				base.SetContentWithStyle(x+col, y+row, r, color)
+				base.SetContentWithStyle(x+col+2, y+row+2, r, color)
 			}
 		}
 	})
