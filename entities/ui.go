@@ -3,6 +3,7 @@ package entities
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -19,11 +20,11 @@ const (
 )
 
 var (
-	nextMinute int
-	status     string
-	showStatus bool
-	minutes    int
-	seconds    int
+	nextMinute   int
+	minutes      int
+	seconds      int
+	listOfStatus []string
+	mu           sync.Mutex
 )
 
 type UI struct {
@@ -38,7 +39,13 @@ type UI struct {
 func NewUI(gc *game.GameContext) *UI {
 	nextMinute = 0
 
-	u := &UI{true, false, false, false, false, 0}
+	u := &UI{
+		MenuScreen:         true,
+		PauseScreen:        false,
+		GameOverScreen:     false,
+		LevelUpScreen:      false,
+		SpaceShipSelection: false,
+	}
 
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
@@ -51,6 +58,11 @@ func NewUI(gc *game.GameContext) *UI {
 func (u *UI) Draw(gc *game.GameContext) {
 	whiteColor := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 
+	n := len(listOfStatus)
+	for i, notification := range listOfStatus {
+		yIndex := n - 1 - i // invert y order
+		DrawRectStatus(notification, yIndex)
+	}
 	// start screen
 	if u.MenuScreen {
 		u.MessageBox(base.GetCenterPoint(),
@@ -153,10 +165,6 @@ func (u *UI) Draw(gc *game.GameContext) {
 			)
 		}
 		return
-	}
-
-	if showStatus {
-		DrawRectStatus(status)
 	}
 }
 
@@ -344,18 +352,31 @@ func DrawBoxedText(text string) {
 }
 
 func SetStatus(text string) {
-	showStatus = true
-	status = text
-	go func() {
-		time.Sleep(4 * time.Second)
-		showStatus = false
-	}()
+	mu.Lock()
+	listOfStatus = append(listOfStatus, text) // safe add
+	mu.Unlock()
+
+	go func(msg string) {
+		time.Sleep(3 * time.Second)
+
+		mu.Lock()
+		for i, v := range listOfStatus {
+			// safe remove
+			if v == msg {
+				listOfStatus = append(listOfStatus[:i], listOfStatus[i+1:]...)
+				break
+			}
+		}
+		mu.Unlock()
+	}(text)
 }
 
-func DrawRectStatus(text string) {
+func DrawRectStatus(text string, y int) {
 	w, _ := base.GetSize()
 	color := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
 	lines := strings.Split(text, "\n")
+
+	jumpBy := 10
 
 	maxLen := 0
 	for _, line := range lines {
@@ -366,7 +387,7 @@ func DrawRectStatus(text string) {
 
 	width := maxLen + 4
 	height := len(lines) + 4
-	ui.DrawRect(base.Point{X: (w * 2) - width - 6, Y: 15}, width, height, func(x, y int) {
+	ui.DrawRect(base.Point{X: (w * 2) - width - 6, Y: 5 + jumpBy*(y+1)}, width, height, func(x, y int) {
 		for row, line := range lines {
 			for col, r := range line {
 				base.SetContentWithStyle(x+col+2, y+row+2, r, color)
