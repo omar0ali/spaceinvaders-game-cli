@@ -11,7 +11,7 @@ import (
 
 const (
 	MaxHealthKitsToOwn  = 5
-	MaxConsumableHealth = 7
+	MaxConsumableHealth = 8
 )
 
 type ModifierProducer struct {
@@ -24,11 +24,11 @@ type ModifierProducer struct {
 func NewModifierProducer(gc *game.GameContext) *ModifierProducer {
 	p := &ModifierProducer{
 		Level:            1.0,
-		ConsumableHealth: 2,
+		ConsumableHealth: 3,
 	}
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		spaceship.OnLevelUp = append(spaceship.OnLevelUp, func(newLevel int) {
-			p.Level += 0.5
+			p.Level += 0.1
 		})
 	}
 	return p

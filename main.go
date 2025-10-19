@@ -13,19 +13,19 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
-func DeployEntities(gc *game.GameContext, cfg game.GameConfig) {
+func DeployEntities(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) {
 	// order is important since some objects might overlap others
 	gc.AddEntity(entities.NewStarsProducer(cfg))
+	gc.AddEntity(entities.NewSpaceShip(cfg, gc))
 	gc.AddEntity(entities.NewModifierProducer(gc))
 	if cfg.Dev.Asteroids { // includeing asteroids is optional
 		gc.AddEntity(entities.NewAsteroidProducer(gc))
 	}
-	gc.AddEntity(entities.NewSpaceShip(cfg, gc))
 	gc.AddEntity(entities.NewAlienProducer(gc))
 	gc.AddEntity(entities.NewBossAlienProducer(gc))
 	gc.AddEntity(particles.NewParticleSystem())
 	gc.AddEntity(ui.NewUISystem())
-	gc.AddEntity(entities.NewUI(gc))
+	gc.AddEntity(entities.NewUI(gc, exitCha))
 }
 
 func main() {
@@ -50,7 +50,7 @@ func main() {
 	// ---------------------------------- entities --------------------------------------
 
 	log.Println("Game running...")
-	DeployEntities(&gameContext, cfg)
+	DeployEntities(&gameContext, cfg, exit)
 
 	// ----------------------------------------- window ------------------------------------
 	base.InputEvent(exit,
@@ -59,7 +59,7 @@ func main() {
 			case *tcell.EventKey:
 				if ev.Key() == tcell.KeyCtrlR {
 					gameContext.RemoveAllEntities()
-					DeployEntities(&gameContext, cfg)
+					DeployEntities(&gameContext, cfg, exit)
 				}
 			}
 			for _, entity := range gameContext.GetEntities() {

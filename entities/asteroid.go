@@ -11,7 +11,7 @@ import (
 
 const (
 	MaxAsteroidsDeployed = 4
-	MaxSpeed             = 7
+	MaxSpeed             = 4
 )
 
 type Asteroid struct {
@@ -33,6 +33,7 @@ func NewAsteroidProducer(gc *game.GameContext) *AsteroidProducer {
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
 			a.Level += 0.1
+			game.Log(game.Warn, "Asteroid Level UP: %1.f", a.Level)
 		})
 	}
 
@@ -54,7 +55,7 @@ func (a *AsteroidProducer) Deploy() {
 	width := len(design.Shape[0])
 	height := len(design.Shape)
 
-	speed := rand.Float64()*float64(min(MaxAsteroidsDeployed, a.Level+1)) + 2
+	speed := rand.Float64()*float64(min(MaxSpeed, a.Level+1)) + 2
 
 	a.Asteroids = append(a.Asteroids, &Asteroid{
 		FallingObjectBase: base.FallingObjectBase{
@@ -75,6 +76,7 @@ func (a *AsteroidProducer) Deploy() {
 
 func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 	if len(a.Asteroids) < min(int(a.Level), MaxAsteroidsDeployed) {
+		game.Log(game.Info, "Asteroids Deployed %d Level %.1f", len(a.Asteroids), a.Level)
 		a.Deploy()
 	}
 

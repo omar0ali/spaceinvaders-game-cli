@@ -21,14 +21,6 @@ func (u *UILayoutBoxesProducer) GetBoxes() []*Box {
 	return u.Boxes
 }
 
-func NewUIBox(shape, desc []string, onClick func()) *Box {
-	return &Box{
-		Description: desc,
-		Shape:       shape,
-		OnClick:     onClick,
-	}
-}
-
 func InitLayout(boxWidth, boxHeight int, boxes ...*Box) *UILayoutBoxesProducer {
 	return &UILayoutBoxesProducer{
 		Boxes:        boxes,

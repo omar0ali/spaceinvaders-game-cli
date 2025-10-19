@@ -39,7 +39,7 @@
         "color": "c2c8ff",
         "gun_power": 6,
         "gun_speed": 43,
-        "gun_cap": 8,
+        "gun_cap": 10,
         "gun_cooldown": 320,
         "gun_reload_cooldown": 1100,
         "shape": [
@@ -57,7 +57,7 @@
         "color": "fbc2ff",
         "gun_power": 20,
         "gun_speed": 38,
-        "gun_cap": 6,
+        "gun_cap": 8,
         "gun_cooldown": 600,
         "gun_reload_cooldown": 1600,
         "shape": [
@@ -65,7 +65,7 @@
             "   +^+   ",
             "  /|||\\  ",
             " < ||| > ",
-            " //|||\\\\ "
+            " /|-0-|\\  "
         ]
     },
     {
@@ -75,17 +75,16 @@
         "color": "ffc2c2",
         "gun_power": 25,
         "gun_speed": 35,
-        "gun_cap": 12,
+        "gun_cap": 20,
         "gun_cooldown": 800,
-        "gun_reload_cooldown": 2500,
+        "gun_reload_cooldown": 2800,
         "shape": [
             "      |      ",
             "     +^+     ",
             "    /|||\\    ",
             "   < ||| >   ",
             "  //|||||\\\\  ",
-            " < ||||||| > ",
-            " //|||||||\\\\ "
+            " <.|-|0|-|.> "
         ]
     },
     {
@@ -93,10 +92,10 @@
         "health": 25,
         "color": "e2c2ff",
         "gun_power": 1,
-        "gun_speed": 55,
-        "gun_cap": 25,
-        "gun_cooldown": 80,
-        "gun_reload_cooldown": 1800,
+        "gun_speed": 50,
+        "gun_cap": 18,
+        "gun_cooldown": 90,
+        "gun_reload_cooldown": 1900,
         "shape": [
             "   .   ",
             "  /^\\  ",

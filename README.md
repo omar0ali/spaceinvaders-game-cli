@@ -90,14 +90,8 @@ The game is an endless space shooter where players face increasingly difficult w
 | Left Mouse Pressed | Shoot beams                           |
 | Mouse Movement     | Move the spaceship                    |
 | E                  | Consume health kit (increase spaceship's health) |
+| R                  | Reload Gun                            |
 | P                  | Pause the game                        |
-| S                  | Start the game                        |
-| A                  | Upgrade Gun Power  (in upgrade menu)  |
-| S                  | Upgrade Gun Speed    (in upgrade menu)|
-| D                  | Upgrade Gun Capacity   (in upgrade menu) |
-| F                  | Upgrade Gun Cooldown    (in upgrade menu) |
-| G                  | Upgrade Gun Reload Cooldown    (in upgrade menu)|
-| H                  | Restore Heatlh    (in upgrade menu)   |
 | Ctrl+R             | Restart game                          |
 | Ctrl+Q             | Quit game                             |
 

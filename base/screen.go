@@ -98,6 +98,13 @@ func SetTitle(title string) {
 	screen.SetTitle(title)
 }
 
+func ExitGame(exitCha chan struct{}) {
+	cleanupOnce.Do(func() {
+		screen.Fini()
+	})
+	close(exitCha)
+}
+
 func InputEvent(exitCha chan struct{}, keys func(tcell.Event)) {
 	if screen == nil {
 		log.Fatal("[InputEvent] Screen must be initialized first. Call InitScreen()")
@@ -110,10 +117,7 @@ func InputEvent(exitCha chan struct{}, keys func(tcell.Event)) {
 				screen.Clear()
 			case *tcell.EventKey:
 				if ev.Key() == tcell.KeyCtrlQ {
-					cleanupOnce.Do(func() {
-						screen.Fini()
-					})
-					close(exitCha)
+					ExitGame(exitCha)
 					return
 				}
 			}

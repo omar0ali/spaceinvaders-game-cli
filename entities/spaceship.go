@@ -45,6 +45,7 @@ func (s *SpaceShip) RestoreFullHealth() bool {
 	if s.Health >= s.SelectedSpaceship.EntityHealth {
 		return false
 	}
+	SetStatus("[H] Spaceship health has been restored!")
 	s.Health = s.SelectedSpaceship.EntityHealth
 	return true
 }
@@ -379,8 +380,8 @@ func LevelUpPopUp(gc *game.GameContext, u *UI, s *SpaceShip) {
 		upgrade := func(up func() bool) {
 			if up() {
 				u.LevelUpScreen = false
+				layout.SetLayout(nil)
 			}
-			layout.SetLayout(nil)
 		}
 
 		SetStatus("Level Up")
@@ -508,7 +509,6 @@ func LevelUpPopUp(gc *game.GameContext, u *UI, s *SpaceShip) {
 				},
 				func() {
 					upgrade(func() bool {
-						SetStatus("[H] Spaceship health has been restored!")
 						return s.RestoreFullHealth()
 					})
 				},
