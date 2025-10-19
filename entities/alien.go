@@ -90,7 +90,7 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 func (a *AlienProducer) UIAlienShipData(gc *game.GameContext) {
 	w, _ := base.GetSize()
 	whiteColor := base.StyleIt(tcell.ColorWhite)
-	aliensStr := []rune(fmt.Sprintf("Enemy Level: %d * ", int(a.Level)))
+	aliensStr := []rune(fmt.Sprintf("Difficulty Level: %d * ", int(a.Level)))
 	for i, r := range aliensStr {
 		base.SetContentWithStyle(w+i-len(aliensStr), 1, r, whiteColor)
 	}

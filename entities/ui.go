@@ -131,22 +131,25 @@ func (u *UI) Draw(gc *game.GameContext) {
 	minutes = int(u.timeElapsed) / 60
 	seconds = int(u.timeElapsed) % 60
 
-	timeStr := []rune(fmt.Sprintf("  * Time: %02d:%02d", minutes, seconds))
-	// display objects details
-	for i, r := range timeStr {
-		base.SetContentWithStyle(i, 1, r, whiteColor)
-	}
+	if !u.MenuScreen {
 
-	// display spacehsip details - Also drop a health kit every minute
-	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-		s.UISpaceshipData(gc)
-	}
+		timeStr := []rune(fmt.Sprintf("  * Time: %02d:%02d", minutes, seconds))
+		// display objects details
+		for i, r := range timeStr {
+			base.SetContentWithStyle(i, 1, r, whiteColor)
+		}
 
-	// display aliens details
-	if aliens, ok := gc.FindEntity("alien").(*AlienProducer); ok {
-		aliens.UIAlienShipData(gc)
-	}
+		// display spacehsip details - Also drop a health kit every minute
+		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+			s.UISpaceshipData(gc)
+		}
 
+		// display aliens details
+		if aliens, ok := gc.FindEntity("alien").(*AlienProducer); ok {
+			aliens.UIAlienShipData(gc)
+		}
+
+	}
 	// pause ui
 	if u.PauseScreen {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -361,12 +364,14 @@ func SetStatus(text string) {
 }
 
 func DrawRectStatus(text string, y int) {
+	// Get terminal width
 	w, _ := base.GetSize()
 	color := base.StyleIt(tcell.ColorWhite)
-	lines := strings.Split(text, "\n")
 
+	lines := strings.Split(text, "\n")
 	jumpBy := 10
 
+	// Find the longest line to determine rectangle width
 	maxLen := 0
 	for _, line := range lines {
 		if len(line) > maxLen {
@@ -374,9 +379,17 @@ func DrawRectStatus(text string, y int) {
 		}
 	}
 
-	width := maxLen + 4
+	width := maxLen + 4 // Padding around text
 	height := len(lines) + 4
-	ui.DrawRect(base.Point{X: (w * 2) - width - 6, Y: 5 + jumpBy*(y+1)}, width, height, func(x, y int) {
+
+	// Calculate top-left corner of the rectangle
+	start := base.Point{
+		X: (w * 2) - width - 2,
+		Y: 1 + jumpBy*(y+1),
+	}
+
+	// Draw the rectangle and render text inside
+	ui.DrawRect(start, width, height, func(x, y int) {
 		for row, line := range lines {
 			for col, r := range line {
 				base.SetContentWithStyle(x+col+2, y+row+2, r, color)
