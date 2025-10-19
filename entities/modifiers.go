@@ -10,21 +10,18 @@ import (
 )
 
 const (
-	MaxHealthKitsToOwn  = 5
-	MaxConsumableHealth = 8
+	MaxHealthKitsToOwn = 5
 )
 
 type ModifierProducer struct {
-	Modifiers        *base.DropDown
-	HealthKit        *base.DropDown
-	Level            float64
-	ConsumableHealth int
+	Modifiers *base.DropDown
+	HealthKit *base.DropDown
+	Level     float64
 }
 
 func NewModifierProducer(gc *game.GameContext) *ModifierProducer {
 	p := &ModifierProducer{
-		Level:            1.0,
-		ConsumableHealth: 3,
+		Level: 3.0,
 	}
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		spaceship.OnLevelUp = append(spaceship.OnLevelUp, func(newLevel int) {
@@ -39,11 +36,10 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 		if p.HealthKit != nil {
 			return
 		}
-		design, err := game.LoadAsset[game.HealthDesign]("health_kit.json")
+		design, err := game.LoadAsset[game.Design]("health_kit.json")
 		if err != nil {
 			panic(err)
 		}
-		p.ConsumableHealth = min(design.ModifyHealthConsumble+int(p.Level), MaxConsumableHealth)
 		p.HealthKit = base.DeployDropDown(&design, p.Level)
 		nextMinute++
 	}

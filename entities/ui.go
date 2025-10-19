@@ -120,18 +120,17 @@ func (u *UI) Draw(gc *game.GameContext) {
 		DrawRectStatus(notification, yIndex)
 	}
 
-	// show controls at the bottom of the screen
-	w, h := base.GetSize()
-	controlsUI := []rune("[LM] Shoot Beams ◆ [E] Consume Health Kit ◆ [R] Reload Gun ◆ [P] Pause Game ◆ [Ctrl+R] Restart Game ◆ [Ctrl+Q] Quit")
-	for i, r := range controlsUI {
-		base.SetContentWithStyle(w/2-(len(controlsUI)/2)+i, h-1, r, whiteColor)
-	}
-
 	// timer
 	minutes = int(u.timeElapsed) / 60
 	seconds = int(u.timeElapsed) % 60
 
 	if !u.MenuScreen {
+		// show controls at the bottom of the screen
+		w, h := base.GetSize()
+		controlsUI := []rune("[LM] Shoot Beams ◆ [E] Consume Health Kit ◆ [R] Reload Gun ◆ [P] Pause Game ◆ [Ctrl+R] Restart Game ◆ [Ctrl+Q] Quit")
+		for i, r := range controlsUI {
+			base.SetContentWithStyle(w/2-(len(controlsUI)/2)+i, h-1, r, whiteColor)
+		}
 
 		timeStr := []rune(fmt.Sprintf("  * Time: %02d:%02d", minutes, seconds))
 		// display objects details

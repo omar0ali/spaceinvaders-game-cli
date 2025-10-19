@@ -196,8 +196,8 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 		if ev.Rune() == 'E' || ev.Rune() == 'e' {
 			if s.healthKitsOwned > 0 {
 				if p, ok := gc.FindEntity("producer").(*ModifierProducer); ok {
-					if s.IncreaseHealth(p.ConsumableHealth) {
-						SetStatus(fmt.Sprintf("[E] Health: Consumed +%d", p.ConsumableHealth))
+					if s.IncreaseHealth(int(p.Level)) {
+						SetStatus(fmt.Sprintf("[E] Health: Consumed +%d", int(p.Level)))
 						s.healthKitsOwned--
 						return
 					}

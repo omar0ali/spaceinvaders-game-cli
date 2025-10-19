@@ -15,11 +15,6 @@ type Design struct {
 	Color        string   `json:"color"`
 }
 
-type HealthDesign struct {
-	Design
-	ModifyHealthConsumble int `json:"modify_health_consumble"`
-}
-
 type ModifierDesign struct {
 	Design
 	ModifyHealth            int  `json:"modify_health"`
