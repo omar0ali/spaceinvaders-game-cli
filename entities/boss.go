@@ -56,7 +56,7 @@ func (b *BossProducer) Draw(gc *game.GameContext) {
 	}
 
 	w, _ := base.GetSize()
-	color := base.StyleIt(tcell.ColorReset, b.BossAlien.GetColor())
+	color := base.StyleIt(b.BossAlien.GetColor())
 
 	// b.BossAlien.DisplayHealth(7, true, color, &b.BossAlien.Gun)
 	name := string(b.BossAlien.Name)

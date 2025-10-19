@@ -164,8 +164,8 @@ func SetContentWithStyle(x, y int, r rune, style tcell.Style) {
 	screen.SetContent(x, y, r, nil, style)
 }
 
-func StyleIt(background, forground tcell.Color) tcell.Style {
-	return tcell.StyleDefault.Background(background).Foreground(forground)
+func StyleIt(forground tcell.Color) tcell.Style {
+	return tcell.StyleDefault.Background(tcell.ColorReset).Foreground(forground)
 }
 
 func GetCenterPoint() Point {

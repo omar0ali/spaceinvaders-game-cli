@@ -57,7 +57,7 @@ func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
 
 func (a *AlienProducer) Draw(gc *game.GameContext) {
 	for _, alien := range a.Aliens {
-		color := base.StyleIt(tcell.ColorReset, alien.GetColor())
+		color := base.StyleIt(alien.GetColor())
 		alien.Draw(gc, alien.GetColor())
 
 		alien.DisplayHealth(5, true, color, &alien.Gun)
@@ -89,7 +89,7 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 
 func (a *AlienProducer) UIAlienShipData(gc *game.GameContext) {
 	w, _ := base.GetSize()
-	whiteColor := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	whiteColor := base.StyleIt(tcell.ColorWhite)
 	aliensStr := []rune(fmt.Sprintf("Enemy Level: %d * ", int(a.Level)))
 	for i, r := range aliensStr {
 		base.SetContentWithStyle(w+i-len(aliensStr), 1, r, whiteColor)

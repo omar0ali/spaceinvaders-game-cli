@@ -133,7 +133,7 @@ func (s *SpaceShip) Draw(gc *game.GameContext) {
 		return
 	}
 
-	color := base.StyleIt(tcell.ColorReset, s.SelectedSpaceship.GetColor())
+	color := base.StyleIt(s.SelectedSpaceship.GetColor())
 
 	defer s.Gun.Draw(gc, s.SelectedSpaceship.GetColor())
 
@@ -221,7 +221,7 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 	}
 
 	const padding, startY = 2, 2
-	whiteColor := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	whiteColor := base.StyleIt(tcell.ColorWhite)
 
 	for i, r := range []rune("* Score: ") {
 		base.SetContentWithStyle(padding+i, startY, r, whiteColor)

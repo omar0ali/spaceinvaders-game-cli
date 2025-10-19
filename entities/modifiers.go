@@ -75,7 +75,7 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 
 func (p *ModifierProducer) Draw(gc *game.GameContext) {
 	if p.HealthKit != nil {
-		color := base.StyleIt(tcell.ColorReset, p.HealthKit.Design.GetColor())
+		color := base.StyleIt(p.HealthKit.Design.GetColor())
 		for rowIndex, line := range p.HealthKit.Design.GetShape() {
 			for colIndex, char := range line {
 				if char != ' ' {
@@ -88,7 +88,7 @@ func (p *ModifierProducer) Draw(gc *game.GameContext) {
 		p.HealthKit.DisplayHealth(6, true, color, nil)
 	}
 	if p.Modifiers != nil {
-		color := base.StyleIt(tcell.ColorReset, p.Modifiers.Design.GetColor())
+		color := base.StyleIt(p.Modifiers.Design.GetColor())
 		for rowIndex, line := range p.Modifiers.Design.GetShape() {
 			for colIndex, char := range line {
 				if char != ' ' {

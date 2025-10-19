@@ -35,7 +35,7 @@ func InitExplosion(scale int, opts ...ParticleOption) *ExplosionProducer {
 			Position: base.PointFloat{X: 0, Y: 0},
 			Speed:    10,
 		},
-		Style:  base.StyleIt(tcell.ColorReset, tcell.ColorYellow),
+		Style:  base.StyleIt(tcell.ColorYellow),
 		Symbol: []rune{'0', 'O', 'o', '*', ';', '.'},
 	}
 

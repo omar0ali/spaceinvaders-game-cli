@@ -38,7 +38,7 @@ func InitMeteroids(opts ...ParticleOption) *MeteroidProducer {
 			Position: base.PointFloat{X: 0, Y: 0},
 			Speed:    float64(rand.Intn(10) + 3),
 		},
-		Style:  base.StyleIt(tcell.ColorReset, tcell.ColorWhite),
+		Style:  base.StyleIt(tcell.ColorWhite),
 		Symbol: []rune("O○o○"),
 	}
 

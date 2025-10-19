@@ -68,9 +68,9 @@ func (ui *UISystem) GetType() string {
 }
 
 func DrawBoxHover(pos base.Point, width, height int, hover bool, fn func(initX, initY int)) {
-	style := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	style := base.StyleIt(tcell.ColorWhite)
 	if hover {
-		style = base.StyleIt(tcell.ColorReset, tcell.ColorYellowGreen)
+		style = base.StyleIt(tcell.ColorYellowGreen)
 	}
 	const padding = 2
 	startX := pos.X
@@ -124,7 +124,7 @@ func DrawBox(pos base.Point, width, height int, style tcell.Style) {
 }
 
 func DrawBoxOverlap(pos base.Point, width, height int, fn func(initX, initY int)) {
-	style := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	style := base.StyleIt(tcell.ColorWhite)
 	const padding = 2
 	startX := pos.X
 	startY := pos.Y

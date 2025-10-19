@@ -56,7 +56,7 @@ func NewUI(gc *game.GameContext) *UI {
 }
 
 func (u *UI) Draw(gc *game.GameContext) {
-	whiteColor := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	whiteColor := base.StyleIt(tcell.ColorWhite)
 
 	n := len(listOfStatus)
 	for i, notification := range listOfStatus {
@@ -280,7 +280,7 @@ func (u *UI) MessageBox(origin base.Point, message string, title string) {
 		}
 	}
 
-	color := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	color := base.StyleIt(tcell.ColorWhite)
 	for i, line := range wrappedLines {
 		for j, r := range line {
 			base.SetContentWithStyle(int(origin.GetX())+padding+j, int(origin.GetY())+padding+i, r, color)
@@ -373,7 +373,7 @@ func SetStatus(text string) {
 
 func DrawRectStatus(text string, y int) {
 	w, _ := base.GetSize()
-	color := base.StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	color := base.StyleIt(tcell.ColorWhite)
 	lines := strings.Split(text, "\n")
 
 	jumpBy := 10

@@ -205,7 +205,7 @@ func (g *Gun) Update(gc *game.GameContext, delta float64) {
 
 func (g *Gun) Draw(gc *game.GameContext, color tcell.Color) {
 	// draw the beam new position
-	style := StyleIt(tcell.ColorReset, color)
+	style := StyleIt(color)
 
 	for _, beam := range g.beams {
 		SetContentWithStyle(beam.position.X, beam.position.Y, beam.Symbol, style)

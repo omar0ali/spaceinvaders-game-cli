@@ -96,11 +96,13 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 			if i >= j {
 				continue
 			}
+			// asteroids can crash at each other and destroy
 			if Crash(&asteroid.ObjectBase, &asteroid2.ObjectEntity, gc) {
 				asteroid.TakeDamage(40)
 				asteroid2.TakeDamage(40)
 			}
 		}
+
 		Move(&asteroid.ObjectBase, delta)
 
 		// can collid with a meteroid
@@ -141,13 +143,13 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 		if asteroid.IsDead() {
 			if ps, ok := gc.FindEntity("particles").(*particles.ParticleSystem); ok {
 				ps.AddParticles(
-					particles.InitExplosion(10,
+					particles.InitExplosion(15,
 						particles.WithDimensions(
 							asteroid.Position.X,
 							asteroid.Position.Y,
 							asteroid.Width,
 							asteroid.Height,
-						), particles.WithStyle(base.StyleIt(tcell.ColorReset, tcell.ColorWhite)),
+						), particles.WithStyle(base.StyleIt(tcell.ColorWhite)),
 					),
 				)
 
@@ -173,7 +175,7 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 
 func (a *AsteroidProducer) Draw(gc *game.GameContext) {
 	for _, asteroid := range a.Asteroids {
-		color := base.StyleIt(tcell.ColorReset, asteroid.GetColor())
+		color := base.StyleIt(asteroid.GetColor())
 		// asteroid.DisplayHealth(5, true, color, nil)
 		for rowIndex, line := range asteroid.Shape {
 			for colIndex, char := range line {

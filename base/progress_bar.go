@@ -62,7 +62,7 @@ func WithGun(gun Gunner) BarOption {
 }
 
 func DisplayBar(h Meter, opts ...BarOption) {
-	defStyle := StyleIt(tcell.ColorReset, tcell.ColorWhite)
+	defStyle := StyleIt(tcell.ColorWhite)
 
 	o := BarOptions{
 		Size:      10,
