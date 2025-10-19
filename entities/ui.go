@@ -36,7 +36,7 @@ type UI struct {
 	timeElapsed        float64
 }
 
-func NewUI(gc *game.GameContext) *UI {
+func NewUI(gc *game.GameContext, exitCha chan struct{}) *UI {
 	nextMinute = 0
 
 	u := &UI{
@@ -45,6 +45,62 @@ func NewUI(gc *game.GameContext) *UI {
 		GameOverScreen:     false,
 		LevelUpScreen:      false,
 		SpaceShipSelection: false,
+	}
+
+	if u.MenuScreen {
+		if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
+
+			boxes := []*ui.Box{
+				ui.NewUIBox(
+					[]string{
+						"Start New Game",
+					},
+					[]string{},
+					func() {
+						// here we should start the game
+						SetStatus("Select a Spaceship")
+						u.SpaceShipSelection = true
+						if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+							var boxes []*ui.Box
+							for i, shipDesign := range s.ListOfSpaceships {
+								descriptions := []string{
+									fmt.Sprintf("- [%s]", shipDesign.Name),
+									fmt.Sprintf("* HP:         %d", shipDesign.EntityHealth),
+									fmt.Sprintf("* Gun PWD:    %d", shipDesign.GunPower),
+									fmt.Sprintf("* Gun CAP:    %d", shipDesign.GunCap),
+									fmt.Sprintf("* Gun SPD:    %d", shipDesign.GunSpeed),
+									fmt.Sprintf("* Gun CD:     %d ms", shipDesign.GunCooldown),
+									fmt.Sprintf("* Gun RLD CD: %d ms", shipDesign.GunReloadCooldown),
+								}
+
+								boxes = append(boxes, ui.NewUIBox(
+									shipDesign.Shape,
+									descriptions,
+									func() {
+										name := s.SpaceshipSelection(i)
+										SetStatus(fmt.Sprintf("%s Selected", name))
+										u.SpaceShipSelection = false
+										layout.SetLayout(nil)
+									},
+								))
+							}
+							layout.SetLayout(
+								ui.InitLayout(21, 10, boxes...),
+							)
+						}
+						u.MenuScreen = false
+					},
+				),
+				ui.NewUIBox([]string{
+					"Quit Game",
+				}, []string{}, func() {
+					base.ExitGame(exitCha)
+				}),
+			}
+			layout.SetLayout(
+				ui.InitMainMenu(20, 5, boxes...),
+			)
+		}
 	}
 
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -63,41 +119,12 @@ func (u *UI) Draw(gc *game.GameContext) {
 		yIndex := n - 1 - i // invert y order
 		DrawRectStatus(notification, yIndex)
 	}
-	// start screen
-	if u.MenuScreen {
-		u.MessageBox(base.GetCenterPoint(),
-			`
-				The game is an endless space shooter where players face increasingly difficult 
-				waves of alien ships that scale with their level.
-
-				Each time the player levels up, they can choose an upgrade to improve their spaceship,
-				such as boosting firepower to handle tougher aliens with stronger armor.
-
-				The objective is to survive as long as possible, destroy alien ships, and push for 
-				a higher score while managing health through occasional drop-down health packs that
-				restore the spaceship health.
-
-				 -----------------
-				(*) Controls
-				 -----------------
-
-				[LM] hold to shoot a beam to coming alien-ships.
-
-				[E] Consume Health Kit.
-				[P] To pause the game.
-
-				[Ctrl+R] to restart the game.
-				[Ctrl+Q] To quit the game.
-
-				Press [S] to start the game
-			`,
-			"Space Invaders Game")
-	}
 
 	// show controls at the bottom of the screen
-	_, h := base.GetSize()
-	for i, r := range []rune("[LM] Shoot Beams ◆ [E] Consume Health Kit ◆ [R] Reload Gun ◆ [P] Pause Game ◆ [Ctrl+R] Restart Game ◆ [Ctrl+Q] Quit") {
-		base.SetContentWithStyle(i, h-1, r, whiteColor)
+	w, h := base.GetSize()
+	controlsUI := []rune("[LM] Shoot Beams ◆ [E] Consume Health Kit ◆ [R] Reload Gun ◆ [P] Pause Game ◆ [Ctrl+R] Restart Game ◆ [Ctrl+Q] Quit")
+	for i, r := range controlsUI {
+		base.SetContentWithStyle(w/2-(len(controlsUI)/2)+i, h-1, r, whiteColor)
 	}
 
 	// timer
@@ -180,46 +207,8 @@ func (u *UI) Update(gc *game.GameContext, delta float64) {
 func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 	switch ev := events.(type) {
 	case *tcell.EventKey:
-		if ev.Rune() == 's' || ev.Rune() == 'S' {
-			if u.MenuScreen {
-				SetStatus("Select a Spaceship")
-				u.SpaceShipSelection = true
-				if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-					var boxes []*ui.Box
-					if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
-						for i, shipDesign := range s.ListOfSpaceships {
-							descriptions := []string{
-								fmt.Sprintf("- [%s]", shipDesign.Name),
-								fmt.Sprintf("* HP:         %d", shipDesign.EntityHealth),
-								fmt.Sprintf("* Gun PWD:    %d", shipDesign.GunPower),
-								fmt.Sprintf("* Gun CAP:    %d", shipDesign.GunCap),
-								fmt.Sprintf("* Gun SPD:    %d", shipDesign.GunSpeed),
-								fmt.Sprintf("* Gun CD:     %d ms", shipDesign.GunCooldown),
-								fmt.Sprintf("* Gun RLD CD: %d ms", shipDesign.GunReloadCooldown),
-							}
-
-							boxes = append(boxes, ui.NewUIBox(
-								shipDesign.Shape,
-								descriptions,
-								func() {
-									name := s.SpaceshipSelection(i)
-									SetStatus(fmt.Sprintf("%s Selected", name))
-									u.SpaceShipSelection = false
-									layout.SetLayout(nil)
-								},
-							))
-						}
-						layout.SetLayout(
-							ui.InitLayout(21, 10, boxes...),
-						)
-					}
-				}
-
-				u.MenuScreen = false
-			}
-		}
 		if ev.Rune() == 'p' || ev.Rune() == 'P' {
-			if u.MenuScreen || u.GameOverScreen { // skip
+			if u.MenuScreen || u.GameOverScreen || u.SpaceShipSelection { // skip
 				return
 			}
 			u.PauseScreen = !u.PauseScreen

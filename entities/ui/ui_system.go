@@ -36,6 +36,14 @@ type Box struct {
 	Hovered     bool
 }
 
+func NewUIBox(shape, desc []string, onClick func()) *Box {
+	return &Box{
+		Description: desc,
+		Shape:       shape,
+		OnClick:     onClick,
+	}
+}
+
 func (ui *UISystem) SetLayout(layout UIProducable) {
 	now := time.Now()
 	ui.target = now.Add(2 * time.Second)
@@ -44,6 +52,28 @@ func (ui *UISystem) SetLayout(layout UIProducable) {
 }
 
 func (ui *UISystem) Draw(gc *game.GameContext) {
+	// show loading symbol
+	if !time.Now().After(ui.target) && ui.UIProducable != nil {
+		w, h := base.GetSize()
+		// frames := []rune{'.', 'o', 'O', 'o'}
+		// frames := []rune{'▁', '▃', '▄', '▅', '▆', '▇', '█', '▇', '▆', '▅', '▄', '▃'}
+		frames := []rune{'•', '◦'}
+
+		i := int(time.Now().UnixNano()/400_000_000) % len(frames)
+		j := int(time.Now().UnixNano()/200_000_000) % len(frames)
+
+		loadingWord := "Loading"
+		for i, r := range loadingWord {
+			base.SetContent(i+(w/2)-len(loadingWord)/2, h-3, r)
+		}
+
+		base.SetContent((w/2)-1, h-2, frames[i])
+		base.SetContent((w/2)-2, h-2, frames[i])
+		base.SetContent(w/2, h-2, frames[j])
+		base.SetContent((w/2)+1, h-2, frames[i])
+		base.SetContent((w/2)+2, h-2, frames[i])
+	}
+
 	if ui.UIProducable != nil {
 		ui.UIProducable.Draw(gc)
 	}
@@ -123,8 +153,7 @@ func DrawBox(pos base.Point, width, height int, style tcell.Style) {
 	}
 }
 
-func DrawBoxOverlap(pos base.Point, width, height int, fn func(initX, initY int)) {
-	style := base.StyleIt(tcell.ColorWhite)
+func DrawBoxOverlap(pos base.Point, width, height int, fn func(initX, initY int), style tcell.Style) {
 	const padding = 2
 	startX := pos.X
 	startY := pos.Y
