@@ -26,7 +26,7 @@ func InitMainMenu(boxWidth, boxHeight int, boxes ...*Box) *UILayoutMenuBoxesProd
 		Width:  boxWidth,
 		Height: boxHeight,
 		selectedDesc: []string{
-			"* Space Invaders Game v1.8",
+			"* Space Invaders Game v1.8.0.alpha.1",
 			"",
 			"The game is an endless space shooter where players face increasingly difficult",
 			"waves of alien ships that scale with their level.",
