@@ -45,7 +45,7 @@ func Deploy(fileDesigns string, level float64, ships ...*Enemy) *Enemy {
 		panic(err)
 	}
 
-	// pick random design: based on the current health level. The higher the stronger the ships.
+	// pick random design: based on the current level. The higher the stronger the ships.
 	design := designs[rand.Intn(min(int(level)+1, len(designs)))]
 	width := len(design.Shape[0])
 	height := len(design.Shape)

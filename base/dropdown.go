@@ -8,7 +8,7 @@ import (
 
 const (
 	MaxHealthKitsToOwn = 5
-	MaxSpeed           = 3
+	MaxSpeed           = 4
 )
 
 type DropDown struct {
@@ -16,7 +16,7 @@ type DropDown struct {
 	Design game.Designable
 }
 
-func DeployDropDown(design game.Designable, level float64) *DropDown {
+func DeployDropDown(design game.Designable, level int) *DropDown {
 	w, _ := GetSize()
 
 	const padding = 20
@@ -27,13 +27,13 @@ func DeployDropDown(design game.Designable, level float64) *DropDown {
 	width := len(design.GetShape()[0])
 	height := len(design.GetShape())
 
-	speed := rand.Float64()*float64(min(MaxSpeed, int(level))) + 1
+	speed := rand.Float64()*float64(min(MaxSpeed, level)) + 1
 
 	dropdown := &DropDown{
 		FallingObjectBase: FallingObjectBase{
 			ObjectBase: ObjectBase{
-				Health:    design.GetHealth() + int(level),
-				MaxHealth: design.GetHealth() + int(level),
+				Health:    design.GetHealth() + level*2,
+				MaxHealth: design.GetHealth() + level*2,
 				ObjectEntity: ObjectEntity{
 					Position: PointFloat{X: float64(xPos), Y: -5},
 					Width:    width,

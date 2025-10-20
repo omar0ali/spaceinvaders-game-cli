@@ -21,11 +21,11 @@ type ModifierProducer struct {
 
 func NewModifierProducer(gc *game.GameContext) *ModifierProducer {
 	p := &ModifierProducer{
-		Level: 3.0,
+		Level: 2,
 	}
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		spaceship.OnLevelUp = append(spaceship.OnLevelUp, func(newLevel int) {
-			p.Level += 0.1
+			p.Level += 0.5
 		})
 	}
 	return p
@@ -40,7 +40,7 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 		if err != nil {
 			panic(err)
 		}
-		p.HealthKit = base.DeployDropDown(&design, p.Level)
+		p.HealthKit = base.DeployDropDown(&design, int(p.Level))
 		nextMinute++
 	}
 
@@ -55,7 +55,7 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 
 		design := designs[rand.Intn(len(designs))]
 
-		p.Modifiers = base.DeployDropDown(&design, p.Level)
+		p.Modifiers = base.DeployDropDown(&design, int(p.Level))
 	}
 
 	if p.Modifiers != nil {

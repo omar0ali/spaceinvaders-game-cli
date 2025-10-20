@@ -34,6 +34,7 @@ func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
 		if boss.BossAlien != nil {
 			if len(a.Aliens) > -1 {
 				a.Aliens = nil
+				a.SelectedAlien = nil
 			}
 			return
 		}
