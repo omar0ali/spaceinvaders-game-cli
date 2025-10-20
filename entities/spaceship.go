@@ -189,6 +189,12 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 			s.mouseDown = false
 		}
 
+		if ev.Buttons() == tcell.Button2 {
+			if s.GetLoaded() != s.GetCapacity() {
+				s.ReloadGun()
+			}
+		}
+
 	case *tcell.EventKey:
 		if ev.Rune() == ' ' {
 			s.mouseDown = true
@@ -263,11 +269,11 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 		base.SetContentWithStyle(i, h-8, r, whiteColor)
 	}
 
-	reloadAnimation := []rune("•○")
 	str := fmt.Sprintf("[CAP:    %d/%d", s.GetLoaded(), s.GetCapacity())
 
 	if s.IsReloading() {
-		frame := int(time.Now().UnixNano()/300_000_000) % len(reloadAnimation)
+		reloadAnimation := []rune{'·', '•', '●', '○', '●', '•', '·'}
+		frame := int(time.Now().UnixNano()/100_000_000) % len(reloadAnimation)
 		str += " " + string(reloadAnimation[frame]) + " RELOADING"
 	}
 	for i, r := range []rune(str) {

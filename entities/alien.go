@@ -10,8 +10,9 @@ import (
 )
 
 type AlienProducer struct {
-	Aliens []*base.Enemy
-	Level  float64
+	Aliens        []*base.Enemy
+	Level         float64
+	SelectedAlien *base.Enemy // used to display healthbar for selected ones
 }
 
 func NewAlienProducer(gc *game.GameContext) *AlienProducer {
@@ -24,7 +25,6 @@ func NewAlienProducer(gc *game.GameContext) *AlienProducer {
 			a.Level += 0.1
 		})
 	}
-
 	return a
 }
 
@@ -56,11 +56,24 @@ func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
 }
 
 func (a *AlienProducer) Draw(gc *game.GameContext) {
+	// display the last alien ship that was shot
+
+	if a.SelectedAlien != nil {
+		base.DisplayHealthLeft(
+			&a.SelectedAlien.ObjectBase,
+			a.SelectedAlien.Name,
+			15,
+			true,
+			base.StyleIt(a.SelectedAlien.GetColor()),
+			&a.SelectedAlien.Gun,
+		)
+	}
+
 	for _, alien := range a.Aliens {
 		color := base.StyleIt(alien.GetColor())
 		alien.Draw(gc, alien.GetColor())
 
-		alien.DisplayHealth(5, true, color, &alien.Gun)
+		alien.DisplayHealth(6, true, color, &alien.Gun)
 
 		// draw shape
 		for rowIndex, line := range alien.Shape {
@@ -110,6 +123,7 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 		Move(&alien.ObjectBase, delta)
 		for _, beam := range spaceship.GetBeams() {
 			if GettingHit(&alien.ObjectBase, beam, gc) {
+				a.SelectedAlien = alien
 				alien.TakeDamage(spaceship.GetPower())
 				spaceship.ScoreHit()
 				spaceship.RemoveBeam(beam) // removing a beam when hitting the ship
@@ -155,6 +169,7 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 					),
 				)
 			}
+			a.SelectedAlien = nil
 			spaceship.ScoreKill()
 		}
 

@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	HealthBoxStyle      = '■'
-	HealthBoxEmptyStyle = '□'
+	HealthBoxStyle      = '═'
+	HealthBoxEmptyStyle = '─'
 )
 
 type Meter interface {
@@ -24,7 +24,7 @@ type BarOptions struct {
 	ShowStats bool
 	InPercent bool
 	Style     tcell.Style
-	Gun       Gunner
+	Gun       *Gun
 }
 
 type BarOption func(opts *BarOptions)
@@ -55,7 +55,7 @@ func WithStyle(style tcell.Style) BarOption {
 	}
 }
 
-func WithGun(gun Gunner) BarOption {
+func WithGun(gun *Gun) BarOption {
 	return func(o *BarOptions) {
 		o.Gun = gun
 	}
@@ -78,9 +78,13 @@ func DisplayBar(h Meter, opts ...BarOption) {
 		opt(&o)
 	}
 
-	reloadAnimation := []rune("•○")
 	if o.Gun != nil && o.Gun.IsReloading() {
-		frame := int(time.Now().UnixNano()/300_000_000) % len(reloadAnimation)
+		// reloadAnimation := []rune("o.•○")
+		// reloadAnimation := []rune{'▁', '▃', '▄', '▅', '▆', '▇', '█', '▇', '▆', '▅', '▄', '▃'}
+		// reloadAnimation := []rune{'▉', '▊', '▋', '▌', '▍', '▎', '▏', '▎', '▍', '▌', '▋', '▊'}
+		reloadAnimation := []rune{'·', '•', '●', '○', '●', '•', '·'}
+
+		frame := int(time.Now().UnixNano()/100_000_000) % len(reloadAnimation)
 		SetContentWithStyle(o.X-2, o.Y, reloadAnimation[frame], o.Style)
 	}
 

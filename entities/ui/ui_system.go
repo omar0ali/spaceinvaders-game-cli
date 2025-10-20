@@ -46,7 +46,7 @@ func NewUIBox(shape, desc []string, onClick func()) *Box {
 
 func (ui *UISystem) SetLayout(layout UIProducable) {
 	now := time.Now()
-	ui.target = now.Add(2 * time.Second)
+	ui.target = now.Add(1100 * time.Millisecond)
 
 	ui.UIProducable = layout
 }

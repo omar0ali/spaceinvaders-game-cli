@@ -55,22 +55,9 @@ func (b *BossProducer) Draw(gc *game.GameContext) {
 		return
 	}
 
-	w, _ := base.GetSize()
 	color := base.StyleIt(b.BossAlien.GetColor())
 
-	// b.BossAlien.DisplayHealth(7, true, color, &b.BossAlien.Gun)
-	name := string(b.BossAlien.Name)
-	for i, r := range name {
-		base.SetContentWithStyle((w/2)-(len(name)/2)+i, 0, r, color)
-	}
-	base.DisplayBar(
-		b.BossAlien,
-		base.WithGun(&b.BossAlien.Gun),
-		base.WithBarSize(20),
-		base.WithPosition((w/2)-(24/2), 1),
-		base.WithStatus(true),
-		base.WithStyle(color),
-	)
+	base.DisplayHealthTop(&b.BossAlien.ObjectBase, b.BossAlien.Name, 20, true, color, &b.BossAlien.Gun)
 
 	b.BossAlien.Draw(gc, b.BossAlien.GetColor())
 

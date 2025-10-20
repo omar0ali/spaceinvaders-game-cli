@@ -74,7 +74,7 @@ func (u *UILayoutBoxesProducer) Draw(gc *game.GameContext) {
 		// draw the box using DrawRect
 		DrawBoxHover(base.Point{X: b.Position.X, Y: b.Position.Y}, b.Width, b.Height, b.Hovered, func(innerX, innerY int) {
 			startX := (b.Width / 2) - len(b.Shape[0])/2
-			startY := (b.Height / 2) - len(b.Shape)
+			startY := (b.Height / 2) - len(b.Shape) + 1
 			for rowIndex, line := range b.Shape {
 				for colIndex, char := range line {
 					if char != ' ' {

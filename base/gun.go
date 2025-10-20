@@ -32,11 +32,12 @@ type Gun struct {
 	power  int
 	speed  int
 
-	reloading      bool
-	mu             sync.Mutex
-	lastShot       time.Time
-	cooldown       time.Duration
-	reloadCooldown time.Duration
+	reloading       bool
+	mu              sync.Mutex
+	lastShot        time.Time
+	cooldown        time.Duration
+	reloadCooldown  time.Duration
+	reloadStartTime time.Time
 }
 
 func NewGun(cap, power, speed int, cooldown, reloadCooldown int) Gun {
@@ -49,10 +50,6 @@ func NewGun(cap, power, speed int, cooldown, reloadCooldown int) Gun {
 		cooldown:       time.Duration(cooldown) * time.Millisecond,
 		reloadCooldown: time.Duration(reloadCooldown) * time.Millisecond,
 	}
-}
-
-type Gunner interface {
-	IsReloading() bool
 }
 
 func (g *Gun) GetPower() int {

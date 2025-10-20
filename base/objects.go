@@ -63,7 +63,38 @@ func (f *ObjectEntity) AppendPositionY(y float64) {
 	f.Position.AppendY(y)
 }
 
-func (f *ObjectBase) DisplayHealth(barSize int, showPercentage bool, style tcell.Style, gun Gunner) {
+func DisplayHealthLeft(base *ObjectBase, name string, barSize int, showPercentage bool, style tcell.Style, gun *Gun) {
+	for i, r := range name {
+		SetContentWithStyle(2+i, 6, r, style)
+	}
+
+	DisplayBar(
+		base,
+		WithGun(gun),
+		WithBarSize(barSize),
+		WithPosition(2, 7),
+		WithStatus(true),
+		WithStyle(style),
+	)
+}
+
+func DisplayHealthTop(base *ObjectBase, name string, barSize int, showPercentage bool, style tcell.Style, gun *Gun) {
+	w, _ := GetSize()
+	for i, r := range name {
+		SetContentWithStyle((w/2)-(len(name)/2)+i, 0, r, style)
+	}
+
+	DisplayBar(
+		base,
+		WithGun(gun),
+		WithBarSize(barSize),
+		WithPosition((w/2)-(24/2), 1),
+		WithStatus(true),
+		WithStyle(style),
+	)
+}
+
+func (f *ObjectBase) DisplayHealth(barSize int, showPercentage bool, style tcell.Style, gun *Gun) {
 	DisplayBar(
 		f,
 		WithPosition(
