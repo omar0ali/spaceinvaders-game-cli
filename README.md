@@ -85,15 +85,15 @@ The game is an endless space shooter where players face increasingly difficult w
 
 ### Controls
 
-| Control            | Action                                |
-|--------------------|---------------------------------------|
-| Left Mouse Pressed | Shoot beams                           |
-| Mouse Movement     | Move the spaceship                    |
-| E                  | Consume health kit (increase spaceship's health) |
-| R                  | Reload Gun                            |
-| P                  | Pause the game                        |
-| Ctrl+R             | Restart game                          |
-| Ctrl+Q             | Quit game                             |
+| Control               | Action                                           |
+|-----------------------|--------------------------------------------------|
+| Left Mouse Pressed    | Shoot beams                                      |
+| Mouse Movement        | Move the spaceship                               |
+| E                     | Consume health kit (increase spaceship's health) |
+| R - Right Mouse Click | Reload Gun                                       |
+| P                     | Pause the game                                   |
+| Ctrl+R                | Restart game                                     |
+| Ctrl+Q                | Quit game                                        |
 
 ### Default Configuration File
 Configuration file added for the player to freely change/update entity's attributes. The config file saved as `config.toml`.
