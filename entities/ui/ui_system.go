@@ -46,7 +46,7 @@ func NewUIBox(shape, desc []string, onClick func()) *Box {
 
 func (ui *UISystem) SetLayout(layout UIProducable) {
 	now := time.Now()
-	ui.target = now.Add(1100 * time.Millisecond)
+	ui.target = now.Add(1000 * time.Millisecond)
 
 	ui.UIProducable = layout
 }
@@ -61,11 +61,6 @@ func (ui *UISystem) Draw(gc *game.GameContext) {
 
 		i := int(time.Now().UnixNano()/400_000_000) % len(frames)
 		j := int(time.Now().UnixNano()/200_000_000) % len(frames)
-
-		loadingWord := "Loading"
-		for i, r := range loadingWord {
-			base.SetContent(i+(w/2)-len(loadingWord)/2, h-3, r)
-		}
 
 		base.SetContent((w/2)-1, h-2, frames[i])
 		base.SetContent((w/2)-2, h-2, frames[i])
