@@ -124,11 +124,36 @@ func (u *UI) Draw(gc *game.GameContext) {
 			base.SetContentWithStyle(w/2-(len(controlsUI)/2)+i, h-1, r, whiteColor)
 		}
 
-		timeStr := []rune(fmt.Sprintf("  * Time: %02d:%02d", minutes, seconds))
-		// display objects details
-		for i, r := range timeStr {
-			base.SetContentWithStyle(i, 1, r, whiteColor)
-		}
+		whiteColor := base.StyleIt(tcell.ColorWhite)
+		greenColor := base.StyleIt(tcell.ColorGreenYellow)
+		// top left box
+		ui.DrawBoxOverlap(base.Point{X: 0, Y: 0}, 30, 5, func(x int, y int) {
+			// display time details
+			timeStr := []rune(fmt.Sprintf("Time: %02d:%02d", minutes, seconds))
+			for i, r := range timeStr {
+				base.SetContentWithStyle(i+x+2, y+1, r, whiteColor)
+			}
+
+			if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+				// display score
+				txtScore := "Score: "
+				for i, r := range txtScore {
+					base.SetContentWithStyle(i+x+2, y+2, r, whiteColor)
+				}
+
+				base.DisplayBar(
+					&s.Score,
+					base.WithPosition(x+len(txtScore)+2, y+2),
+					base.WithBarSize(8),
+					base.WithStatus(false),
+					base.WithStyle(whiteColor),
+				)
+
+				for i, r := range []rune(fmt.Sprintf("Kills: %d", s.Kills)) {
+					base.SetContentWithStyle(i+x+2, y+3, r, whiteColor)
+				}
+			}
+		}, greenColor)
 
 		// display spacehsip details - Also drop a health kit every minute
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -148,17 +173,23 @@ func (u *UI) Draw(gc *game.GameContext) {
 			u.MessageBox(
 				base.GetCenterPoint(),
 				fmt.Sprintf(`
-				----------- PAUSED -----------
-				- HP: %d
-				- Score: %d
-				- Kills: %d
-				- Level: %d
+				------[Spaceship]------
 
-				[Ctrl+R] To restart the game.
-				[Ctrl+Q] To quit the game.
+				Gun CAP: %d
+				Gun SPD: %d
+				Gun PWD: %d
+				Gun CLD: %d
+				Gun RLD: %d
 
-				[P] To continue the game.
-			`, s.Health, s.Score.Score, s.Kills, s.Level),
+				-----------------------
+
+				[P] PAUSE`, s.GetCapacity(),
+					s.GetSpeed(),
+					s.GetPower(),
+					s.GetCooldown(),
+					s.GetReloadCooldown(),
+				),
+
 				"Paused",
 			)
 			return
@@ -360,7 +391,7 @@ func DrawRectStatus(text string, y int) {
 	color := base.StyleIt(tcell.ColorWhite)
 
 	lines := strings.Split(text, "\n")
-	jumpBy := 10
+	jumpBy := 7
 
 	// Find the longest line to determine rectangle width
 	maxLen := 0
@@ -371,11 +402,11 @@ func DrawRectStatus(text string, y int) {
 	}
 
 	width := maxLen + 4 // Padding around text
-	height := len(lines) + 4
+	height := len(lines) + 2
 
 	// Calculate top-left corner of the rectangle
 	start := base.Point{
-		X: (w * 2) - width - 2,
+		X: (w * 2) - width,
 		Y: 1 + jumpBy*(y+1),
 	}
 
@@ -383,7 +414,7 @@ func DrawRectStatus(text string, y int) {
 	ui.DrawRect(start, width, height, func(x, y int) {
 		for row, line := range lines {
 			for col, r := range line {
-				base.SetContentWithStyle(x+col+2, y+row+2, r, color)
+				base.SetContentWithStyle(x+col+2, y+row+1, r, color)
 			}
 		}
 	})

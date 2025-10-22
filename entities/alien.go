@@ -6,6 +6,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
+	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
@@ -102,12 +103,19 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 }
 
 func (a *AlienProducer) UIAlienShipData(gc *game.GameContext) {
-	w, _ := base.GetSize()
 	whiteColor := base.StyleIt(tcell.ColorWhite)
-	aliensStr := []rune(fmt.Sprintf("Difficulty Level: %d * ", int(a.Level)))
-	for i, r := range aliensStr {
-		base.SetContentWithStyle(w+i-len(aliensStr), 1, r, whiteColor)
-	}
+	greenColor := base.StyleIt(tcell.ColorYellowGreen)
+	aliensStr := []rune(fmt.Sprintf("Difficulty Level: %d", int(a.Level)))
+	w, _ := base.GetSize()
+	ui.DrawBoxOverlap(base.Point{
+		X: w - (len(aliensStr) + 4), Y: 0,
+	}, len(aliensStr)+4,
+		3,
+		func(x, y int) {
+			for i, r := range aliensStr {
+				base.SetContentWithStyle(x+i+2, y+1, r, whiteColor)
+			}
+		}, greenColor)
 }
 
 func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext) {

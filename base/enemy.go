@@ -14,7 +14,7 @@ type Enemy struct {
 
 func Deploy(fileDesigns string, level float64, ships ...*Enemy) *Enemy {
 	w, _ := GetSize()
-	const padding = 23
+	const padding = 30
 
 	distance := (w - (padding * 2))
 

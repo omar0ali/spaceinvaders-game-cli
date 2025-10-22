@@ -19,7 +19,7 @@ type DropDown struct {
 func DeployDropDown(design game.Designable, level int) *DropDown {
 	w, _ := GetSize()
 
-	const padding = 20
+	const padding = 30
 
 	distance := (w - (padding * 2))
 	xPos := rand.Intn(distance) + padding

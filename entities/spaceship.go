@@ -229,73 +229,55 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 		return
 	}
 
-	const padding, startY = 2, 2
 	whiteColor := base.StyleIt(tcell.ColorWhite)
-
-	for i, r := range []rune("* Score: ") {
-		base.SetContentWithStyle(padding+i, startY, r, whiteColor)
-	}
-
-	// display score
-	base.DisplayBar(
-		&s.Score,
-		base.WithPosition(padding+9, startY),
-		base.WithBarSize(10),
-		base.WithStatus(false),
-		base.WithStyle(whiteColor),
-	)
-
-	for i, r := range []rune(fmt.Sprintf("* Kills: %d", s.Kills)) {
-		base.SetContentWithStyle(padding+i, startY+1, r, whiteColor)
-	}
-
+	greenColor := base.StyleIt(tcell.ColorGreenYellow)
 	// display health at the bottome left
 	_, h := base.GetSize()
+	ui.DrawBoxOverlap(
+		base.Point{
+			X: 0, Y: h - 8,
+		}, 23, 6, func(x int, y int) {
+			// display health bar of the spaceship at bottom left of the screen
+			base.DisplayBar(s, base.WithPosition(x+2, y+1),
+				base.WithBarSize(11),
+				base.WithStatus(false),
+				base.WithStyle(whiteColor),
+			)
 
-	healthStr := []rune(fmt.Sprintf("[HP Kit: %d/%d]", s.healthKitsOwned, MaxHealthKitsToOwn))
-	for i, r := range healthStr {
-		base.SetContentWithStyle(i, h-10, r, whiteColor)
-	}
+			for i, r := range fmt.Sprintf("Level:  %d", s.Level) {
+				base.SetContentWithStyle(x+i+2, h-6, r, whiteColor)
+			}
 
-	// display health bar of the spaceship at bottom left of the screen
-	base.DisplayBar(
-		s,
-		base.WithPosition(0, h-9),
-		base.WithBarSize(11),
-		base.WithStatus(false),
-		base.WithStyle(whiteColor),
-		base.WithGun(&s.Gun),
-	)
+			str := fmt.Sprintf("CAP:    %d/%d", s.GetLoaded(), s.GetCapacity())
 
-	for i, r := range []rune(fmt.Sprintf("[Level:  %d", s.Level)) {
-		base.SetContentWithStyle(i, h-8, r, whiteColor)
-	}
+			if s.IsReloading() {
+				reloadAnimation := []rune{'·', '•', '●', '○', '●', '•', '·'}
+				frame := int(time.Now().UnixNano()/100_000_000) % len(reloadAnimation)
+				str += " " + string(reloadAnimation[frame])
+			}
 
-	str := fmt.Sprintf("[CAP:    %d/%d", s.GetLoaded(), s.GetCapacity())
+			for i, r := range string(str) {
+				base.SetContentWithStyle(x+i+2, h-5, r, whiteColor)
+			}
+			for i, r := range fmt.Sprintf("HP Kit: %d/%d", s.healthKitsOwned, MaxHealthKitsToOwn) {
+				base.SetContentWithStyle(x+i+2, h-4, r, whiteColor)
+			}
+		}, greenColor)
 
-	if s.IsReloading() {
-		reloadAnimation := []rune{'·', '•', '●', '○', '●', '•', '·'}
-		frame := int(time.Now().UnixNano()/100_000_000) % len(reloadAnimation)
-		str += " " + string(reloadAnimation[frame]) + " RELOADING"
-	}
-	for i, r := range []rune(str) {
-		base.SetContentWithStyle(i, h-7, r, whiteColor)
-	}
-
-	for i, r := range []rune(fmt.Sprintf("[POW:    %d", s.GetPower())) {
-		base.SetContentWithStyle(i, h-6, r, whiteColor)
-	}
-
-	for i, r := range []rune(fmt.Sprintf("[SPD:    %d", int(s.GetSpeed()))) {
-		base.SetContentWithStyle(i, h-5, r, whiteColor)
-	}
-
-	for i, r := range []rune(fmt.Sprintf("[CD:     %d ms", int(s.GetCooldown()))) {
-		base.SetContentWithStyle(i, h-4, r, whiteColor)
-	}
-	for i, r := range []rune(fmt.Sprintf("[RLD:    %d ms", int(s.GetReloadCooldown()))) {
-		base.SetContentWithStyle(i, h-3, r, whiteColor)
-	}
+	// for i, r := range []rune(fmt.Sprintf("[POW:    %d", s.GetPower())) {
+	// 	base.SetContentWithStyle(i, h-6, r, whiteColor)
+	// }
+	//
+	// for i, r := range []rune(fmt.Sprintf("[SPD:    %d", int(s.GetSpeed()))) {
+	// 	base.SetContentWithStyle(i, h-5, r, whiteColor)
+	// }
+	//
+	// for i, r := range []rune(fmt.Sprintf("[CD:     %d ms", int(s.GetCooldown()))) {
+	// 	base.SetContentWithStyle(i, h-4, r, whiteColor)
+	// }
+	// for i, r := range []rune(fmt.Sprintf("[RLD:    %d ms", int(s.GetReloadCooldown()))) {
+	// 	base.SetContentWithStyle(i, h-3, r, whiteColor)
+	// }
 }
 
 func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
