@@ -63,6 +63,7 @@ func (a *AlienProducer) Draw(gc *game.GameContext) {
 	if a.SelectedAlien != nil {
 		base.DisplayHealthLeft(
 			&a.SelectedAlien.ObjectBase,
+			5,
 			a.SelectedAlien.Name,
 			15,
 			true,
@@ -106,9 +107,9 @@ func (a *AlienProducer) UIAlienShipData(gc *game.GameContext) {
 	whiteColor := base.StyleIt(tcell.ColorWhite)
 	greenColor := base.StyleIt(tcell.ColorYellowGreen)
 	aliensStr := []rune(fmt.Sprintf("Difficulty Level: %d", int(a.Level)))
-	w, _ := base.GetSize()
+	w, h := base.GetSize()
 	ui.DrawBoxOverlap(base.Point{
-		X: w - (len(aliensStr) + 4), Y: 0,
+		X: w - (len(aliensStr) + 4), Y: h - 5,
 	}, len(aliensStr)+4,
 		3,
 		func(x, y int) {
@@ -187,6 +188,7 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 
 		_, h := base.GetSize()
 		if alien.IsOffScreen(h) {
+			a.SelectedAlien = nil
 			spaceship.TakeDamage(1)
 		}
 		if !alien.IsDead() && !alien.IsOffScreen(h) { // still flying

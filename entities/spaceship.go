@@ -53,6 +53,9 @@ func (s *SpaceShip) RestoreFullHealth() bool {
 }
 
 func (s *SpaceShip) IncreaseHealth(i int) bool {
+	if s.Health <= 0 {
+		return false
+	}
 	if s.Health < s.SelectedSpaceship.EntityHealth {
 		s.Health += i
 		s.Health = min(s.Health, s.SelectedSpaceship.EntityHealth)

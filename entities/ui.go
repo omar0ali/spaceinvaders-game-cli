@@ -195,28 +195,20 @@ func (u *UI) Draw(gc *game.GameContext) {
 			return
 		}
 	}
+
 	// game over ui
 	if u.GameOverScreen {
-		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-			u.MessageBox(
-				base.GetCenterPoint(),
-				fmt.Sprintf(`
-				Thank you for playing :)
-
-				- Score: %d
-				- Kills: %d
-				- Level: %d
-
-				Would you like to play again?
-
-				[Ctrl+R] To restart the game.
-				[Ctrl+Q] To quit the game.
-
-			`, s.Score.Score, s.Kills, s.Level),
-				"Game Over",
-			)
-		}
-		return
+		u.MessageBox(
+			base.GetCenterPoint(),
+			`
+			Thank you for playing :)
+			---------------------------------------
+			Would you like to play again?
+			[Ctrl+R] To Restart.
+			[Ctrl+Q] To Quit.
+			`,
+			"Game Over",
+		)
 	}
 }
 
@@ -391,7 +383,7 @@ func DrawRectStatus(text string, y int) {
 	color := base.StyleIt(tcell.ColorWhite)
 
 	lines := strings.Split(text, "\n")
-	jumpBy := 7
+	jumpBy := 6
 
 	// Find the longest line to determine rectangle width
 	maxLen := 0
@@ -407,7 +399,7 @@ func DrawRectStatus(text string, y int) {
 	// Calculate top-left corner of the rectangle
 	start := base.Point{
 		X: (w * 2) - width,
-		Y: 1 + jumpBy*(y+1),
+		Y: 2 + jumpBy*y,
 	}
 
 	// Draw the rectangle and render text inside

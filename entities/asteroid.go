@@ -20,8 +20,9 @@ type Asteroid struct {
 }
 
 type AsteroidProducer struct {
-	Asteroids []*Asteroid
-	Level     float64
+	Asteroids        []*Asteroid
+	Level            float64
+	SelectedAsteroid *Asteroid
 }
 
 func NewAsteroidProducer(gc *game.GameContext) *AsteroidProducer {
@@ -42,7 +43,7 @@ func NewAsteroidProducer(gc *game.GameContext) *AsteroidProducer {
 
 func (a *AsteroidProducer) Deploy() {
 	w, _ := base.GetSize()
-	const padding = 23
+	const padding = 30
 	distance := (w - (padding * 2))
 	xPos := rand.Intn(distance) + padding
 
@@ -125,6 +126,7 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 		// get get hit from the spaceship
 		for _, beam := range spaceship.GetBeams() {
 			if GettingHit(asteroid, beam, gc) {
+				a.SelectedAsteroid = asteroid
 				asteroid.TakeDamage(spaceship.GetPower())
 				spaceship.RemoveBeam(beam)
 			}
@@ -164,7 +166,12 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 					)))
 			}
 
+			a.SelectedAsteroid = nil
 			spaceship.ScoreHit()
+		}
+
+		if asteroid.IsOffScreen(h) {
+			a.SelectedAsteroid = nil
 		}
 
 		if !asteroid.IsDead() && !asteroid.IsOffScreen(h) {
@@ -176,6 +183,20 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 }
 
 func (a *AsteroidProducer) Draw(gc *game.GameContext) {
+	// display the last asteroid that was shot
+
+	if a.SelectedAsteroid != nil {
+		base.DisplayHealthLeft(
+			&a.SelectedAsteroid.ObjectBase,
+			8,
+			a.SelectedAsteroid.Name,
+			15,
+			true,
+			base.StyleIt(a.SelectedAsteroid.GetColor()),
+			nil,
+		)
+	}
+
 	for _, asteroid := range a.Asteroids {
 		color := base.StyleIt(asteroid.GetColor())
 		// asteroid.DisplayHealth(5, true, color, nil)

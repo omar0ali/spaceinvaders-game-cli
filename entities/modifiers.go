@@ -14,9 +14,10 @@ const (
 )
 
 type ModifierProducer struct {
-	Modifiers *base.DropDown
-	HealthKit *base.DropDown
-	Level     float64
+	Modifiers        *base.DropDown
+	HealthKit        *base.DropDown
+	Level            float64
+	SelectedDropDown *base.DropDown
 }
 
 func NewModifierProducer(gc *game.GameContext) *ModifierProducer {
@@ -70,6 +71,19 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 }
 
 func (p *ModifierProducer) Draw(gc *game.GameContext) {
+	// display the last dropdown that was hit
+	if p.SelectedDropDown != nil {
+		base.DisplayHealthLeft(
+			&p.SelectedDropDown.ObjectBase,
+			11,
+			p.SelectedDropDown.Design.GetName(),
+			15,
+			true,
+			base.StyleIt(p.SelectedDropDown.Design.GetColor()),
+			nil,
+		)
+	}
+
 	if p.HealthKit != nil {
 		color := base.StyleIt(p.HealthKit.Design.GetColor())
 		for rowIndex, line := range p.HealthKit.Design.GetShape() {
@@ -108,6 +122,7 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 		Move(&p.HealthKit.ObjectBase, delta)
 		for _, beam := range spaceship.GetBeams() {
 			if GettingHit(&p.HealthKit.ObjectBase, beam, gc) {
+				p.SelectedDropDown = p.HealthKit
 				p.HealthKit.TakeDamage(spaceship.GetPower())
 				spaceship.RemoveBeam(beam)
 			}
@@ -124,6 +139,10 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 				spaceship.ScoreHit()
 				SetStatus("Health kit +1")
 			}
+			if p.SelectedDropDown == p.HealthKit {
+				p.SelectedDropDown = nil
+			}
+
 			p.HealthKit = nil
 		})
 	}
@@ -131,6 +150,7 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 		Move(&p.Modifiers.ObjectBase, delta)
 		for _, beam := range spaceship.GetBeams() {
 			if GettingHit(&p.Modifiers.ObjectBase, beam, gc) {
+				p.SelectedDropDown = p.Modifiers
 				p.Modifiers.TakeDamage(spaceship.GetPower())
 				spaceship.RemoveBeam(beam)
 			}
@@ -156,6 +176,9 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 						SetStatus(fmt.Sprintf("Modifier %s Applied!", m.Name))
 					}
 				}
+			}
+			if p.SelectedDropDown == p.Modifiers {
+				p.SelectedDropDown = nil
 			}
 			p.Modifiers = nil
 		})
