@@ -12,13 +12,6 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
-const (
-	IncreaseGunCapBy      = 1
-	IncreaseGunPowerBy    = 1
-	IncreaseGunSpeedBy    = 1
-	DecreaseGunCooldownBy = 3
-)
-
 var (
 	nextMinute   int
 	minutes      int
@@ -49,7 +42,6 @@ func NewUI(gc *game.GameContext, exitCha chan struct{}) *UI {
 
 	if u.MenuScreen {
 		if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
-
 			boxes := []*ui.Box{
 				ui.NewUIBox(
 					[]string{
@@ -101,12 +93,6 @@ func NewUI(gc *game.GameContext, exitCha chan struct{}) *UI {
 				ui.InitMainMenu(20, 5, boxes...),
 			)
 		}
-	}
-
-	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-		s.AddOnLevelUp(func(newLevel int) {
-			LevelUpPopUp(gc, u, s)
-		})
 	}
 	return u
 }

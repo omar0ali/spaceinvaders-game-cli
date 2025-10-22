@@ -116,13 +116,13 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 		p.HealthKit.MovementAndColision(delta, func(isDead bool) {
 			if isDead {
 				if spaceship.healthKitsOwned >= MaxHealthKitsToOwn {
-					SetStatus("Health: Health kits maxed out!")
+					SetStatus("Health kits maxed out!")
 					p.HealthKit = nil
 					return
 				}
 				spaceship.healthKitsOwned += 1
 				spaceship.ScoreHit()
-				SetStatus("Health: Health kit +1")
+				SetStatus("Health kit +1")
 			}
 			p.HealthKit = nil
 		})
@@ -141,16 +141,16 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 				spaceship.ScoreHit()
 				if m, ok := p.Modifiers.Design.(*game.ModifierDesign); ok {
 					spaceship.IncreaseHealth(m.ModifyHealth)
-					spaceship.IncreaseGunCap(m.ModifyGunCap, spaceship.cfg.SpaceShipConfig.GunMaxCap)
+					spaceship.IncreaseGunCap(m.ModifyGunCap, m.MaxValue)
 					spaceship.IncreaseGunPower(m.ModifyGunPower)
-					spaceship.IncreaseGunSpeed(m.ModifyGunSpeed, spaceship.cfg.SpaceShipConfig.GunMaxSpeed)
+					spaceship.IncreaseGunSpeed(m.ModifyGunSpeed, m.MaxValue)
 					spaceship.DecreaseCooldown(m.ModifyGunCoolDown)
 					spaceship.DecreaseGunReloadCooldown(m.ModifyGunReloadCoolDown)
 					if m.ModifyLevel {
 						SetStatus("Free Level Up!")
 						if u, ok := gc.FindEntity("ui").(*UI); ok {
 							u.LevelUpScreen = true
-							LevelUpPopUp(gc, u, spaceship)
+							spaceship.LevelUpMenu(gc)
 						}
 					} else {
 						SetStatus(fmt.Sprintf("Modifier %s Applied!", m.Name))

@@ -8,6 +8,24 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/assets"
 )
 
+type AbilityEffect struct {
+	PowerIncrease          int  `json:"power_increase"`
+	SpeedIncrease          int  `json:"speed_increase"`
+	CapacityIncrease       int  `json:"capacity_increase"`
+	CooldownDecrease       int  `json:"cooldown_decrease"`
+	ReloadCooldownDecrease int  `json:"reload_cooldown_decrease"`
+	RestoreFullHealth      bool `json:"restore_full_health"`
+	MaxValue               int  `json:"max_value"`
+}
+
+type AbilityDesign struct {
+	Name        string        `json:"name"`
+	Shape       []string      `json:"shape"`
+	Description string        `json:"description"`
+	Status      string        `json:"status"`
+	Effect      AbilityEffect `json:"effect"`
+}
+
 type Design struct {
 	Name         string   `json:"name"`
 	Shape        []string `json:"shape"`
@@ -24,6 +42,7 @@ type ModifierDesign struct {
 	ModifyGunSpeed          int  `json:"modify_gun_speed"`
 	ModifyGunCoolDown       int  `json:"modify_gun_cooldown"`
 	ModifyGunReloadCoolDown int  `json:"modify_gun_reload_cooldown"`
+	MaxValue                int  `json:"max_value"`
 }
 
 type SpaceshipDesign struct {

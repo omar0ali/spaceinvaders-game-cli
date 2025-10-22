@@ -10,6 +10,7 @@
         "modify_gun_power": 0,
         "modify_gun_cooldown": 0,
         "modify_gun_reload_cooldown": 0,
+        "max_value": 0,
         "shape": [
             " _____________ ",
             "|    _____    |",
@@ -32,6 +33,7 @@
         "modify_gun_power": 1,
         "modify_gun_cooldown": 0,
         "modify_gun_reload_cooldown": 0,
+        "max_value": 0,
         "shape": [
             " _____________ ",
             "|    /\\/\\     |",
@@ -52,7 +54,8 @@
         "modify_gun_cap": 0,
         "modify_gun_speed": 0,
         "modify_gun_power": 0,
-        "modify_gun_reload_cooldown": 3,
+        "modify_gun_reload_cooldown": -3,
+        "max_value": 0,
         "shape": [
             " _____________ ",
             "|    _____    |",
@@ -73,8 +76,9 @@
         "modify_gun_cap": 0,
         "modify_gun_speed": 0,
         "modify_gun_power": 0,
-        "modify_gun_cooldown": 3,
+        "modify_gun_cooldown": -3,
         "modify_gun_reload_cooldown": 0,
+        "max_value": 0,
         "shape": [
             " _____________ ",
             "|    _____    |",
@@ -97,6 +101,7 @@
         "modify_gun_power": 0,
         "modify_gun_cooldown": 0,
         "modify_gun_reload_cooldown": 0,
+        "max_value": 35,
         "shape": [
             " _____________ ",
             "|   _______   |",
@@ -119,6 +124,7 @@
         "modify_gun_power": 0,
         "modify_gun_cooldown": 0,
         "modify_gun_reload_cooldown": 0,
+        "max_value": 65,
         "shape": [
             " _____________ ",
             "|     ___     |",
@@ -141,6 +147,7 @@
         "modify_gun_power": 1,
         "modify_gun_cooldown": 0,
         "modify_gun_reload_cooldown": 0,
+        "max_value": 0,
         "shape": [
             " _____________ ",
             "|     /\\      |",

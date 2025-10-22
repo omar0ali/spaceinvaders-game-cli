@@ -1,0 +1,132 @@
+[
+    {
+        "name": "POWER",
+        "status": "Gun Power Increased +1",
+        "shape": [
+            "     /\\      ",
+            "    /***\\    ",
+            "   | *+* |   ",
+            "    \\***/    ",
+            "     ||      ",
+            "    POWER    "
+        ],
+        "description": "Increase Gun Power by 1",
+        "effect": {
+            "power_increase": 1,
+            "speed_increase": 0,
+            "capacity_increase": 0,
+            "cooldown_decrease": 0,
+            "reload_cooldown_decrease": 0,
+            "restore_full_health": false,
+            "max_value": 0
+        }
+    },
+    {
+        "name": "SPEED",
+        "status": "Gun Speed Increased +1",
+        "shape": [
+            "     ___     ",
+            "    />>>\\    ",
+            "   |>>+>>|   ",
+            "    \\>>>/    ",
+            "     ~~~     ",
+            "    SPEED    "
+        ],
+        "description": "Increase Gun Speed by 1",
+        "effect": {
+            "power_increase": 0,
+            "speed_increase": 1,
+            "capacity_increase": 0,
+            "cooldown_decrease": 0,
+            "reload_cooldown_decrease": 0,
+            "restore_full_health": false,
+            "max_value": 65
+        }
+    },
+    {
+        "name": "CAPACITY",
+        "status": "Gun Capacity Increased +1",
+        "shape": [
+            "   _______   ",
+            "  |[1] [2]|  ",
+            "  |[3] [+]|  ",
+            "  |_______|  ",
+            "     CAP     "
+        ],
+        "description": "Increase Gun Capacity by 1",
+        "effect": {
+            "power_increase": 0,
+            "speed_increase": 0,
+            "capacity_increase": 1,
+            "cooldown_decrease": 0,
+            "reload_cooldown_decrease": 0,
+            "restore_full_health": false,
+            "max_value": 35
+        }
+    },
+    {
+        "name": "COOLDOWN",
+        "status": "Gun Cooldown Decreased 3",
+        "shape": [
+            "    _____    ",
+            "   | -=- |   ",
+            "   | -3- |   ",
+            "   |_____|   ",
+            "    \\___/    ",
+            "  COOL DOWN  "
+        ],
+        "description": "Decrease Gun Cooldown by 3",
+        "effect": {
+            "power_increase": 0,
+            "speed_increase": 0,
+            "capacity_increase": 0,
+            "cooldown_decrease": -3,
+            "reload_cooldown_decrease": 0,
+            "restore_full_health": false,
+            "max_value": 0
+        }
+    },
+    {
+        "name": "RELOAD_COOLDOWN",
+        "status": "Gun Reload Cooldown Decreased 3",
+        "shape": [
+            "    _____    ",
+            "   |\\___/|   ",
+            "   || - ||   ",
+            "   || 3 ||   ",
+            "   ||___||   ",
+            "   RLD CLD   "
+        ],
+        "description": "Decrease Gun Reload Cooldown by 3",
+        "effect": {
+            "power_increase": 0,
+            "speed_increase": 0,
+            "capacity_increase": 0,
+            "cooldown_decrease": 0,
+            "reload_cooldown_decrease": -3,
+            "restore_full_health": false,
+            "max_value": 0
+        }
+    },
+    {
+        "name": "HEALTH",
+        "shape": [
+            "    _____    ",
+            "   / +++ \\   ",
+            "  | +100+ |  ",
+            "   \\ ___ /   ",
+            "    |___|    ",
+            "     HP%     "
+        ],
+        "description": "Restore Full Health",
+        "effect": {
+            "power_increase": 0,
+            "speed_increase": 0,
+            "capacity_increase": 0,
+            "cooldown_decrease": 0,
+            "reload_cooldown_decrease": 0,
+            "restore_full_health": true,
+            "max_value": 0
+        }
+    }
+]

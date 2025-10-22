@@ -3,6 +3,7 @@ package entities
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"time"
 
@@ -43,9 +44,10 @@ type SpaceShip struct {
 
 func (s *SpaceShip) RestoreFullHealth() bool {
 	if s.Health >= s.SelectedSpaceship.EntityHealth {
+		SetStatus("Spaceship health already full")
 		return false
 	}
-	SetStatus("[H] Spaceship health has been restored!")
+	SetStatus("Spaceship health has been restored")
 	s.Health = s.SelectedSpaceship.EntityHealth
 	return true
 }
@@ -124,7 +126,7 @@ func (s *SpaceShip) Update(gc *game.GameContext, delta float64) {
 		s.shootBeam()
 	}
 
-	s.LevelUp()
+	s.LevelUp(gc)
 
 	s.MovementAndCollision(delta, gc)
 }
@@ -381,159 +383,110 @@ func (s *SpaceShip) isHit(pointBeam base.PointInterface, gc *game.GameContext) b
 	return false
 }
 
-func LevelUpPopUp(gc *game.GameContext, u *UI, s *SpaceShip) {
+func (s *SpaceShip) ApplyAbility(eff game.AbilityEffect, max int) bool {
+	if eff.PowerIncrease != 0 {
+		return s.IncreaseGunPower(eff.PowerIncrease)
+	}
+	if eff.SpeedIncrease != 0 {
+		return s.IncreaseGunSpeed(eff.SpeedIncrease, max)
+	}
+	if eff.CapacityIncrease != 0 {
+		return s.IncreaseGunCap(eff.CapacityIncrease, max)
+	}
+	if eff.CooldownDecrease != 0 {
+		return s.DecreaseCooldown(eff.CooldownDecrease)
+	}
+	if eff.ReloadCooldownDecrease != 0 {
+		return s.DecreaseGunReloadCooldown(eff.ReloadCooldownDecrease)
+	}
+	if eff.RestoreFullHealth {
+		return s.RestoreFullHealth()
+	}
+	return false
+}
+
+func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 	if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
-		upgrade := func(up func() bool) {
-			if up() {
-				u.LevelUpScreen = false
-				layout.SetLayout(nil)
+		if u, ok := gc.FindEntity("ui").(*UI); ok {
+			upgrade := func(up func() bool) {
+				if up() {
+					u.LevelUpScreen = false
+					layout.SetLayout(nil)
+				}
 			}
+
+			displayUpgrade := func(v int) string {
+				if v > 0 {
+					return fmt.Sprintf("+ %1.f", math.Abs(float64(v)))
+				} else if v < 0 {
+					return fmt.Sprintf("- %1.f", math.Abs(float64(v)))
+				}
+				return ""
+			}
+
+			SetStatus("Level Up")
+			u.LevelUpScreen = true
+
+			var boxes []*ui.Box
+			designs, err := game.LoadListOfAssets[game.AbilityDesign]("abilities.json")
+			if err != nil {
+				panic(err)
+			}
+
+			for _, design := range designs {
+				var displayMax string
+				if design.Effect.MaxValue > 0 {
+					displayMax = fmt.Sprintf("Max: %d", design.Effect.MaxValue)
+				}
+
+				increaseSpeed := design.Effect.SpeedIncrease
+				increaseCap := design.Effect.CapacityIncrease
+				decreaseCD := design.Effect.CooldownDecrease
+				decreaseRDCD := design.Effect.ReloadCooldownDecrease
+				increasePower := design.Effect.PowerIncrease
+
+				boxes = append(
+					boxes,
+					ui.NewUIBox(
+						design.Shape,
+						[]string{
+							design.Name,
+							displayMax + " " + design.Description,
+							fmt.Sprintf("Gun Power: (%d) %s", s.GetPower(), displayUpgrade(increasePower)),
+							fmt.Sprintf("Gun Capacity: (%d) %s", s.GetCapacity(), displayUpgrade(increaseCap)),
+							fmt.Sprintf("Gun Speed: (%d) %s", s.GetSpeed(), displayUpgrade(increaseSpeed)),
+							fmt.Sprintf("Gun Cooldown: (%d) %s", s.GetCooldown(), displayUpgrade(decreaseCD)),
+							fmt.Sprintf("Gun Reload Cooldown: (%d) %s", s.GetReloadCooldown(), displayUpgrade(decreaseRDCD)),
+						},
+
+						func() {
+							upgrade(func() bool {
+								if design.Status != "" {
+									SetStatus(design.Status)
+								}
+								return s.ApplyAbility(design.Effect, design.Effect.MaxValue)
+							})
+						},
+					),
+				)
+			}
+
+			// shuffle the list
+			rand.Shuffle(len(boxes), func(i, j int) {
+				boxes[i], boxes[j] = boxes[j], boxes[i]
+			})
+
+			// pick the first 3 boxes
+			pickedBoxes := boxes[:3]
+
+			layout.SetLayout(
+				ui.InitLayout(21, 10, pickedBoxes...),
+			)
 		}
-
-		SetStatus("Level Up")
-		u.LevelUpScreen = true
-
-		boxes := []*ui.Box{
-			ui.NewUIBox(
-				[]string{
-					"     /\\      ",
-					"    /***\\    ",
-					"   | *+* |   ",
-					"    \\***/    ",
-					"     ||      ",
-					"    POWER    ",
-				},
-				[]string{
-					fmt.Sprintf("(%d) Increase Gun Power by %d", s.GetPower(), IncreaseGunPowerBy),
-				},
-				func() {
-					upgrade(func() bool {
-						SetStatus(fmt.Sprintf("Gun Power: +%d", IncreaseGunPowerBy))
-						return s.IncreaseGunPower(IncreaseGunPowerBy)
-					})
-				},
-			),
-
-			ui.NewUIBox(
-				[]string{
-					"     ___     ",
-					"    />>>\\    ",
-					"   |>>+>>|   ",
-					"    \\>>>/    ",
-					"     ~~~     ",
-					"    SPEED    ",
-				},
-				[]string{
-					fmt.Sprintf("(%d/%d) Increase Gun Speed by %d", int(s.GetSpeed()), s.cfg.SpaceShipConfig.GunMaxSpeed, IncreaseGunSpeedBy),
-				},
-				func() {
-					upgrade(func() bool {
-						SetStatus(fmt.Sprintf("Gun Speed: +%d", IncreaseGunSpeedBy))
-						return s.IncreaseGunSpeed(IncreaseGunSpeedBy, s.cfg.SpaceShipConfig.GunMaxSpeed)
-					})
-				},
-			),
-
-			ui.NewUIBox(
-				[]string{
-					"   _______   ",
-					"  |[1] [2]|  ",
-					"  |[3] [+]|  ",
-					"  |_______|  ",
-					"     CAP     ",
-				},
-				[]string{
-					fmt.Sprintf("(%d/%d) Increase Gun Capacity by %d", s.GetCapacity(), s.cfg.SpaceShipConfig.GunMaxCap, IncreaseGunCapBy),
-				},
-				func() {
-					upgrade(func() bool {
-						SetStatus(fmt.Sprintf("Gun Capcity: +%d", IncreaseGunCapBy))
-						return s.IncreaseGunCap(IncreaseGunCapBy, s.cfg.SpaceShipConfig.GunMaxCap)
-					})
-				},
-			),
-
-			ui.NewUIBox(
-				[]string{
-					"    _____    ",
-					"   | -=- |   ",
-					"   | -3- |   ",
-					"   |_____|   ",
-					"    \\___/    ",
-					"  COOL DOWN  ",
-				},
-				[]string{
-					fmt.Sprintf("(%d) Decrease Gun Cooldown by %d", s.GetCooldown(), DecreaseGunCooldownBy),
-				},
-				func() {
-					upgrade(func() bool {
-						if s.DecreaseCooldown(DecreaseGunCooldownBy) {
-							SetStatus(fmt.Sprintf("Gun Cooldown: -%d", DecreaseGunCooldownBy))
-							return true
-						}
-						SetStatus("Gun Cooldown: Maxed Out!")
-						return false
-					})
-				},
-			),
-
-			ui.NewUIBox(
-				[]string{
-					"    _____    ",
-					"   |\\___/|   ",
-					"   || - ||   ",
-					"   || 3 ||   ",
-					"   ||___||   ",
-					"   RLD CLD   ",
-				},
-				[]string{
-					fmt.Sprintf("(%d) Decrease Gun Reload Cooldown by %d", s.GetReloadCooldown(), DecreaseGunCooldownBy),
-				},
-				func() {
-					upgrade(func() bool {
-						if s.DecreaseGunReloadCooldown(DecreaseGunCooldownBy) {
-							SetStatus(fmt.Sprintf("Gun Reload Cooldown: -%d", DecreaseGunCooldownBy))
-							return true
-						}
-						SetStatus("Gun Reload Cooldown: Maxed Out!")
-						return false
-					})
-				},
-			),
-
-			ui.NewUIBox(
-				[]string{
-					"    _____    ",
-					"   / +++ \\   ",
-					"  | +100+ |  ",
-					"   \\ ___ /   ",
-					"    |___|    ",
-					"     HP%     ",
-				},
-				[]string{
-					fmt.Sprintf("(%d/%d) Restore Full Health", s.Health, s.SelectedSpaceship.EntityHealth),
-				},
-				func() {
-					upgrade(func() bool {
-						return s.RestoreFullHealth()
-					})
-				},
-			),
-		}
-
-		rand.Shuffle(len(boxes), func(i, j int) {
-			boxes[i], boxes[j] = boxes[j], boxes[i]
-		})
-
-		pickedBoxes := boxes[:3]
-
-		layout.SetLayout(
-			ui.InitLayout(21, 10, pickedBoxes...),
-		)
 	}
 }
 
-func (s *SpaceShip) LevelUp() {
+func (s *SpaceShip) LevelUp(gc *game.GameContext) {
 	if s.Level > s.PreviousLevel {
 		if s.cfg.SpaceShipConfig.MaxLevel <= s.Level {
 			return // skip when reaching max level, will not increase any elements of other objects
@@ -541,6 +494,9 @@ func (s *SpaceShip) LevelUp() {
 		for _, fn := range s.OnLevelUp {
 			fn(s.Level)
 		}
+
+		// pop up level up
+		s.LevelUpMenu(gc)
 		s.PreviousLevel = s.Level
 		s.Score.Score = 0
 	}

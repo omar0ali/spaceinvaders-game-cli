@@ -83,18 +83,18 @@ func (g *Gun) IncreaseGunPower(i int) bool {
 }
 
 func (g *Gun) DecreaseCooldown(i int) bool {
-	if g.cooldown < 30 {
+	if g.cooldown < 30 { // min cooldown set to 30
 		return false
 	}
-	g.cooldown -= time.Duration(i) * time.Millisecond
+	g.cooldown += time.Duration(i) * time.Millisecond
 	return true
 }
 
 func (g *Gun) DecreaseGunReloadCooldown(i int) bool {
-	if g.reloadCooldown < 30 {
+	if g.reloadCooldown < 30 { // min cooldown set to 30
 		return false
 	}
-	g.reloadCooldown -= time.Duration(i) * time.Millisecond
+	g.reloadCooldown += time.Duration(i) * time.Millisecond
 	return true
 }
 
