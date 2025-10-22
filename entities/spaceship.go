@@ -408,21 +408,6 @@ func (s *SpaceShip) ApplyAbility(eff game.AbilityEffect, max int) bool {
 func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 	if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
 		if u, ok := gc.FindEntity("ui").(*UI); ok {
-			upgrade := func(up func() bool) {
-				if up() {
-					u.LevelUpScreen = false
-					layout.SetLayout(nil)
-				}
-			}
-
-			displayUpgrade := func(v int) string {
-				if v > 0 {
-					return fmt.Sprintf("+ %1.f", math.Abs(float64(v)))
-				} else if v < 0 {
-					return fmt.Sprintf("- %1.f", math.Abs(float64(v)))
-				}
-				return ""
-			}
 
 			SetStatus("Level Up")
 			u.LevelUpScreen = true
@@ -433,10 +418,26 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 				panic(err)
 			}
 
+			upgrade := func(up func() bool) {
+				if up() {
+					u.LevelUpScreen = false
+					layout.SetLayout(nil)
+				}
+			}
+
+			displayUpgrade := func(v int, max string) string {
+				if v > 0 {
+					return fmt.Sprintf("+ %1.f %s", math.Abs(float64(v)), max)
+				} else if v < 0 {
+					return fmt.Sprintf("- %1.f", math.Abs(float64(v)))
+				}
+				return ""
+			}
+
 			for _, design := range designs {
 				var displayMax string
 				if design.Effect.MaxValue > 0 {
-					displayMax = fmt.Sprintf("Max: %d", design.Effect.MaxValue)
+					displayMax = fmt.Sprintf("(Max: %d)", design.Effect.MaxValue)
 				}
 
 				increaseSpeed := design.Effect.SpeedIncrease
@@ -450,13 +451,13 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 					ui.NewUIBox(
 						design.Shape,
 						[]string{
-							design.Name,
-							displayMax + " " + design.Description,
-							fmt.Sprintf("Gun Power: (%d) %s", s.GetPower(), displayUpgrade(increasePower)),
-							fmt.Sprintf("Gun Capacity: (%d) %s", s.GetCapacity(), displayUpgrade(increaseCap)),
-							fmt.Sprintf("Gun Speed: (%d) %s", s.GetSpeed(), displayUpgrade(increaseSpeed)),
-							fmt.Sprintf("Gun Cooldown: (%d) %s", s.GetCooldown(), displayUpgrade(decreaseCD)),
-							fmt.Sprintf("Gun Reload Cooldown: (%d) %s", s.GetReloadCooldown(), displayUpgrade(decreaseRDCD)),
+							"(*) " + design.Name,
+							"Details: " + design.Description,
+							fmt.Sprintf("Gun Power: (%d) %s", s.GetPower(), displayUpgrade(increasePower, displayMax)),
+							fmt.Sprintf("Gun Capacity: (%d) %s", s.GetCapacity(), displayUpgrade(increaseCap, displayMax)),
+							fmt.Sprintf("Gun Speed: (%d) %s", s.GetSpeed(), displayUpgrade(increaseSpeed, displayMax)),
+							fmt.Sprintf("Gun Cooldown: (%d) %s", s.GetCooldown(), displayUpgrade(decreaseCD, displayMax)),
+							fmt.Sprintf("Gun Reload Cooldown: (%d) %s", s.GetReloadCooldown(), displayUpgrade(decreaseRDCD, displayMax)),
 						},
 
 						func() {

@@ -111,8 +111,14 @@ func (u *UI) Draw(gc *game.GameContext) {
 	seconds = int(u.timeElapsed) % 60
 
 	if !u.MenuScreen {
-		// show controls at the bottom of the screen
 		w, h := base.GetSize()
+		// draw a line
+
+		for i := range w {
+			base.SetContent(i, h-2, tcell.RuneHLine)
+		}
+
+		// show controls at the bottom of the screen
 		controlsUI := []rune("[LM] Shoot Beams ◆ [E] Consume Health Kit ◆ [R] Reload Gun ◆ [P] Pause Game ◆ [Ctrl+R] Restart Game ◆ [Ctrl+Q] Quit")
 		for i, r := range controlsUI {
 			base.SetContentWithStyle(w/2-(len(controlsUI)/2)+i, h-1, r, whiteColor)
