@@ -10,7 +10,7 @@ var IsDebug = false
 
 const defaultConfig = `
 [dev]
-debug = true
+debug = false
 fps_counter = false
 asteroids = true
 
