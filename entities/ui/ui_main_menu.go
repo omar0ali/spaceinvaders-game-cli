@@ -26,8 +26,7 @@ func InitMainMenu(boxWidth, boxHeight int, boxes ...*Box) *UILayoutMenuBoxesProd
 		Width:  boxWidth,
 		Height: boxHeight,
 		selectedDesc: []string{
-			"* Space Invaders Game v1.8.0.alpha.1",
-			"",
+			"* Space Invaders Game v1.8.0.alpha.2",
 			"The game is an endless space shooter where players face increasingly difficult",
 			"waves of alien ships that scale with their level.",
 			"",
@@ -42,8 +41,9 @@ func InitMainMenu(boxWidth, boxHeight int, boxes ...*Box) *UILayoutMenuBoxesProd
 			"",
 			"[LM] hold to shoot a beam to coming alien-ships.",
 			"[E] Consume Health Kit.",
-			"[P] To pause the game.",
-			"[Ctrl+R] to restart the game.",
+			"[R] or [RM] Reload Gun.",
+			"[P] To Pause The Game.",
+			"[Ctrl+R] To Restart The Game.",
 		},
 	}
 }
@@ -77,8 +77,8 @@ func (u *UILayoutMenuBoxesProducer) Draw(gc *game.GameContext) {
 
 	const spaceBetween = 1
 	totalHeight := (u.Height * len(u.Boxes)) + (spaceBetween * (len(u.Boxes) - 1))
-	startX := (w / 2) - u.Width/2
-	startY := (h / 2) - (totalHeight / 2) + 10
+	startX := 20
+	startY := (h / 2) - (totalHeight / 2)
 	for i, b := range u.Boxes {
 		b.Position.X = startX
 		b.Position.Y = startY + (i * (u.Height + spaceBetween))
@@ -111,7 +111,7 @@ func (u *UILayoutMenuBoxesProducer) Draw(gc *game.GameContext) {
 	width := 90
 	height := 20
 
-	DrawBoxOverlap(base.Point{X: (w / 2) - width/2, Y: 3}, width, height, func(innerX, innerY int) {
+	DrawBoxOverlap(base.Point{X: (w / 2) - (width / 2) + 20, Y: (h / 2) - height/2}, width, height, func(innerX, innerY int) {
 		for j, line := range u.selectedDesc {
 			for i, r := range line {
 				base.SetContentWithStyle(innerX+i+1, innerY+j+1, r, style)
