@@ -6,6 +6,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
+	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
 )
 
 type Star struct {
@@ -74,7 +75,7 @@ func (s *StarProducer) Update(gc *game.GameContext, delta float64) {
 }
 
 func (s *StarProducer) Draw(gc *game.GameContext) {
-	whiteColor := base.StyleIt(game.HexToColor("445559"))
+	whiteColor := base.StyleIt(design.HexToColor("445559"))
 	for _, star := range s.Stars {
 		switch {
 		case star.Speed < 15:

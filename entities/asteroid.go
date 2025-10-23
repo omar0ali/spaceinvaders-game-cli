@@ -7,28 +7,32 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
-)
-
-const (
-	MaxAsteroidsDeployed = 4
-	MaxSpeed             = 4
+	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
+	"github.com/omar0ali/spaceinvaders-game-cli/game/loader"
 )
 
 type Asteroid struct {
 	base.FallingObjectBase
-	game.Design
+	design.Design
 }
 
 type AsteroidProducer struct {
 	Asteroids        []*Asteroid
+	Design           design.AsteroidDesign
 	Level            float64
 	SelectedAsteroid *Asteroid
 }
 
 func NewAsteroidProducer(gc *game.GameContext) *AsteroidProducer {
+	asteroidDesign, err := loader.LoadAsset[design.AsteroidDesign]("asteroids.json")
+	if err != nil {
+		panic(err)
+	}
+
 	a := &AsteroidProducer{
 		Asteroids: []*Asteroid{},
 		Level:     1.0,
+		Design:    asteroidDesign,
 	}
 
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -43,26 +47,23 @@ func NewAsteroidProducer(gc *game.GameContext) *AsteroidProducer {
 
 func (a *AsteroidProducer) Deploy() {
 	w, _ := base.GetSize()
+
+	pickAsteroid := a.Design.Asteroids[rand.Intn(len(a.Design.Asteroids))]
+
+	width := len(pickAsteroid.Shape[0])
+	height := len(pickAsteroid.Shape)
+
+	speed := rand.Float64()*float64(min(a.Design.MaxSpeed, int(a.Level)+1)) + 2
+
 	const padding = 30
 	distance := (w - (padding * 2))
 	xPos := rand.Intn(distance) + padding
 
-	designs, err := game.LoadListOfAssets[game.Design]("asteroids.json")
-	if err != nil {
-		panic(err)
-	}
-
-	design := designs[rand.Intn(len(designs))]
-	width := len(design.Shape[0])
-	height := len(design.Shape)
-
-	speed := rand.Float64()*float64(min(MaxSpeed, a.Level+1)) + 2
-
 	a.Asteroids = append(a.Asteroids, &Asteroid{
 		FallingObjectBase: base.FallingObjectBase{
 			ObjectBase: base.ObjectBase{
-				Health:    design.EntityHealth + int(a.Level),
-				MaxHealth: design.EntityHealth + int(a.Level),
+				Health:    pickAsteroid.EntityHealth + int(a.Level),
+				MaxHealth: pickAsteroid.EntityHealth + int(a.Level),
 				ObjectEntity: base.ObjectEntity{
 					Position: base.PointFloat{X: float64(xPos), Y: -5},
 					Width:    width,
@@ -71,12 +72,12 @@ func (a *AsteroidProducer) Deploy() {
 				},
 			},
 		},
-		Design: design,
+		Design: pickAsteroid,
 	})
 }
 
 func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
-	if len(a.Asteroids) < min(int(a.Level), MaxAsteroidsDeployed) {
+	if len(a.Asteroids) < min(int(a.Level), a.Design.MaxLimit) {
 		game.Log(game.Info, "Asteroids Deployed %d Level %.1f", len(a.Asteroids), a.Level)
 		a.Deploy()
 	}

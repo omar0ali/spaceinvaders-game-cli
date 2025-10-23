@@ -12,6 +12,8 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
+	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
+	"github.com/omar0ali/spaceinvaders-game-cli/game/loader"
 )
 
 type Score struct {
@@ -20,6 +22,11 @@ type Score struct {
 	Kills          int
 	PreviousLevel  int
 	NextLevelScore int
+}
+
+type HealthKit struct {
+	HealthKitsOwned int
+	HealthKitLimit  int
 }
 
 func (s *Score) GetCurrent() int {
@@ -34,11 +41,11 @@ type SpaceShip struct {
 	base.Gun
 	base.ObjectBase
 	Score
+	HealthKit         HealthKit
 	cfg               game.GameConfig
 	OnLevelUp         []func(newLevel int)
-	SelectedSpaceship *game.SpaceshipDesign
-	ListOfSpaceships  []game.SpaceshipDesign
-	healthKitsOwned   int
+	SelectedSpaceship *design.SpaceshipDesign
+	ListOfSpaceships  []design.SpaceshipDesign
 	mouseDown         bool
 }
 
@@ -77,7 +84,7 @@ func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
 		Y: float64(h - 3),
 	}
 
-	designs, err := game.LoadListOfAssets[game.SpaceshipDesign]("spaceships.json")
+	designs, err := loader.LoadListOfAssets[design.SpaceshipDesign]("spaceships.json")
 	if err != nil {
 		panic(err)
 	}
@@ -90,7 +97,10 @@ func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
 		},
 		ListOfSpaceships: designs,
 		cfg:              cfg,
-		healthKitsOwned:  1,
+		HealthKit: HealthKit{
+			HealthKitsOwned: 1,
+			HealthKitLimit:  5,
+		},
 		Score: Score{
 			NextLevelScore: cfg.SpaceShipConfig.NextLevelScore,
 		},
@@ -205,11 +215,11 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 			s.mouseDown = true
 		}
 		if ev.Rune() == 'E' || ev.Rune() == 'e' {
-			if s.healthKitsOwned > 0 {
+			if s.HealthKit.HealthKitsOwned > 0 {
 				if p, ok := gc.FindEntity("producer").(*ModifierProducer); ok {
 					if s.IncreaseHealth(int(p.Level)) {
 						SetStatus(fmt.Sprintf("[E] Health: Consumed +%d", int(p.Level)))
-						s.healthKitsOwned--
+						s.HealthKit.HealthKitsOwned--
 						return
 					}
 				}
@@ -262,7 +272,7 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 			for i, r := range string(str) {
 				base.SetContentWithStyle(x+i+2, h-5, r, whiteColor)
 			}
-			for i, r := range fmt.Sprintf("HP Kit: %d/%d", s.healthKitsOwned, MaxHealthKitsToOwn) {
+			for i, r := range fmt.Sprintf("HP Kit: %d/%d", s.HealthKit.HealthKitsOwned, s.HealthKit.HealthKitLimit) {
 				base.SetContentWithStyle(x+i+2, h-4, r, whiteColor)
 			}
 		}, greenColor)
@@ -368,7 +378,7 @@ func (s *SpaceShip) isHit(pointBeam base.PointInterface, gc *game.GameContext) b
 	return false
 }
 
-func (s *SpaceShip) ApplyAbility(eff game.AbilityEffect, max int) bool {
+func (s *SpaceShip) ApplyAbility(eff design.AbilityEffect, max int) bool {
 	if eff.PowerIncrease != 0 {
 		return s.IncreaseGunPower(eff.PowerIncrease)
 	}
@@ -398,7 +408,7 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 			u.LevelUpScreen = true
 
 			var boxes []*ui.Box
-			designs, err := game.LoadListOfAssets[game.AbilityDesign]("abilities.json")
+			designs, err := loader.LoadListOfAssets[design.AbilityDesign]("abilities.json")
 			if err != nil {
 				panic(err)
 			}

@@ -7,10 +7,8 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
-)
-
-const (
-	MaxHealthKitsToOwn = 5
+	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
+	"github.com/omar0ali/spaceinvaders-game-cli/game/loader"
 )
 
 type ModifierProducer struct {
@@ -37,10 +35,12 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 		if p.HealthKit != nil {
 			return
 		}
-		design, err := game.LoadAsset[game.Design]("health_kit.json")
+
+		design, err := loader.LoadAsset[design.Design]("health_kit.json")
 		if err != nil {
 			panic(err)
 		}
+
 		p.HealthKit = base.DeployDropDown(&design, int(p.Level))
 		nextMinute++
 	}
@@ -49,7 +49,7 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 		if p.Modifiers != nil {
 			return
 		}
-		designs, err := game.LoadListOfAssets[game.ModifierDesign]("modifiers.json")
+		designs, err := loader.LoadListOfAssets[design.ModifierDesign]("modifiers.json")
 		if err != nil {
 			panic(err)
 		}
@@ -130,12 +130,12 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 
 		p.HealthKit.MovementAndColision(delta, func(isDead bool) {
 			if isDead {
-				if spaceship.healthKitsOwned >= MaxHealthKitsToOwn {
+				if spaceship.HealthKit.HealthKitsOwned >= spaceship.HealthKit.HealthKitLimit {
 					SetStatus("Health kits maxed out!")
 					p.HealthKit = nil
 					return
 				}
-				spaceship.healthKitsOwned += 1
+				spaceship.HealthKit.HealthKitsOwned += 1
 				spaceship.ScoreHit()
 				SetStatus("Health kit +1")
 			}
@@ -159,7 +159,7 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 		p.Modifiers.MovementAndColision(delta, func(isDead bool) {
 			if isDead {
 				spaceship.ScoreHit()
-				if m, ok := p.Modifiers.Design.(*game.ModifierDesign); ok {
+				if m, ok := p.Modifiers.Design.(*design.ModifierDesign); ok {
 					spaceship.IncreaseHealth(m.ModifyHealth)
 					spaceship.IncreaseGunCap(m.ModifyGunCap, m.MaxValue)
 					spaceship.IncreaseGunPower(m.ModifyGunPower)

@@ -3,20 +3,15 @@ package base
 import (
 	"math/rand"
 
-	"github.com/omar0ali/spaceinvaders-game-cli/game"
-)
-
-const (
-	MaxHealthKitsToOwn = 5
-	MaxSpeed           = 4
+	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
 )
 
 type DropDown struct {
 	FallingObjectBase
-	Design game.Designable
+	Design design.Designable
 }
 
-func DeployDropDown(design game.Designable, level int) *DropDown {
+func DeployDropDown(design design.Designable, level int) *DropDown {
 	w, _ := GetSize()
 
 	const padding = 30
@@ -27,7 +22,7 @@ func DeployDropDown(design game.Designable, level int) *DropDown {
 	width := len(design.GetShape()[0])
 	height := len(design.GetShape())
 
-	speed := rand.Float64()*float64(min(MaxSpeed, level)) + 1
+	speed := rand.Float64()*float64(min(design.GetMaxSpeed(), level)) + 1
 
 	dropdown := &DropDown{
 		FallingObjectBase: FallingObjectBase{

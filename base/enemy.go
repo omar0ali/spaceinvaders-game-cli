@@ -3,16 +3,16 @@ package base
 import (
 	"math/rand"
 
-	"github.com/omar0ali/spaceinvaders-game-cli/game"
+	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
 )
 
 type Enemy struct {
 	FallingObjectBase
 	Gun
-	game.AlienshipDesign
+	design.AlienshipDesign
 }
 
-func Deploy(fileDesigns string, level float64, ships ...*Enemy) *Enemy {
+func Deploy(designs []design.AlienshipDesign, level float64, currentShips ...*Enemy) *Enemy {
 	w, _ := GetSize()
 	const padding = 30
 
@@ -26,7 +26,7 @@ func Deploy(fileDesigns string, level float64, ships ...*Enemy) *Enemy {
 		xPos = rand.Intn(distance) + padding
 		overlap := false
 
-		for _, ship := range ships {
+		for _, ship := range currentShips {
 			start := int(ship.Position.X) - tolerance/2
 			end := int(ship.Position.X) + tolerance/2
 			if xPos > start && xPos < end {
@@ -38,11 +38,6 @@ func Deploy(fileDesigns string, level float64, ships ...*Enemy) *Enemy {
 		if !overlap {
 			break
 		}
-	}
-
-	designs, err := game.LoadListOfAssets[game.AlienshipDesign](fileDesigns)
-	if err != nil {
-		panic(err)
 	}
 
 	// pick random design: based on the current level. The higher the stronger the ships.

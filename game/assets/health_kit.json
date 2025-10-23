@@ -2,6 +2,7 @@
     "name": "health_chest",
     "health": 10,
     "color": "008000",
+    "speed": 3,
     "shape": [
         "  ______  ",
         " |__+___| ",
