@@ -1,7 +1,6 @@
 [
     {
         "name": "Interceptor",
-        "role": "Fast Harasser",
         "health": 15,
         "color": "c4ffc2",
         "gun_power": 3,
@@ -17,7 +16,6 @@
     },
     {
         "name": "Scout",
-        "role": "Agile All-Rounder",
         "health": 25,
         "color": "c2fffc",
         "gun_power": 3,
@@ -34,7 +32,6 @@
     },
     {
         "name": "Fighter",
-        "role": "DPS Skirmisher",
         "health": 30,
         "color": "c2c8ff",
         "gun_power": 6,
@@ -52,7 +49,6 @@
     },
     {
         "name": "Destroyer",
-        "role": "Burst Damage",
         "health": 40,
         "color": "fbc2ff",
         "gun_power": 20,
@@ -70,7 +66,6 @@
     },
     {
         "name": "Battleship",
-        "role": "Tanky Artillery",
         "health": 45,
         "color": "ffc2c2",
         "gun_power": 25,
