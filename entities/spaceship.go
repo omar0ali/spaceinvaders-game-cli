@@ -493,6 +493,7 @@ func (s *SpaceShip) LevelUp(gc *game.GameContext) {
 
 		// pop up level up
 		s.LevelUpMenu(gc)
+
 		s.PreviousLevel = s.Level
 		s.Score.Score = 0
 	}

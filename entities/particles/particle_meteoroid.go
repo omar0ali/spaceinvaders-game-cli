@@ -30,7 +30,7 @@ func (m *MeteroidProducer) GetParticles() []*Particle {
 	return m.Particles
 }
 
-func InitMeteroids(opts ...ParticleOption) *MeteroidProducer {
+func InitMeteroids(scale int, opts ...ParticleOption) *MeteroidProducer {
 	var listOfParticles []*Particle
 
 	po := &Particle{
@@ -47,7 +47,7 @@ func InitMeteroids(opts ...ParticleOption) *MeteroidProducer {
 	}
 
 	for dir := Up; dir <= DownRight; dir++ { // for each direction
-		for i := range 1 {
+		for i := range scale {
 			particle := &Particle{
 				ObjectEntity: base.ObjectEntity{
 					Speed:    po.Speed + float64(i)*3,

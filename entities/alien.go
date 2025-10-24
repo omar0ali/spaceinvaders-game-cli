@@ -33,6 +33,8 @@ func NewAlienProducer(gc *game.GameContext) *AlienProducer {
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
 			a.Level += 0.1
+			// clear screen from aliens when the player levels up
+			a.Aliens = nil
 		})
 	}
 	return a

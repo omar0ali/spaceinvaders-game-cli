@@ -39,6 +39,8 @@ func NewAsteroidProducer(gc *game.GameContext) *AsteroidProducer {
 		s.AddOnLevelUp(func(newLevel int) {
 			a.Level += 0.1
 			game.Log(game.Warn, "Asteroid Level UP: %1.f", a.Level)
+			// clear screen from asteroids when the player levels up
+			a.Asteroids = nil
 		})
 	}
 
@@ -158,7 +160,7 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 					),
 				)
 
-				ps.AddParticles(particles.InitMeteroids(
+				ps.AddParticles(particles.InitMeteroids(1,
 					particles.WithDimensions(
 						asteroid.Position.X,
 						asteroid.Position.Y,
