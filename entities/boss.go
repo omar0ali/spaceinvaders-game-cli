@@ -73,7 +73,7 @@ func (b *BossProducer) Draw(gc *game.GameContext) {
 
 	color := base.StyleIt(b.BossAlien.GetColor())
 
-	base.DisplayHealthTop(&b.BossAlien.ObjectBase, b.BossAlien.Name, 20, true, color, &b.BossAlien.Gun)
+	base.DisplayHealthTop(&b.BossAlien.ObjectBase, b.BossAlien.Name, 26, true, color, &b.BossAlien.Gun)
 
 	b.BossAlien.Draw(gc, b.BossAlien.GetColor())
 
@@ -95,7 +95,7 @@ func (b *BossProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 	// switch ev := event.(type) {
 	// case *tcell.EventKey:
 	// 	if ev.Rune() == 'm' { // dev mode
-	// 		b.BossAlien = base.Deploy("bossships.json", b.Level)
+	// 		b.BossAlien = base.Deploy(b.BossShipDesigns, b.Level)
 	// 	}
 	// }
 }

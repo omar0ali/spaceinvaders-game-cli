@@ -88,7 +88,7 @@ func DisplayHealthTop(base *ObjectBase, name string, barSize int, showPercentage
 		base,
 		WithGun(gun),
 		WithBarSize(barSize),
-		WithPosition((w/2)-(24/2), 1),
+		WithPosition((w/2)-(barSize+1)/2, 1),
 		WithStatus(true),
 		WithStyle(style),
 	)
