@@ -111,14 +111,14 @@ func DisplayBar(h Meter, opts ...BarOption) {
 		trackXPossition += o.Size
 
 		if o.InPercent {
-			for i, r := range []rune(fmt.Sprintf(" %2.f%%", (float64(h.GetCurrent())/float64(h.GetMax()))*100)) {
-				SetContentWithStyle(trackXPossition+i+1, o.Y, r, o.Style)
+			for i, r := range []rune(fmt.Sprintf("(%1.f%%)", (float64(h.GetCurrent())/float64(h.GetMax()))*100)) {
+				SetContentWithStyle(trackXPossition+i-(o.Size+6)/2, o.Y, r, o.Style)
 			}
 
 			return
 		}
-		for i, r := range []rune(fmt.Sprintf(" %d/%d", h.GetCurrent(), h.GetMax())) {
-			SetContentWithStyle(trackXPossition+i+1, o.Y, r, o.Style)
+		for i, r := range []rune(fmt.Sprintf("(%d/%d)", h.GetCurrent(), h.GetMax())) {
+			SetContentWithStyle(trackXPossition+i-(o.Size+7)/2, o.Y, r, o.Style)
 		}
 	}
 }

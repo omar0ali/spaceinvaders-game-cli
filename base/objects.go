@@ -94,7 +94,7 @@ func DisplayHealthTop(base *ObjectBase, name string, barSize int, showPercentage
 	)
 }
 
-func (f *ObjectBase) DisplayHealth(barSize int, showPercentage bool, style tcell.Style, gun *Gun) {
+func (f *ObjectBase) DisplayHealth(barSize int, style tcell.Style, gun *Gun) {
 	DisplayBar(
 		f,
 		WithPosition(
@@ -102,7 +102,6 @@ func (f *ObjectBase) DisplayHealth(barSize int, showPercentage bool, style tcell
 			int(f.Position.GetY()-1),
 		),
 		WithBarSize(barSize),
-		WithStatus(showPercentage),
 		WithStyle(style),
 		WithGun(gun),
 	)

@@ -126,8 +126,9 @@ func (u *UI) Draw(gc *game.GameContext) {
 
 		whiteColor := base.StyleIt(tcell.ColorWhite)
 		greenColor := base.StyleIt(tcell.ColorGreenYellow)
+
 		// top left box
-		ui.DrawBoxOverlap(base.Point{X: 0, Y: 0}, 30, 5, func(x int, y int) {
+		ui.DrawBoxOverlap(base.Point{X: 0, Y: 0}, 35, 5, func(x int, y int) {
 			// display time details
 			timeStr := []rune(fmt.Sprintf("Time: %02d:%02d", minutes, seconds))
 			for i, r := range timeStr {
@@ -137,6 +138,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 			if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 				// display score
 				txtScore := "Score: "
+				barSize := 22
 				for i, r := range txtScore {
 					base.SetContentWithStyle(i+x+2, y+2, r, whiteColor)
 				}
@@ -144,7 +146,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 				base.DisplayBar(
 					&s.Score,
 					base.WithPosition(x+len(txtScore)+2, y+2),
-					base.WithBarSize(8),
+					base.WithBarSize(barSize),
 					base.WithStatus(false),
 					base.WithStyle(whiteColor),
 				)

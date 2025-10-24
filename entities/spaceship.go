@@ -164,7 +164,7 @@ func (s *SpaceShip) Draw(gc *game.GameContext) {
 	}
 
 	// display health bar at the bottom of the spaceship
-	barSize := 5
+	barSize := 7
 	base.DisplayBar(
 		s,
 		base.WithPosition(
@@ -172,8 +172,7 @@ func (s *SpaceShip) Draw(gc *game.GameContext) {
 			int(s.Position.GetY())+(s.Height),
 		),
 		base.WithBarSize(barSize),
-		base.WithStatus(true),
-		base.WithStyle(color),
+		base.WithStyle(base.StyleIt(tcell.ColorGreenYellow)),
 		base.WithGun(&s.Gun),
 	)
 
@@ -252,7 +251,7 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 		}, 23, 6, func(x int, y int) {
 			// display health bar of the spaceship at bottom left of the screen
 			base.DisplayBar(s, base.WithPosition(x+2, y+1),
-				base.WithBarSize(11),
+				base.WithBarSize(17),
 				base.WithStatus(false),
 				base.WithStyle(whiteColor),
 			)

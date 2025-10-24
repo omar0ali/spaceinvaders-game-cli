@@ -95,7 +95,7 @@ func (p *ModifierProducer) Draw(gc *game.GameContext) {
 				}
 			}
 		}
-		p.HealthKit.DisplayHealth(6, true, color, nil)
+		p.HealthKit.DisplayHealth(11, color, nil)
 	}
 	if p.Modifiers != nil {
 		color := base.StyleIt(p.Modifiers.Design.GetColor())
@@ -108,7 +108,7 @@ func (p *ModifierProducer) Draw(gc *game.GameContext) {
 				}
 			}
 		}
-		p.Modifiers.DisplayHealth(8, true, color, nil)
+		p.Modifiers.DisplayHealth(13, color, nil)
 	}
 }
 

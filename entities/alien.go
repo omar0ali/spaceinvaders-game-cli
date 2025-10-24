@@ -87,7 +87,7 @@ func (a *AlienProducer) Draw(gc *game.GameContext) {
 		color := base.StyleIt(alien.GetColor())
 		alien.Draw(gc, alien.GetColor())
 
-		alien.DisplayHealth(6, true, color, &alien.Gun)
+		alien.DisplayHealth(11, color, &alien.Gun)
 
 		// draw shape
 		for rowIndex, line := range alien.Shape {
