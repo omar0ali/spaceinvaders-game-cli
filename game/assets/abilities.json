@@ -17,7 +17,7 @@
             "capacity_increase": 0,
             "cooldown_decrease": 0,
             "reload_cooldown_decrease": 0,
-            "restore_full_health": false,
+            "increase_capacity": 0,
             "max_value": 0
         }
     },
@@ -39,7 +39,7 @@
             "capacity_increase": 0,
             "cooldown_decrease": 0,
             "reload_cooldown_decrease": 0,
-            "restore_full_health": false,
+            "increase_capacity": 0,
             "max_value": 65
         }
     },
@@ -60,7 +60,7 @@
             "capacity_increase": 1,
             "cooldown_decrease": 0,
             "reload_cooldown_decrease": 0,
-            "restore_full_health": false,
+            "increase_capacity": 0,
             "max_value": 35
         }
     },
@@ -82,7 +82,7 @@
             "capacity_increase": 0,
             "cooldown_decrease": -3,
             "reload_cooldown_decrease": 0,
-            "restore_full_health": false,
+            "increase_capacity": 0,
             "max_value": 0
         }
     },
@@ -104,7 +104,7 @@
             "capacity_increase": 0,
             "cooldown_decrease": 0,
             "reload_cooldown_decrease": -3,
-            "restore_full_health": false,
+            "increase_capacity": 0,
             "max_value": 0
         }
     },
@@ -116,16 +116,16 @@
             "  | +100+ |  ",
             "   \\ ___ /   ",
             "    |___|    ",
-            "     HP%     "
+            "     HP+     "
         ],
-        "description": "Restore Full Health",
+        "description": "Restore Health & Heatlh Capacity +1",
         "effect": {
             "power_increase": 0,
             "speed_increase": 0,
             "capacity_increase": 0,
             "cooldown_decrease": 0,
             "reload_cooldown_decrease": 0,
-            "restore_full_health": true,
+            "increase_capacity": 1,
             "max_value": 0
         }
     }

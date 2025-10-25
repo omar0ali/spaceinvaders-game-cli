@@ -49,13 +49,9 @@ type SpaceShip struct {
 	mouseDown         bool
 }
 
-func (s *SpaceShip) RestoreFullHealth() bool {
-	if s.Health >= s.SelectedSpaceship.EntityHealth {
-		SetStatus("Spaceship health already full")
-		return false
-	}
-	SetStatus("Spaceship health has been restored")
-	s.Health = s.SelectedSpaceship.EntityHealth
+func (s *SpaceShip) IncreaseHealthCapacity() bool {
+	s.MaxHealth++
+	s.Health = s.MaxHealth
 	return true
 }
 
@@ -63,9 +59,9 @@ func (s *SpaceShip) IncreaseHealth(i int) bool {
 	if s.Health <= 0 {
 		return false
 	}
-	if s.Health < s.SelectedSpaceship.EntityHealth {
+	if s.Health < s.MaxHealth {
 		s.Health += i
-		s.Health = min(s.Health, s.SelectedSpaceship.EntityHealth)
+		s.Health = min(s.Health, s.MaxHealth)
 		return true
 	}
 	return false
@@ -275,21 +271,6 @@ func (s *SpaceShip) UISpaceshipData(gc *game.GameContext) {
 				base.SetContentWithStyle(x+i+2, h-4, r, whiteColor)
 			}
 		}, greenColor)
-
-	// for i, r := range []rune(fmt.Sprintf("[POW:    %d", s.GetPower())) {
-	// 	base.SetContentWithStyle(i, h-6, r, whiteColor)
-	// }
-	//
-	// for i, r := range []rune(fmt.Sprintf("[SPD:    %d", int(s.GetSpeed()))) {
-	// 	base.SetContentWithStyle(i, h-5, r, whiteColor)
-	// }
-	//
-	// for i, r := range []rune(fmt.Sprintf("[CD:     %d ms", int(s.GetCooldown()))) {
-	// 	base.SetContentWithStyle(i, h-4, r, whiteColor)
-	// }
-	// for i, r := range []rune(fmt.Sprintf("[RLD:    %d ms", int(s.GetReloadCooldown()))) {
-	// 	base.SetContentWithStyle(i, h-3, r, whiteColor)
-	// }
 }
 
 func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
@@ -393,8 +374,8 @@ func (s *SpaceShip) ApplyAbility(eff design.AbilityEffect, max int) bool {
 	if eff.ReloadCooldownDecrease != 0 {
 		return s.DecreaseGunReloadCooldown(eff.ReloadCooldownDecrease)
 	}
-	if eff.RestoreFullHealth {
-		return s.RestoreFullHealth()
+	if eff.HealthCpacity != 0 {
+		return s.IncreaseHealthCapacity()
 	}
 	return false
 }
@@ -439,6 +420,7 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 				decreaseCD := design.Effect.CooldownDecrease
 				decreaseRDCD := design.Effect.ReloadCooldownDecrease
 				increasePower := design.Effect.PowerIncrease
+				increaseHealthCap := design.Effect.HealthCpacity
 
 				boxes = append(
 					boxes,
@@ -452,6 +434,7 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 							fmt.Sprintf("Gun Speed: (%d) %s", s.GetSpeed(), displayUpgrade(increaseSpeed, displayMax)),
 							fmt.Sprintf("Gun Cooldown: (%d) %s", s.GetCooldown(), displayUpgrade(decreaseCD, displayMax)),
 							fmt.Sprintf("Gun Reload Cooldown: (%d) %s", s.GetReloadCooldown(), displayUpgrade(decreaseRDCD, displayMax)),
+							fmt.Sprintf("Health Capacity: (%d) %s", s.MaxHealth, displayUpgrade(increaseHealthCap, displayMax)),
 						},
 
 						func() {

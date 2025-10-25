@@ -1,13 +1,13 @@
 package design
 
 type AbilityEffect struct {
-	PowerIncrease          int  `json:"power_increase"`
-	SpeedIncrease          int  `json:"speed_increase"`
-	CapacityIncrease       int  `json:"capacity_increase"`
-	CooldownDecrease       int  `json:"cooldown_decrease"`
-	ReloadCooldownDecrease int  `json:"reload_cooldown_decrease"`
-	RestoreFullHealth      bool `json:"restore_full_health"`
-	MaxValue               int  `json:"max_value"`
+	PowerIncrease          int `json:"power_increase"`
+	SpeedIncrease          int `json:"speed_increase"`
+	CapacityIncrease       int `json:"capacity_increase"`
+	CooldownDecrease       int `json:"cooldown_decrease"`
+	ReloadCooldownDecrease int `json:"reload_cooldown_decrease"`
+	HealthCpacity          int `json:"increase_capacity"`
+	MaxValue               int `json:"max_value"`
 }
 
 type AbilityDesign struct {

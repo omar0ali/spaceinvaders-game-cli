@@ -175,7 +175,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 			u.MessageBox(
 				base.GetCenterPoint(),
 				fmt.Sprintf(`
-				------[Spaceship]------
+				------------[Spaceship]------------
 
 				Gun CAP: %d
 				Gun SPD: %d
@@ -183,7 +183,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 				Gun CLD: %d
 				Gun RLD: %d
 
-				-----------------------
+				-----------------------------------
 
 				[P] PAUSE`, s.GetCapacity(),
 					s.GetSpeed(),

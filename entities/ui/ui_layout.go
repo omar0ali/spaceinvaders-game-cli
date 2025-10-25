@@ -86,7 +86,7 @@ func (u *UILayoutBoxesProducer) Draw(gc *game.GameContext) {
 	}
 
 	style := base.StyleIt(tcell.ColorWhite)
-	DrawRect(base.Point{X: w, Y: h + 15}, 50, 9, func(innerX, innerY int) {
+	DrawRect(base.Point{X: w, Y: h + 15}, 50, len(u.selectedDesc)+2, func(innerX, innerY int) {
 		for j, line := range u.selectedDesc {
 			for i, r := range line {
 				base.SetContentWithStyle(innerX+i+1, innerY+j+1, r, style)
