@@ -9,7 +9,7 @@ import (
 type UILayoutMenuBoxesProducer struct {
 	Boxes         []*Box
 	Width, Height int
-	selectedDesc  []string
+	SelectedDesc  []string
 }
 
 func (u *UILayoutMenuBoxesProducer) GetTotalBoxes() int {
@@ -25,7 +25,7 @@ func InitMainMenu(boxWidth, boxHeight int, boxes ...*Box) *UILayoutMenuBoxesProd
 		Boxes:  boxes,
 		Width:  boxWidth,
 		Height: boxHeight,
-		selectedDesc: []string{
+		SelectedDesc: []string{
 			"* Space Invaders Game v1.8.0.alpha.2",
 			"The game is an endless space shooter where players face increasingly difficult",
 			"waves of alien ships that scale with their level.",
@@ -59,7 +59,7 @@ func (u *UILayoutMenuBoxesProducer) InputEvents(events tcell.Event, gc *game.Gam
 				if !b.Hovered {
 					b.Hovered = true
 					if len(b.Description) > 0 {
-						u.selectedDesc = b.Description
+						u.SelectedDesc = b.Description
 					}
 				}
 				if ev.Buttons() == tcell.Button1 {
@@ -107,12 +107,10 @@ func (u *UILayoutMenuBoxesProducer) Draw(gc *game.GameContext) {
 
 	// Description Box
 	style := base.StyleIt(tcell.ColorWhite)
-
 	width := 90
-	height := 20
-
+	height := len(u.SelectedDesc) + 2
 	DrawBoxOverlap(base.Point{X: (w / 2) - (width / 2) + 20, Y: (h / 2) - height/2}, width, height, func(innerX, innerY int) {
-		for j, line := range u.selectedDesc {
+		for j, line := range u.SelectedDesc {
 			for i, r := range line {
 				base.SetContentWithStyle(innerX+i+1, innerY+j+1, r, style)
 			}

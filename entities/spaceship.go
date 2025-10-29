@@ -387,6 +387,7 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 			SetStatus("Level Up")
 			u.LevelUpScreen = true
 
+			// TODO: Must not load this every time. Should implement a preset function that load this once and can reuse it
 			var boxes []*ui.Box
 			designs, err := loader.LoadListOfAssets[design.AbilityDesign]("abilities.json")
 			if err != nil {
