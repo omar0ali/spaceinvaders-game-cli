@@ -200,7 +200,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 	switch ev := events.(type) {
 	case *tcell.EventKey:
 		if ev.Rune() == 'p' || ev.Rune() == 'P' {
-			if u.MenuScreen || u.GameOverScreen || u.SpaceShipSelection { // skip
+			if u.MenuScreen || u.GameOverScreen || u.SpaceShipSelection || u.LevelUpScreen { // skip
 				return
 			}
 			u.PauseScreen = !u.PauseScreen

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
+	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
 	"github.com/omar0ali/spaceinvaders-game-cli/game/loader"
@@ -49,6 +50,8 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 		if p.Modifiers != nil {
 			return
 		}
+
+		// TODO:
 		designs, err := loader.LoadListOfAssets[design.ModifierDesign]("modifiers.json")
 		if err != nil {
 			panic(err)
@@ -86,28 +89,45 @@ func (p *ModifierProducer) Draw(gc *game.GameContext) {
 
 	if p.HealthKit != nil {
 		color := base.StyleIt(p.HealthKit.Design.GetColor())
-		for rowIndex, line := range p.HealthKit.Design.GetShape() {
-			for colIndex, char := range line {
-				if char != ' ' {
-					x := int(p.HealthKit.Position.GetX()) + colIndex
-					y := int(p.HealthKit.Position.GetY()) + rowIndex
-					base.SetContentWithStyle(x, y, char, color)
+		width := len(p.HealthKit.Design.GetShape()[0])
+		height := len(p.HealthKit.Design.GetShape())
+		ui.DrawBoxOverlap(
+			base.Point{
+				X: int(p.HealthKit.Position.GetX()),
+				Y: int(p.HealthKit.Position.GetY()),
+			}, width, height, func(innerX, innerY int) {
+				for rowIndex, line := range p.HealthKit.Design.GetShape() {
+					for colIndex, char := range line {
+						if char != ' ' {
+							x := innerX + colIndex
+							y := innerY + rowIndex
+							base.SetContentWithStyle(x, y, char, color)
+						}
+					}
 				}
-			}
-		}
+			}, color)
 		p.HealthKit.DisplayHealth(11, color, nil)
 	}
 	if p.Modifiers != nil {
 		color := base.StyleIt(p.Modifiers.Design.GetColor())
-		for rowIndex, line := range p.Modifiers.Design.GetShape() {
-			for colIndex, char := range line {
-				if char != ' ' {
-					x := int(p.Modifiers.Position.GetX()) + colIndex
-					y := int(p.Modifiers.Position.GetY()) + rowIndex
-					base.SetContentWithStyle(x, y, char, color)
+		width := len(p.Modifiers.Design.GetShape()[0])
+		height := len(p.Modifiers.Design.GetShape())
+
+		ui.DrawBoxOverlap(
+			base.Point{
+				X: int(p.Modifiers.Position.GetX()),
+				Y: int(p.Modifiers.Position.GetY()),
+			}, width, height, func(innerX, innerY int) {
+				for rowIndex, line := range p.Modifiers.Design.GetShape() {
+					for colIndex, char := range line {
+						if char != ' ' {
+							x := innerX + colIndex
+							y := innerY + rowIndex
+							base.SetContentWithStyle(x, y, char, color)
+						}
+					}
 				}
-			}
-		}
+			}, color)
 		p.Modifiers.DisplayHealth(13, color, nil)
 	}
 }
