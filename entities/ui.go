@@ -28,9 +28,10 @@ type UI struct {
 	SpaceShipSelection bool
 	timeElapsed        float64
 	exitCha            chan struct{}
+	cfg                game.GameConfig
 }
 
-func NewUI(gc *game.GameContext, exitCha chan struct{}) *UI {
+func NewUI(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) *UI {
 	nextMinute = 0
 
 	u := &UI{
@@ -40,6 +41,7 @@ func NewUI(gc *game.GameContext, exitCha chan struct{}) *UI {
 		LevelUpScreen:      false,
 		SpaceShipSelection: false,
 		exitCha:            exitCha,
+		cfg:                cfg,
 	}
 
 	if u.MenuScreen {
@@ -199,7 +201,7 @@ func (u *UI) Update(gc *game.GameContext, delta float64) {
 func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 	switch ev := events.(type) {
 	case *tcell.EventKey:
-		if ev.Rune() == 'p' || ev.Rune() == 'P' {
+		if ev.Rune() == 'p' || ev.Rune() == 'P' || ev.Key() == tcell.KeyESC {
 			if u.MenuScreen || u.GameOverScreen || u.SpaceShipSelection || u.LevelUpScreen { // skip
 				return
 			}
@@ -262,17 +264,17 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 
 							},
 						),
-						// ui.NewUIBox(
-						// 	[]string{
-						// 		"Restart",
-						// 	},
-						// 	[]string{
-						// 		"Restart the game.",
-						// 	},
-						// 	func() {
-						//
-						// 	},
-						// ),
+						ui.NewUIBox(
+							[]string{
+								"Restart",
+							},
+							[]string{
+								"Restart the game.",
+							},
+							func() {
+								RestartGame(gc, u.cfg, u.exitCha)
+							},
+						),
 						ui.NewUIBox([]string{
 							"Quit Game",
 						}, []string{"Exit the game."}, func() {

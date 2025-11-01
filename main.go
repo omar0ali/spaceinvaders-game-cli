@@ -8,27 +8,9 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities"
-	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
-	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
 )
-
-func DeployEntities(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) {
-	// order is important since some objects might overlap others
-	loadedUIDesigns := design.LoadDesigns()
-	gc.AddEntity(entities.NewStarsProducer(cfg))
-	gc.AddEntity(entities.NewSpaceShip(cfg, gc, loadedUIDesigns))
-	gc.AddEntity(entities.NewModifierProducer(gc, loadedUIDesigns))
-	if cfg.Dev.Asteroids { // includeing asteroids is optional
-		gc.AddEntity(entities.NewAsteroidProducer(gc, loadedUIDesigns))
-	}
-	gc.AddEntity(entities.NewAlienProducer(gc, loadedUIDesigns))
-	gc.AddEntity(entities.NewBossAlienProducer(gc, loadedUIDesigns))
-	gc.AddEntity(particles.NewParticleSystem())
-	gc.AddEntity(ui.NewUISystem())
-	gc.AddEntity(entities.NewUI(gc, exitCha))
-}
 
 func main() {
 	cfg := game.LoadConfig()
@@ -52,7 +34,8 @@ func main() {
 	// ---------------------------------- entities --------------------------------------
 
 	log.Println("Game running...")
-	DeployEntities(&gameContext, cfg, exit)
+
+	entities.StartGame(&gameContext, cfg, exit)
 
 	// ----------------------------------------- window ------------------------------------
 	base.InputEvent(exit,
@@ -60,8 +43,7 @@ func main() {
 			switch ev := event.(type) {
 			case *tcell.EventKey:
 				if ev.Key() == tcell.KeyCtrlR {
-					gameContext.RemoveAllEntities()
-					DeployEntities(&gameContext, cfg, exit)
+					entities.RestartGame(&gameContext, cfg, exit)
 				}
 			}
 			for _, entity := range gameContext.GetEntities() {
