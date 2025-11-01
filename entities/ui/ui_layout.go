@@ -8,9 +8,7 @@ import (
 )
 
 type UILayoutBoxesProducer struct {
-	Boxes         []*Box
-	selectedDesc  []string
-	Width, Height int
+	UIProducerBase
 }
 
 func (u *UILayoutBoxesProducer) GetTotalBoxes() int {
@@ -23,10 +21,12 @@ func (u *UILayoutBoxesProducer) GetBoxes() []*Box {
 
 func InitLayout(boxWidth, boxHeight int, boxes ...*Box) *UILayoutBoxesProducer {
 	return &UILayoutBoxesProducer{
-		Boxes:        boxes,
-		Width:        boxWidth,
-		Height:       boxHeight,
-		selectedDesc: []string{"- No detials to show."},
+		UIProducerBase: UIProducerBase{
+			Boxes:        boxes,
+			Width:        boxWidth,
+			Height:       boxHeight,
+			SelectedDesc: []string{"- No detials to show."},
+		},
 	}
 }
 
@@ -40,7 +40,7 @@ func (u *UILayoutBoxesProducer) InputEvents(events tcell.Event, gc *game.GameCon
 			if mx >= b.Position.X && mx < b.Position.X+b.Width && my >= b.Position.Y && my < b.Position.Y+b.Height {
 				if !b.Hovered {
 					b.Hovered = true
-					u.selectedDesc = b.Description
+					u.SelectedDesc = b.Description
 				}
 				if ev.Buttons() == tcell.Button1 {
 					b.OnClick()
@@ -86,8 +86,8 @@ func (u *UILayoutBoxesProducer) Draw(gc *game.GameContext) {
 	}
 
 	style := base.StyleIt(tcell.ColorWhite)
-	DrawRect(base.Point{X: w, Y: h + 15}, 50, len(u.selectedDesc)+2, func(innerX, innerY int) {
-		for j, line := range u.selectedDesc {
+	DrawRect(base.Point{X: w, Y: h + 15}, 50, len(u.SelectedDesc)+2, func(innerX, innerY int) {
+		for j, line := range u.SelectedDesc {
 			for i, r := range line {
 				base.SetContentWithStyle(innerX+i+1, innerY+j+1, r, style)
 			}

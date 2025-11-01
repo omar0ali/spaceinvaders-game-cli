@@ -50,8 +50,7 @@ func NewUI(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) *UI
 				ui.NewUIBox(
 					[]string{
 						"Start New Game",
-					},
-					[]string{},
+					}, ui.StartGameDesc,
 					func() {
 						// here we should start the game
 						SetStatus("Select a Spaceship")
@@ -87,9 +86,19 @@ func NewUI(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) *UI
 						u.MenuScreen = false
 					},
 				),
+				ui.NewUIBox(
+					[]string{
+						"Compendium",
+					},
+					[]string{
+						"Scan the battlefield: ships, weapons, abilities.",
+					}, func() {
+						SetStatus("Still under development")
+					},
+				),
 				ui.NewUIBox([]string{
 					"Quit Game",
-				}, []string{}, func() {
+				}, []string{"Quit the game."}, func() {
 					base.ExitGame(exitCha)
 				}),
 			}

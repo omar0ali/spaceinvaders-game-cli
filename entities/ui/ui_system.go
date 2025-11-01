@@ -16,6 +16,12 @@ type UIProducable interface {
 	GetBoxes() []*Box
 }
 
+type UIProducerBase struct {
+	Boxes         []*Box
+	Width, Height int
+	SelectedDesc  []string
+}
+
 type UISystem struct {
 	UIProducable UIProducable
 	target       time.Time // this is used to give time before player can use the menu

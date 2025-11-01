@@ -144,6 +144,7 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 				if spaceship.HealthKit.HealthKitsOwned >= spaceship.HealthKit.HealthKitLimit {
 					SetStatus("Health kits maxed out!")
 					p.HealthKit = nil
+					p.SelectedDropDown = nil
 					return
 				}
 				spaceship.HealthKit.HealthKitsOwned += 1
@@ -202,11 +203,7 @@ func (p *ModifierProducer) InputEvents(event tcell.Event, gc *game.GameContext) 
 	// switch ev := event.(type) {
 	// case *tcell.EventKey:
 	// 	if ev.Rune() == 'y' {
-	// 		design, err := game.LoadListOfAssets[game.ModifierDesign]("modifiers.json")
-	// 		if err != nil {
-	// 			panic(err)
-	// 		}
-	// 		p.Modifiers = base.DeployDropDown(&design[1], p.Level)
+	// 		p.Modifiers = base.DeployDropDown(&p.LoadedDesigns.HealthKitDesign, int(p.Level))
 	// 	}
 	// }
 }

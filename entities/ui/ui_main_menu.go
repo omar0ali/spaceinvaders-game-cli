@@ -6,10 +6,29 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 )
 
+var StartGameDesc = []string{
+	"* Space Invaders Game v1.8.0.alpha.2",
+	"The game is an endless space shooter where players face increasingly difficult",
+	"waves of alien ships that scale with their level.",
+	"",
+	"Each time the player levels up, they can choose an upgrade to improve their spaceship,",
+	"such as boosting firepower to handle tougher aliens with stronger armor.",
+	"",
+	"The objective is to survive as long as possible, destroy alien ships, and push for",
+	"a higher score while managing health through occasional drop-down health packs that",
+	"restore the spaceship health.",
+	"",
+	"(*) Controls",
+	"",
+	"[LM] hold to shoot a beam to coming alien-ships.",
+	"[E] Consume Health Kit.",
+	"[R] or [RM] Reload Gun.",
+	"[P] To Pause The Game.",
+	"[Ctrl+R] To Restart The Game.",
+}
+
 type UILayoutMenuBoxesProducer struct {
-	Boxes         []*Box
-	Width, Height int
-	SelectedDesc  []string
+	UIProducerBase
 }
 
 func (u *UILayoutMenuBoxesProducer) GetTotalBoxes() int {
@@ -22,28 +41,11 @@ func (u *UILayoutMenuBoxesProducer) GetBoxes() []*Box {
 
 func InitMainMenu(boxWidth, boxHeight int, boxes ...*Box) *UILayoutMenuBoxesProducer {
 	return &UILayoutMenuBoxesProducer{
-		Boxes:  boxes,
-		Width:  boxWidth,
-		Height: boxHeight,
-		SelectedDesc: []string{
-			"* Space Invaders Game v1.8.0.alpha.2",
-			"The game is an endless space shooter where players face increasingly difficult",
-			"waves of alien ships that scale with their level.",
-			"",
-			"Each time the player levels up, they can choose an upgrade to improve their spaceship,",
-			"such as boosting firepower to handle tougher aliens with stronger armor.",
-			"",
-			"The objective is to survive as long as possible, destroy alien ships, and push for",
-			"a higher score while managing health through occasional drop-down health packs that",
-			"restore the spaceship health.",
-			"",
-			"(*) Controls",
-			"",
-			"[LM] hold to shoot a beam to coming alien-ships.",
-			"[E] Consume Health Kit.",
-			"[R] or [RM] Reload Gun.",
-			"[P] To Pause The Game.",
-			"[Ctrl+R] To Restart The Game.",
+		UIProducerBase: UIProducerBase{
+			Boxes:        boxes,
+			Width:        boxWidth,
+			Height:       boxHeight,
+			SelectedDesc: StartGameDesc,
 		},
 	}
 }
