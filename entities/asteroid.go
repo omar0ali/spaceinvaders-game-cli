@@ -8,7 +8,6 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
-	"github.com/omar0ali/spaceinvaders-game-cli/game/loader"
 )
 
 type Asteroid struct {
@@ -18,21 +17,16 @@ type Asteroid struct {
 
 type AsteroidProducer struct {
 	Asteroids        []*Asteroid
-	Design           design.AsteroidDesign
+	LoadedDesigns    *design.LoadedDesigns
 	Level            float64
 	SelectedAsteroid *Asteroid
 }
 
-func NewAsteroidProducer(gc *game.GameContext) *AsteroidProducer {
-	asteroidDesign, err := loader.LoadAsset[design.AsteroidDesign]("asteroids.json")
-	if err != nil {
-		panic(err)
-	}
-
+func NewAsteroidProducer(gc *game.GameContext, designs *design.LoadedDesigns) *AsteroidProducer {
 	a := &AsteroidProducer{
-		Asteroids: []*Asteroid{},
-		Level:     1.0,
-		Design:    asteroidDesign,
+		Asteroids:     []*Asteroid{},
+		Level:         1.0,
+		LoadedDesigns: designs,
 	}
 
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -50,12 +44,12 @@ func NewAsteroidProducer(gc *game.GameContext) *AsteroidProducer {
 func (a *AsteroidProducer) Deploy() {
 	w, _ := base.GetSize()
 
-	pickAsteroid := a.Design.Asteroids[rand.Intn(len(a.Design.Asteroids))]
+	pickAsteroid := a.LoadedDesigns.ListOfAsteroids.Asteroids[rand.Intn(len(a.LoadedDesigns.ListOfAsteroids.Asteroids))]
 
 	width := len(pickAsteroid.Shape[0])
 	height := len(pickAsteroid.Shape)
 
-	speed := rand.Float64()*float64(min(a.Design.MaxSpeed, int(a.Level)+1)) + 2
+	speed := rand.Float64()*float64(min(a.LoadedDesigns.ListOfAsteroids.MaxSpeed, int(a.Level)+1)) + 2
 
 	const padding = 30
 	distance := (w - (padding * 2))
@@ -79,7 +73,7 @@ func (a *AsteroidProducer) Deploy() {
 }
 
 func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
-	if len(a.Asteroids) < min(int(a.Level), a.Design.MaxLimit) {
+	if len(a.Asteroids) < min(int(a.Level), a.LoadedDesigns.ListOfAsteroids.MaxLimit) {
 		game.Log(game.Info, "Asteroids Deployed %d Level %.1f", len(a.Asteroids), a.Level)
 		a.Deploy()
 	}

@@ -9,25 +9,19 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
-	"github.com/omar0ali/spaceinvaders-game-cli/game/loader"
 )
 
 type AlienProducer struct {
-	Aliens           []*base.Enemy
-	Level            float64
-	SelectedAlien    *base.Enemy // used to display healthbar for selected ones
-	AlienShipDesigns []design.AlienshipDesign
+	Aliens        []*base.Enemy
+	Level         float64
+	SelectedAlien *base.Enemy // used to display healthbar for selected ones
+	LoadedDesigns *design.LoadedDesigns
 }
 
-func NewAlienProducer(gc *game.GameContext) *AlienProducer {
-	designs, err := loader.LoadListOfAssets[design.AlienshipDesign]("alienships.json")
-	if err != nil {
-		panic(err)
-	}
-
+func NewAlienProducer(gc *game.GameContext, designs *design.LoadedDesigns) *AlienProducer {
 	a := &AlienProducer{
-		Level:            1.0,
-		AlienShipDesigns: designs,
+		Level:         1.0,
+		LoadedDesigns: designs,
 	}
 
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -52,7 +46,7 @@ func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
 		}
 	}
 	if len(a.Aliens) < int(a.Level) {
-		a.Aliens = append(a.Aliens, base.Deploy(a.AlienShipDesigns, a.Level, a.Aliens...))
+		a.Aliens = append(a.Aliens, base.Deploy(a.LoadedDesigns.ListOfAlienships, a.Level, a.Aliens...))
 	}
 
 	// go through each alien's gun and shoot

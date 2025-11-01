@@ -9,38 +9,20 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
-	"github.com/omar0ali/spaceinvaders-game-cli/game/loader"
 )
-
-type Designs struct {
-	HealthKitDesign design.Design
-	ModifierDesign  []design.ModifierDesign
-}
 
 type ModifierProducer struct {
 	Modifiers        *base.DropDown
 	HealthKit        *base.DropDown
 	Level            float64
 	SelectedDropDown *base.DropDown
-	Designs          *Designs
+	LoadedDesigns    *design.LoadedDesigns
 }
 
-func NewModifierProducer(gc *game.GameContext) *ModifierProducer {
-	healthKitDesign, err := loader.LoadAsset[design.Design]("health_kit.json")
-	if err != nil {
-		panic(err)
-	}
-	modifiersDesigns, err := loader.LoadListOfAssets[design.ModifierDesign]("modifiers.json")
-	if err != nil {
-		panic(err)
-	}
-
+func NewModifierProducer(gc *game.GameContext, design *design.LoadedDesigns) *ModifierProducer {
 	p := &ModifierProducer{
-		Level: 2,
-		Designs: &Designs{
-			HealthKitDesign: healthKitDesign,
-			ModifierDesign:  modifiersDesigns,
-		},
+		Level:         2,
+		LoadedDesigns: design,
 	}
 
 	if spaceship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -57,7 +39,7 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 			return
 		}
 
-		p.HealthKit = base.DeployDropDown(&p.Designs.HealthKitDesign, int(p.Level))
+		p.HealthKit = base.DeployDropDown(&p.LoadedDesigns.HealthKitDesign, int(p.Level))
 		nextMinute++
 	}
 
@@ -66,7 +48,7 @@ func (p *ModifierProducer) Update(gc *game.GameContext, delta float64) {
 			return
 		}
 
-		design := p.Designs.ModifierDesign[rand.Intn(len(p.Designs.ModifierDesign))]
+		design := p.LoadedDesigns.ModifierDesign[rand.Intn(len(p.LoadedDesigns.ModifierDesign))]
 
 		p.Modifiers = base.DeployDropDown(&design, int(p.Level))
 	}

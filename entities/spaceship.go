@@ -13,7 +13,6 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
-	"github.com/omar0ali/spaceinvaders-game-cli/game/loader"
 )
 
 type Score struct {
@@ -45,7 +44,7 @@ type SpaceShip struct {
 	cfg               game.GameConfig
 	OnLevelUp         []func(newLevel int)
 	SelectedSpaceship *design.SpaceshipDesign
-	ListOfSpaceships  []design.SpaceshipDesign
+	LoadedDesigns     *design.LoadedDesigns
 	mouseDown         bool
 }
 
@@ -73,16 +72,11 @@ func (s *SpaceShip) AddOnLevelUp(fn func(newLevel int)) {
 
 // player initialized in the bottom center of the secreen by default
 
-func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
+func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext, designs *design.LoadedDesigns) *SpaceShip {
 	w, h := base.GetSize()
 	origin := base.PointFloat{
 		X: float64(w / 2),
 		Y: float64(h - 3),
-	}
-
-	designs, err := loader.LoadListOfAssets[design.SpaceshipDesign]("spaceships.json")
-	if err != nil {
-		panic(err)
 	}
 
 	return &SpaceShip{
@@ -91,8 +85,8 @@ func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
 				Position: origin,
 			},
 		},
-		ListOfSpaceships: designs,
-		cfg:              cfg,
+		LoadedDesigns: designs,
+		cfg:           cfg,
 		HealthKit: HealthKit{
 			HealthKitsOwned: 1,
 			HealthKitLimit:  5,
@@ -105,17 +99,17 @@ func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext) *SpaceShip {
 
 func (s *SpaceShip) SpaceshipSelection(id int) string {
 	s.Gun = base.NewGun(
-		s.ListOfSpaceships[id].GunCap,
-		s.ListOfSpaceships[id].GunPower,
-		s.ListOfSpaceships[id].GunSpeed,
-		s.ListOfSpaceships[id].GunCooldown,
-		s.ListOfSpaceships[id].GunReloadCooldown,
+		s.LoadedDesigns.ListOfSpaceships[id].GunCap,
+		s.LoadedDesigns.ListOfSpaceships[id].GunPower,
+		s.LoadedDesigns.ListOfSpaceships[id].GunSpeed,
+		s.LoadedDesigns.ListOfSpaceships[id].GunCooldown,
+		s.LoadedDesigns.ListOfSpaceships[id].GunReloadCooldown,
 	)
-	s.SelectedSpaceship = &s.ListOfSpaceships[id]
-	s.Health = s.ListOfSpaceships[id].EntityHealth
-	s.MaxHealth = s.ListOfSpaceships[id].EntityHealth
-	s.Width = len(s.ListOfSpaceships[id].Shape[0])
-	s.Height = len(s.ListOfSpaceships[id].Shape)
+	s.SelectedSpaceship = &s.LoadedDesigns.ListOfSpaceships[id]
+	s.Health = s.LoadedDesigns.ListOfSpaceships[id].EntityHealth
+	s.MaxHealth = s.LoadedDesigns.ListOfSpaceships[id].EntityHealth
+	s.Width = len(s.LoadedDesigns.ListOfSpaceships[id].Shape[0])
+	s.Height = len(s.LoadedDesigns.ListOfSpaceships[id].Shape)
 	return s.SelectedSpaceship.Name
 }
 
@@ -387,12 +381,7 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 			SetStatus("Level Up")
 			u.LevelUpScreen = true
 
-			// TODO: Must not load this every time. Should implement a preset function that load this once and can reuse it
 			var boxes []*ui.Box
-			designs, err := loader.LoadListOfAssets[design.AbilityDesign]("abilities.json")
-			if err != nil {
-				panic(err)
-			}
 
 			upgrade := func(up func() bool) {
 				if up() {
@@ -410,7 +399,7 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 				return ""
 			}
 
-			for _, design := range designs {
+			for _, design := range s.LoadedDesigns.ListOfAbilities {
 				var displayMax string
 				if design.Effect.MaxValue > 0 {
 					displayMax = fmt.Sprintf("(Max: %d)", design.Effect.MaxValue)

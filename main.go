@@ -11,18 +11,20 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
+	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
 )
 
 func DeployEntities(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) {
 	// order is important since some objects might overlap others
+	loadedUIDesigns := design.LoadDesigns()
 	gc.AddEntity(entities.NewStarsProducer(cfg))
-	gc.AddEntity(entities.NewSpaceShip(cfg, gc))
-	gc.AddEntity(entities.NewModifierProducer(gc))
+	gc.AddEntity(entities.NewSpaceShip(cfg, gc, loadedUIDesigns))
+	gc.AddEntity(entities.NewModifierProducer(gc, loadedUIDesigns))
 	if cfg.Dev.Asteroids { // includeing asteroids is optional
-		gc.AddEntity(entities.NewAsteroidProducer(gc))
+		gc.AddEntity(entities.NewAsteroidProducer(gc, loadedUIDesigns))
 	}
-	gc.AddEntity(entities.NewAlienProducer(gc))
-	gc.AddEntity(entities.NewBossAlienProducer(gc))
+	gc.AddEntity(entities.NewAlienProducer(gc, loadedUIDesigns))
+	gc.AddEntity(entities.NewBossAlienProducer(gc, loadedUIDesigns))
 	gc.AddEntity(particles.NewParticleSystem())
 	gc.AddEntity(ui.NewUISystem())
 	gc.AddEntity(entities.NewUI(gc, exitCha))

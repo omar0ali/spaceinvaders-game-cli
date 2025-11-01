@@ -6,13 +6,12 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
 	"github.com/omar0ali/spaceinvaders-game-cli/game"
 	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
-	"github.com/omar0ali/spaceinvaders-game-cli/game/loader"
 )
 
 type BossProducer struct {
 	BossAlien       *base.Enemy
 	Level           float64
-	BossShipDesigns []design.AlienshipDesign
+	LoadedDesigns   *design.LoadedDesigns
 	deploymentTimer int
 }
 
@@ -20,16 +19,11 @@ func (b *BossProducer) GetType() string {
 	return "boss"
 }
 
-func NewBossAlienProducer(gc *game.GameContext) *BossProducer {
-	designs, err := loader.LoadListOfAssets[design.AlienshipDesign]("bossships.json")
-	if err != nil {
-		panic(err)
-	}
-
+func NewBossAlienProducer(gc *game.GameContext, designs *design.LoadedDesigns) *BossProducer {
 	b := &BossProducer{
 		Level:           1.0,
 		deploymentTimer: 2,
-		BossShipDesigns: designs,
+		LoadedDesigns:   designs,
 	}
 
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
@@ -51,7 +45,7 @@ func NewBossAlienProducer(gc *game.GameContext) *BossProducer {
 func (b *BossProducer) Update(gc *game.GameContext, delta float64) {
 	if b.BossAlien == nil && b.deploymentTimer == minutes {
 		SetStatus("Warning: Massive energy spike detected.")
-		b.BossAlien = base.Deploy(b.BossShipDesigns, b.Level)
+		b.BossAlien = base.Deploy(b.LoadedDesigns.ListOfBossShips, b.Level)
 		b.deploymentTimer += 3
 	}
 

@@ -56,7 +56,7 @@ func NewUI(gc *game.GameContext, exitCha chan struct{}) *UI {
 						u.SpaceShipSelection = true
 						if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 							var boxes []*ui.Box
-							for i, shipDesign := range s.ListOfSpaceships {
+							for i, shipDesign := range s.LoadedDesigns.ListOfSpaceships {
 								descriptions := []string{
 									fmt.Sprintf("- [%s]", shipDesign.Name),
 									fmt.Sprintf("* HP:         %d", shipDesign.EntityHealth),
