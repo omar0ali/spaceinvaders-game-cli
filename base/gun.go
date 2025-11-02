@@ -123,9 +123,10 @@ func (g *Gun) IsReloading() bool {
 	return g.reloading
 }
 
-func (g *Gun) ReloadGun() {
+func (g *Gun) ReloadGun(sounds *game.SoundSystem) {
 	if !g.reloading {
 		g.reloading = true
+		sounds.PlaySound("sfx-tank-reload.mp3", 2)
 		done := make(chan struct{})
 		go DoOnce(g.reloadCooldown, func() {
 			g.mu.Lock()
@@ -136,7 +137,7 @@ func (g *Gun) ReloadGun() {
 	}
 }
 
-func (g *Gun) InitBeam(pos Point, dir Direction) {
+func (g *Gun) InitBeam(pos Point, dir Direction, sounds *game.SoundSystem) {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 
@@ -149,7 +150,7 @@ func (g *Gun) InitBeam(pos Point, dir Direction) {
 	}
 
 	if g.loaded <= 0 {
-		g.ReloadGun()
+		g.ReloadGun(sounds)
 		return
 	}
 
@@ -166,6 +167,9 @@ func (g *Gun) InitBeam(pos Point, dir Direction) {
 		Symbol:    symbol,
 		Direction: dir,
 	}
+
+	sounds.PlaySound("8-bit-explosion-1.mp3", -1)
+
 	g.beams = append(g.beams, &beam)
 	g.lastShot = time.Now()
 	g.loaded -= 1

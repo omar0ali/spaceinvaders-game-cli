@@ -44,7 +44,7 @@ func NewBossAlienProducer(gc *game.GameContext, designs *design.LoadedDesigns) *
 
 func (b *BossProducer) Update(gc *game.GameContext, delta float64) {
 	if b.BossAlien == nil && b.deploymentTimer == minutes {
-		SetStatus("Warning: Massive energy spike detected.")
+		SetStatus("Warning: Massive energy spike detected.", gc)
 		b.BossAlien = base.Deploy(b.LoadedDesigns.ListOfBossShips, b.Level)
 		b.deploymentTimer += 3
 	}
@@ -54,7 +54,7 @@ func (b *BossProducer) Update(gc *game.GameContext, delta float64) {
 		b.BossAlien.InitBeam(base.Point{
 			X: int(b.BossAlien.Position.X) + (b.BossAlien.Width / 2),
 			Y: int(b.BossAlien.Position.Y) + (b.BossAlien.Height) + 1,
-		}, base.Down)
+		}, base.Down, gc.Sounds)
 
 		b.MovementAndCollision(delta, gc)
 	}
@@ -145,9 +145,10 @@ func (b *BossProducer) MovementAndCollision(delta float64, gc *game.GameContext)
 					),
 				)
 			}
+			gc.Sounds.PlaySound("8-bit-explosion-low-resonant.mp3", 0)
 
 			spaceship.ScoreKill()
-			SetStatus("Threat neutralized. Returning to standby.")
+			SetStatus("Threat neutralized. Returning to standby.", gc)
 			b.BossAlien = nil
 		}
 	}

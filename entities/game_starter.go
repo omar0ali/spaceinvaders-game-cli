@@ -1,13 +1,16 @@
 package entities
 
-import "github.com/omar0ali/spaceinvaders-game-cli/game"
-import "github.com/omar0ali/spaceinvaders-game-cli/game/design"
-import "github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
-import "github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
+import (
+	"github.com/omar0ali/spaceinvaders-game-cli/entities/particles"
+	"github.com/omar0ali/spaceinvaders-game-cli/entities/ui"
+	"github.com/omar0ali/spaceinvaders-game-cli/game"
+	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
+)
 
 func StartGame(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) {
-	// order is important since some objects might overlap others
+	// loading designs
 	loadedUIDesigns := design.LoadDesigns()
+	// order is important since some objects might overlap others
 	gc.AddEntity(NewStarsProducer(cfg))
 	gc.AddEntity(NewSpaceShip(cfg, gc, loadedUIDesigns))
 	gc.AddEntity(NewModifierProducer(gc, loadedUIDesigns))

@@ -28,6 +28,7 @@ type (
 		entities []Entity
 		Screen   tcell.Screen
 		Halt     bool
+		Sounds   *SoundSystem
 	}
 )
 

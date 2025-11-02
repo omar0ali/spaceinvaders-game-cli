@@ -161,6 +161,7 @@ func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
 						asteroid.Width,
 						asteroid.Height,
 					)))
+				gc.Sounds.PlaySound("8-bit-asteroid-explosion.mp3", 1)
 			}
 
 			a.SelectedAsteroid = nil

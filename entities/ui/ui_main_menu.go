@@ -59,12 +59,14 @@ func (u *UILayoutMenuBoxesProducer) InputEvents(events tcell.Event, gc *game.Gam
 		for _, b := range u.Boxes {
 			if mx >= b.Position.X && mx < b.Position.X+b.Width && my >= b.Position.Y && my < b.Position.Y+b.Height {
 				if !b.Hovered {
+					gc.Sounds.PlaySound("8-bit-hover-button.mp3", 0)
 					b.Hovered = true
 					if len(b.Description) > 0 {
 						u.SelectedDesc = b.Description
 					}
 				}
 				if ev.Buttons() == tcell.Button1 {
+					gc.Sounds.PlaySound("8-bit-game-sfx-sound-select.mp3", 0)
 					b.OnClick()
 				}
 			} else {

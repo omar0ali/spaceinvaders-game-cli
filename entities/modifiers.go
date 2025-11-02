@@ -142,14 +142,14 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 		p.HealthKit.MovementAndColision(delta, func(isDead bool) {
 			if isDead {
 				if spaceship.HealthKit.HealthKitsOwned >= spaceship.HealthKit.HealthKitLimit {
-					SetStatus("Health kits maxed out!")
+					SetStatus("Health kits maxed out!", gc)
 					p.HealthKit = nil
 					p.SelectedDropDown = nil
 					return
 				}
 				spaceship.HealthKit.HealthKitsOwned += 1
 				spaceship.ScoreHit()
-				SetStatus("Health kit +1")
+				SetStatus("Health kit +1", gc)
 			}
 			if p.SelectedDropDown == p.HealthKit {
 				p.SelectedDropDown = nil
@@ -179,13 +179,13 @@ func (p *ModifierProducer) MovementAndCollision(delta float64, gc *game.GameCont
 					spaceship.DecreaseCooldown(m.ModifyGunCoolDown)
 					spaceship.DecreaseGunReloadCooldown(m.ModifyGunReloadCoolDown)
 					if m.ModifyLevel {
-						SetStatus("Free Level Up!")
+						SetStatus("Free Level Up!", gc)
 						if u, ok := gc.FindEntity("ui").(*UI); ok {
 							u.LevelUpScreen = true
 							spaceship.LevelUpMenu(gc)
 						}
 					} else {
-						SetStatus(fmt.Sprintf("Modifier %s Applied!", m.Name))
+						SetStatus(fmt.Sprintf("Modifier %s Applied!", m.Name), gc)
 					}
 				}
 			}

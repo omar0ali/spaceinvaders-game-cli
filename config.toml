@@ -2,11 +2,12 @@
 debug = true
 fps_counter = false
 asteroids = true
+sounds = true
 
 [spaceship]
 max_level = 59
 next_level_score = 150
 
-[stars] 
+[stars]
 limit = 15
 speed = 50

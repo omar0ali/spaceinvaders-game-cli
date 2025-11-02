@@ -53,7 +53,7 @@ func NewUI(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) *UI
 					}, ui.StartGameDesc,
 					func() {
 						// here we should start the game
-						SetStatus("Select a Spaceship")
+						SetStatus("Select a Spaceship", gc)
 						u.SpaceShipSelection = true
 						if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 							var boxes []*ui.Box
@@ -73,7 +73,7 @@ func NewUI(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) *UI
 									descriptions,
 									func() {
 										name := s.SpaceshipSelection(i)
-										SetStatus(fmt.Sprintf("%s Selected", name))
+										SetStatus(fmt.Sprintf("%s Selected", name), gc)
 										u.SpaceShipSelection = false
 										layout.SetLayout(nil)
 									},
@@ -93,7 +93,7 @@ func NewUI(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) *UI
 					[]string{
 						"Scan the battlefield: ships, weapons, abilities.",
 					}, func() {
-						SetStatus("Still under development")
+						SetStatus("Still under development", gc)
 					},
 				),
 				ui.NewUIBox([]string{
@@ -214,6 +214,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 			if u.MenuScreen || u.GameOverScreen || u.SpaceShipSelection || u.LevelUpScreen { // skip
 				return
 			}
+			gc.Sounds.PlaySound("8-bit-game-sfx-sound-select.mp3", 0)
 			u.PauseScreen = !u.PauseScreen
 			if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
 				var spaceship *SpaceShip
@@ -425,8 +426,9 @@ func DrawBoxedText(text string) {
 	})
 }
 
-func SetStatus(text string) {
+func SetStatus(text string, gc *game.GameContext) {
 	mu.Lock()
+	gc.Sounds.PlaySound("8-bit-game-sfx-notification.mp3", 1)
 	listOfStatus = append(listOfStatus, text) // safe add
 	mu.Unlock()
 

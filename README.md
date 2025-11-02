@@ -85,6 +85,8 @@ The game is an endless space shooter where players face increasingly difficult w
     - They damage spaceships, alien ships, and boss ships.
 - [X] Spaceship selection UI Redesign. Now can hover on cards of spaceships and show details.
     - Can select a spaceship with Left Mouse Click.
+- [X] In game audio (using: [gopxl/beeb](https://github.com/gopxl/beep))
+- [ ] Compendium Menu showing (all entities range from all spaceships, alien-ships, abilities ...etc.)
 
 ### Controls
 
@@ -102,19 +104,20 @@ The game is an endless space shooter where players face increasingly difficult w
 Configuration file added for the player to freely change/update entity's attributes. The config file saved as `config.toml`.
 
 ```toml
-[dev]
+``[dev]
 debug = true
 fps_counter = false
 asteroids = true
+sounds = true
 
 [spaceship]
 max_level = 59
 next_level_score = 150
 
-[stars] 
+[stars]
 limit = 15
 speed = 50
-```
+`
 
 ## Getting Started
 

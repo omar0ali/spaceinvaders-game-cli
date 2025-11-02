@@ -55,7 +55,7 @@ func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
 		alien.InitBeam(base.Point{
 			X: int(alien.Position.X) + (alien.Width / 2),
 			Y: int(alien.Position.Y) + (alien.Height) + 1,
-		}, base.Down)
+		}, base.Down, gc.Sounds)
 	}
 
 	// -------- this will ensure to clean up dead aliens and beams --------
@@ -184,6 +184,8 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 					),
 				)
 			}
+			gc.Sounds.PlaySound("8-bit-explosion-2.mp3", -1)
+
 			a.SelectedAlien = nil
 			spaceship.ScoreKill()
 		}

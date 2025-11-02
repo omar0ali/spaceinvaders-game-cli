@@ -27,9 +27,12 @@ func main() {
 	screen := base.InitScreen(base.EnableMouse)
 	screen.SetTitle("Space Invader Game")
 
+	sounds := game.InitSoundSystem(cfg)
+
 	// ------------------------------------- Objects ----------------------------------
 	gameContext := game.GameContext{
 		Screen: screen,
+		Sounds: sounds,
 	}
 	// ---------------------------------- entities --------------------------------------
 

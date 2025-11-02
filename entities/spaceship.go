@@ -126,7 +126,7 @@ func (s *SpaceShip) Update(gc *game.GameContext, delta float64) {
 	}
 
 	if s.mouseDown {
-		s.shootBeam()
+		s.shootBeam(gc)
 	}
 
 	s.LevelUp(gc)
@@ -195,7 +195,7 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 
 		if ev.Buttons() == tcell.Button2 {
 			if s.GetLoaded() != s.GetCapacity() {
-				s.ReloadGun()
+				s.ReloadGun(gc.Sounds)
 			}
 		}
 
@@ -207,19 +207,19 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 			if s.HealthKit.HealthKitsOwned > 0 {
 				if p, ok := gc.FindEntity("producer").(*ModifierProducer); ok {
 					if s.IncreaseHealth(int(p.Level)) {
-						SetStatus(fmt.Sprintf("[E] Health: Consumed +%d", int(p.Level)))
+						SetStatus(fmt.Sprintf("[E] Health: Consumed +%d", int(p.Level)), gc)
 						s.HealthKit.HealthKitsOwned--
 						return
 					}
 				}
-				SetStatus("[E] Health: Can't use right now")
+				SetStatus("[E] Health: Can't use right now", gc)
 			} else {
-				SetStatus("[E] Health: N/A")
+				SetStatus("[E] Health: N/A", gc)
 			}
 		}
 		if ev.Rune() == 'R' || ev.Rune() == 'r' {
 			if s.GetLoaded() != s.GetCapacity() {
-				s.ReloadGun()
+				s.ReloadGun(gc.Sounds)
 			}
 		}
 
@@ -345,6 +345,7 @@ func (s *SpaceShip) isHit(pointBeam base.PointInterface, gc *game.GameContext) b
 					particles.WithSymbols([]rune("0%*;.")),
 				),
 			)
+			gc.Sounds.PlaySound("8-bit-explosion.mp3", -1)
 		}
 
 		return true
@@ -375,10 +376,11 @@ func (s *SpaceShip) ApplyAbility(eff design.AbilityEffect, max int) bool {
 }
 
 func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
+	gc.Sounds.PlaySound("8-bit-game-sfx-levelup-menu.mp3", 0)
 	if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
 		if u, ok := gc.FindEntity("ui").(*UI); ok {
 
-			SetStatus("Level Up")
+			SetStatus("Level Up", gc)
 			u.LevelUpScreen = true
 
 			var boxes []*ui.Box
@@ -430,7 +432,7 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 						func() {
 							upgrade(func() bool {
 								if design.Status != "" {
-									SetStatus(design.Status)
+									SetStatus(design.Status, gc)
 								}
 								return s.ApplyAbility(design.Effect, design.Effect.MaxValue)
 							})
@@ -488,10 +490,10 @@ func (s *SpaceShip) GetCurrent() int {
 	return s.Health
 }
 
-func (s *SpaceShip) shootBeam() {
+func (s *SpaceShip) shootBeam(gc *game.GameContext) {
 	x := int(s.Position.GetX()) + s.Width/2
 	y := int(s.Position.Y)
-	s.InitBeam(base.Point{X: x, Y: y}, base.Up)
+	s.InitBeam(base.Point{X: x, Y: y}, base.Up, gc.Sounds)
 }
 
 func (s *SpaceShip) GetMax() int {

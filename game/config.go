@@ -13,6 +13,7 @@ const defaultConfig = `
 debug = false
 fps_counter = false
 asteroids = true
+sounds = true
 
 [spaceship]
 max_level = 50
@@ -36,6 +37,7 @@ type GameConfig struct {
 		Debug      bool `toml:"debug"`
 		FPSCounter bool `toml:"fps_counter"`
 		Asteroids  bool `toml:"asteroids"`
+		Sounds     bool `toml:"sounds"`
 	} `toml:"dev"`
 }
 
