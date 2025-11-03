@@ -146,7 +146,7 @@ func (b *BossProducer) MovementAndCollision(delta float64, gc *game.GameContext)
 					),
 				)
 			}
-			gc.Sounds.PlaySound("8-bit-explosion-low-resonant.mp3", 0)
+			gc.Sounds.PlaySound("8-bit-explosion-low-resonant.mp3", -1)
 
 			spaceship.ScoreKill()
 			SetStatus("Threat neutralized. Returning to standby.", gc)

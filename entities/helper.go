@@ -85,7 +85,7 @@ func GettingHit(m Movable, beam PointableInt, gc *game.GameContext) bool {
 					particles.WithSymbols([]rune("Oo;.")),
 				),
 			)
-			gc.Sounds.PlaySound("8-bit-explosion.mp3", -1)
+			gc.Sounds.PlaySound("8-bit-explosion.mp3", 0)
 		}
 		return true
 	}
@@ -131,7 +131,7 @@ func Crash(c1, c2 Movable, gc *game.GameContext) bool {
 					particles.WithSymbols([]rune(".oO0*;.")),
 				),
 			)
-			gc.Sounds.PlaySound("8-bit-explosion-1.mp3", -1)
+			gc.Sounds.PlaySound("8-bit-explosion-1.mp3", -2)
 		}
 
 		return true

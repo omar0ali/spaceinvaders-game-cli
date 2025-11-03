@@ -126,7 +126,7 @@ func (g *Gun) IsReloading() bool {
 func (g *Gun) ReloadGun(sounds *game.SoundSystem) {
 	if !g.reloading {
 		g.reloading = true
-		sounds.PlaySound("sfx-tank-reload.mp3", 1)
+		sounds.PlaySound("sfx-tank-reload.mp3", 0)
 		done := make(chan struct{})
 		go DoOnce(g.reloadCooldown, func() {
 			g.mu.Lock()

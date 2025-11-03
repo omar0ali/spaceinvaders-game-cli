@@ -46,6 +46,19 @@ type SpaceShip struct {
 	SelectedSpaceship *design.SpaceshipDesign
 	LoadedDesigns     *design.LoadedDesigns
 	mouseDown         bool
+	SystemHits        *SystemHits
+}
+type SystemHits struct {
+	RegisteredHits []string
+	Max            int
+}
+
+func (s *SystemHits) RegisterHit(source string) {
+	if len(s.RegisteredHits) == s.Max {
+		copy(s.RegisteredHits, s.RegisteredHits[1:])
+		s.RegisteredHits = s.RegisteredHits[:s.Max-1]
+	}
+	s.RegisteredHits = append(s.RegisteredHits, source)
 }
 
 func (s *SpaceShip) IncreaseHealthCapacity() bool {
@@ -93,6 +106,10 @@ func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext, designs *design.Loa
 		},
 		Score: Score{
 			NextLevelScore: cfg.SpaceShipConfig.NextLevelScore,
+		},
+		SystemHits: &SystemHits{
+			RegisteredHits: []string{},
+			Max:            10,
 		},
 	}
 }
@@ -276,11 +293,13 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 				if s.isHit(alienBeam.GetPosition(), gc) {
 					s.TakeDamage(alien.GetPower())
 					alien.RemoveBeam(alienBeam)
+					s.SystemHits.RegisterHit(fmt.Sprintf("Hit by %s, POW: %d", alien.Name, alien.GunPower))
 				}
 			}
 			if Crash(&s.ObjectBase, &alien.ObjectBase, gc) {
 				s.TakeDamage(1)
 				alien.TakeDamage(5)
+				s.SystemHits.RegisterHit(fmt.Sprintf("Crashed with %s", alien.Name))
 			}
 		}
 	}
@@ -294,6 +313,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 					if Crash(&s.ObjectBase, &m.ObjectEntity, gc) {
 						s.TakeDamage(2)
 						p.RemoveParticle(m)
+						s.SystemHits.RegisterHit("Crashed with a Meteroid")
 					}
 				}
 			}
@@ -306,6 +326,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 				if s.isHit(bossBeam.GetPosition(), gc) {
 					s.TakeDamage(b.BossAlien.GetPower())
 					b.BossAlien.RemoveBeam(bossBeam)
+					s.SystemHits.RegisterHit(fmt.Sprintf("Hit by %s, POW: %d", b.BossAlien.Name, b.BossAlien.GunPower))
 				}
 			}
 
@@ -323,6 +344,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 			if Crash(&s.ObjectBase, &asteroid.ObjectBase, gc) {
 				s.TakeDamage(2)
 				asteroid.TakeDamage(4)
+				s.SystemHits.RegisterHit(fmt.Sprintf("Crashed with %s", asteroid.Name))
 			}
 		}
 	}
@@ -377,7 +399,7 @@ func (s *SpaceShip) ApplyAbility(eff design.AbilityEffect, max int) bool {
 }
 
 func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
-	gc.Sounds.PlaySound("8-bit-game-sfx-levelup-menu.mp3", 0)
+	gc.Sounds.PlaySound("8-bit-game-sfx-levelup-menu.mp3", -1)
 	if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
 		if u, ok := gc.FindEntity("ui").(*UI); ok {
 

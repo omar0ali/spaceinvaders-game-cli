@@ -184,17 +184,21 @@ func (u *UI) Draw(gc *game.GameContext) {
 
 	// game over ui
 	if u.GameOverScreen {
-		u.MessageBox(
-			base.GetCenterPoint(),
-			`
+		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+			u.MessageBox(base.GetCenterPoint(),
+				fmt.Sprintf(`
+			Last Registered Hits:
+			%v
+
 			Thank you for playing :)
 			---------------------------------------
 			Would you like to play again?
 			[Ctrl+R] To Restart.
 			[Ctrl+Q] To Quit.
-			`,
-			"Game Over",
-		)
+			`, strings.Join(s.SystemHits.RegisteredHits, "\n")),
+				"Game Over",
+			)
+		}
 	}
 }
 
@@ -214,7 +218,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 			if u.MenuScreen || u.GameOverScreen || u.SpaceShipSelection || u.LevelUpScreen { // skip
 				return
 			}
-			gc.Sounds.PlaySound("8-bit-game-sfx-sound-select.mp3", 0)
+			gc.Sounds.PlaySound("8-bit-game-sfx-sound-select.mp3", -1)
 			u.PauseScreen = !u.PauseScreen
 			if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
 				var spaceship *SpaceShip
@@ -428,7 +432,7 @@ func DrawBoxedText(text string) {
 
 func SetStatus(text string, gc *game.GameContext) {
 	mu.Lock()
-	gc.Sounds.PlaySound("8-bit-game-sfx-notification.mp3", 1)
+	gc.Sounds.PlaySound("8-bit-game-sfx-notification.mp3", 0)
 	listOfStatus = append(listOfStatus, text) // safe add
 	mu.Unlock()
 
