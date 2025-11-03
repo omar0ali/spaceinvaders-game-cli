@@ -116,6 +116,7 @@ func (s *SpaceShip) SpaceshipSelection(id int) string {
 func (s *SpaceShip) Update(gc *game.GameContext, delta float64) {
 	defer s.Gun.Update(gc, delta)
 	if s.Health <= 0 && s.SelectedSpaceship != nil {
+		gc.Sounds.PlaySound("8-bit-game-over.mp3", -1)
 		if ui, ok := gc.FindEntity("ui").(*UI); ok {
 			ui.GameOverScreen = true
 		}

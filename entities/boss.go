@@ -45,6 +45,7 @@ func NewBossAlienProducer(gc *game.GameContext, designs *design.LoadedDesigns) *
 func (b *BossProducer) Update(gc *game.GameContext, delta float64) {
 	if b.BossAlien == nil && b.deploymentTimer == minutes {
 		SetStatus("Warning: Massive energy spike detected.", gc)
+		gc.Sounds.PlaySound("sfx-alarm.mp3", -1)
 		b.BossAlien = base.Deploy(b.LoadedDesigns.ListOfBossShips, b.Level)
 		b.deploymentTimer += 3
 	}
