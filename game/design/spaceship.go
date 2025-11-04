@@ -6,7 +6,7 @@ type AbilityEffect struct {
 	CapacityIncrease       int `json:"capacity_increase"`
 	CooldownDecrease       int `json:"cooldown_decrease"`
 	ReloadCooldownDecrease int `json:"reload_cooldown_decrease"`
-	HealthCpacity          int `json:"increase_capacity"`
+	HealthCpacity          int `json:"health_capacity_increase"`
 	MaxValue               int `json:"max_value"`
 }
 

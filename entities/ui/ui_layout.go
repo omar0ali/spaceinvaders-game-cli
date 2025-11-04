@@ -44,7 +44,7 @@ func (u *UILayoutBoxesProducer) InputEvents(events tcell.Event, gc *game.GameCon
 					u.SelectedDesc = b.Description
 				}
 				if ev.Buttons() == tcell.Button1 {
-					gc.Sounds.PlaySound("8-bit-sfx-powerup.mp3", 0)
+					gc.Sounds.PlaySound("8-bit-powerup.mp3", 0)
 					b.OnClick()
 				}
 			} else {

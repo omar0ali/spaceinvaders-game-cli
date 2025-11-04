@@ -1,6 +1,6 @@
 [
     {
-        "name": "arrow",
+        "name": "Ion Fang",
         "health": 10,
         "color": "F88379",
         "speed": 2,
@@ -19,7 +19,7 @@
         ]
     },
     {
-        "name": "triangle",
+        "name": "The Harbinger",
         "health": 20,
         "color": "ADCCED",
         "speed": 2,
@@ -57,7 +57,7 @@
         ]
     },
     {
-        "name": "ufo",
+        "name": "Synapse Brood",
         "health": 40,
         "color": "BDAD7E",
         "speed": 2,
@@ -76,7 +76,7 @@
         ]
     },
     {
-        "name": "crab",
+        "name": "Mycelial Drifter",
         "health": 50,
         "color": "8F8673",
         "speed": 2,
@@ -93,7 +93,7 @@
         ]
     },
     {
-        "name": "scout",
+        "name": "Omega Vortex",
         "health": 60,
         "color": "F3E5AB",
         "speed": 2,
@@ -130,7 +130,7 @@
         ]
     },
     {
-        "name": "falcon",
+        "name": "Okkar Drone",
         "health": 70,
         "color": "FF991C",
         "speed": 2,
@@ -148,7 +148,7 @@
         ]
     },
     {
-        "name": "beetle",
+        "name": "Zephyr of Ruin",
         "health": 70,
         "color": "B5C7EB",
         "speed": 2,
@@ -166,7 +166,7 @@
         ]
     },
     {
-        "name": "fortress",
+        "name": "Crown of Oblivion",
         "health": 70,
         "color": "E7DFC6",
         "speed": 2,

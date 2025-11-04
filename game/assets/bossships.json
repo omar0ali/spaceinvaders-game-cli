@@ -1,6 +1,6 @@
 [
     {
-        "name": "dreadnought",
+        "name": "Dreadnought",
         "health": 500,
         "color": "9400D3",
         "speed": 20,
@@ -21,7 +21,7 @@
         ]
     },
     {
-        "name": "oblivion_cruiser",
+        "name": "Oblivion Cruiser",
         "health": 750,
         "color": "FF1493",
         "speed": 30,
@@ -42,7 +42,7 @@
         ]
     },
     {
-        "name": "alien_overlord",
+        "name": "Alien Overlord",
         "health": 1000,
         "color": "228B22",
         "speed": 50,
@@ -65,7 +65,7 @@
         ]
     },
     {
-        "name": "iron_titan",
+        "name": "Iron Titan",
         "health": 1300,
         "color": "1E90FF",
         "speed": 50,
@@ -88,7 +88,7 @@
         ]
     },
     {
-        "name": "dread_fortress",
+        "name": "Dread Fortress",
         "health": 1500,
         "color": "FF8C00",
         "speed": 55,
@@ -110,7 +110,7 @@
         ]
     },
     {
-        "name": "celestial_warden",
+        "name": "Celestial Warden",
         "health": 1800,
         "color": "00CED1",
         "speed": 60,
@@ -133,7 +133,7 @@
         ]
     },
     {
-        "name": "void_reaper",
+        "name": "Void Reaper",
         "health": 2000,
         "color": "8B0000",
         "speed": 60,

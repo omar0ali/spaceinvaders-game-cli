@@ -1,7 +1,7 @@
 [
     {
         "name": "POWER",
-        "status": "Gun Power Increased +1",
+        "status": "Gun Power Increased +2",
         "shape": [
             "     /\\      ",
             "    /***\\    ",
@@ -10,20 +10,20 @@
             "     ||      ",
             "    POWER    "
         ],
-        "description": "Increase Gun Power by 1",
+        "description": "Increase Gun Power by 2",
         "effect": {
-            "power_increase": 1,
+            "power_increase": 2,
             "speed_increase": 0,
             "capacity_increase": 0,
             "cooldown_decrease": 0,
             "reload_cooldown_decrease": 0,
-            "increase_capacity": 0,
+            "health_capacity_increase": 0,
             "max_value": 0
         }
     },
     {
         "name": "SPEED",
-        "status": "Gun Speed Increased +1",
+        "status": "Gun Speed Increased +2",
         "shape": [
             "     ___     ",
             "    />>>\\    ",
@@ -32,20 +32,20 @@
             "     ~~~     ",
             "    SPEED    "
         ],
-        "description": "Increase Gun Speed by 1",
+        "description": "Increase Gun Speed by 2",
         "effect": {
             "power_increase": 0,
-            "speed_increase": 1,
+            "speed_increase": 2,
             "capacity_increase": 0,
             "cooldown_decrease": 0,
             "reload_cooldown_decrease": 0,
-            "increase_capacity": 0,
+            "health_capacity_increase": 0,
             "max_value": 65
         }
     },
     {
         "name": "CAPACITY",
-        "status": "Gun Capacity Increased +1",
+        "status": "Gun Capacity Increased +2",
         "shape": [
             "   _______   ",
             "  |[1] [2]|  ",
@@ -53,20 +53,20 @@
             "  |_______|  ",
             "     CAP     "
         ],
-        "description": "Increase Gun Capacity by 1",
+        "description": "Increase Gun Capacity by 2",
         "effect": {
             "power_increase": 0,
             "speed_increase": 0,
-            "capacity_increase": 1,
+            "capacity_increase": 2,
             "cooldown_decrease": 0,
             "reload_cooldown_decrease": 0,
-            "increase_capacity": 0,
+            "health_capacity_increase": 0,
             "max_value": 35
         }
     },
     {
         "name": "COOLDOWN",
-        "status": "Gun Cooldown Decreased 3",
+        "status": "Gun Cooldown Decreased -5",
         "shape": [
             "    _____    ",
             "   | -=- |   ",
@@ -75,20 +75,20 @@
             "    \\___/    ",
             "  COOL DOWN  "
         ],
-        "description": "Decrease Gun Cooldown by 3",
+        "description": "Decrease Gun Cooldown by -5",
         "effect": {
             "power_increase": 0,
             "speed_increase": 0,
             "capacity_increase": 0,
-            "cooldown_decrease": -3,
+            "cooldown_decrease": -5,
             "reload_cooldown_decrease": 0,
-            "increase_capacity": 0,
+            "health_capacity_increase": 0,
             "max_value": 0
         }
     },
     {
         "name": "RELOAD_COOLDOWN",
-        "status": "Gun Reload Cooldown Decreased 3",
+        "status": "Gun Reload Cooldown Decreased -5",
         "shape": [
             "    _____    ",
             "   |\\___/|   ",
@@ -97,14 +97,14 @@
             "   ||___||   ",
             "   RLD CLD   "
         ],
-        "description": "Decrease Gun Reload Cooldown by 3",
+        "description": "Decrease Gun Reload Cooldown by -5",
         "effect": {
             "power_increase": 0,
             "speed_increase": 0,
             "capacity_increase": 0,
             "cooldown_decrease": 0,
-            "reload_cooldown_decrease": -3,
-            "increase_capacity": 0,
+            "reload_cooldown_decrease": -5,
+            "health_capacity_increase": 0,
             "max_value": 0
         }
     },
@@ -118,14 +118,14 @@
             "    |___|    ",
             "     HP+     "
         ],
-        "description": "Restore Health & Heatlh Capacity +1",
+        "description": "Restore Health & Heatlh Capacity +2",
         "effect": {
             "power_increase": 0,
             "speed_increase": 0,
             "capacity_increase": 0,
             "cooldown_decrease": 0,
             "reload_cooldown_decrease": 0,
-            "increase_capacity": 1,
+            "health_capacity_increase": 2,
             "max_value": 0
         }
     }

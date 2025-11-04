@@ -126,7 +126,7 @@ func (g *Gun) IsReloading() bool {
 func (g *Gun) ReloadGun(sounds *game.SoundSystem) {
 	if !g.reloading {
 		g.reloading = true
-		sounds.PlaySound("sfx-tank-reload.mp3", 0)
+		sounds.PlaySound("sfx-tank-reload.mp3", 1)
 		done := make(chan struct{})
 		go DoOnce(g.reloadCooldown, func() {
 			g.mu.Lock()
@@ -168,8 +168,8 @@ func (g *Gun) InitBeam(pos Point, dir Direction, sounds *game.SoundSystem) {
 		Direction: dir,
 	}
 
-	// sounds.PlaySound("8-bit-explosion-1.mp3", -1)
-	sounds.PlaySound("8-bit-laser.mp3", -1)
+	sounds.PlaySound("8-bit-explosion-1.mp3", -1)
+	// sounds.PlaySound("8-bit-laser.mp3", -1)
 
 	g.beams = append(g.beams, &beam)
 	g.lastShot = time.Now()

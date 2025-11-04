@@ -1,9 +1,9 @@
 {
-    "max_limit": 4,
+    "max_limit": 3,
     "max_speed": 4,
     "asteroids": [
         {
-            "name": "asteroid_large",
+            "name": "Ceres",
             "health": 400,
             "color": "93928c",
             "shape": [
@@ -15,7 +15,7 @@
             ]
         },
         {
-            "name": "asteroid_medium",
+            "name": "Sylvia",
             "health": 250,
             "color": "93928c",
             "shape": [
@@ -25,7 +25,7 @@
             ]
         },
         {
-            "name": "asteroid_small",
+            "name": "Euphrosyne",
             "health": 150,
             "color": "93928c",
             "shape": [
@@ -35,7 +35,7 @@
             ]
         },
         {
-            "name": "asteroid_irregular",
+            "name": "Doris",
             "health": 300,
             "color": "93928c",
             "shape": [
@@ -45,7 +45,7 @@
             ]
         },
         {
-            "name": "asteroid_chunky",
+            "name": "Interamnia",
             "health": 350,
             "color": "93928c",
             "shape": [
@@ -55,7 +55,7 @@
             ]
         },
         {
-            "name": "asteroid_crystalline",
+            "name": "Psyche",
             "health": 280,
             "color": "dedede",
             "shape": [
@@ -65,7 +65,7 @@
             ]
         },
         {
-            "name": "asteroid_angular",
+            "name": "Iris",
             "health": 320,
             "color": "93928c",
             "shape": [
@@ -75,7 +75,7 @@
             ]
         },
         {
-            "name": "asteroid_debris",
+            "name": "Amphitrite",
             "health": 100,
             "color": "93928c",
             "shape": [
@@ -84,7 +84,7 @@
             ]
         },
         {
-            "name": "asteroid_rocky",
+            "name": "Elektra",
             "health": 380,
             "color": "93928c",
             "shape": [
@@ -94,7 +94,7 @@
             ]
         },
         {
-            "name": "asteroid_pitted",
+            "name": "Nemesis",
             "health": 220,
             "color": "93928c",
             "shape": [

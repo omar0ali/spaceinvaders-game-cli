@@ -187,7 +187,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 			u.MessageBox(base.GetCenterPoint(),
 				fmt.Sprintf(`
-			Last Registered Hits:
+			Taken damage from:
 			%v
 
 			Thank you for playing :)
@@ -195,7 +195,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 			Would you like to play again?
 			[Ctrl+R] To Restart.
 			[Ctrl+Q] To Quit.
-			`, strings.Join(s.SystemHits.RegisteredHits, "\n")),
+			`, strings.Join(s.GetRegisteredHits(), "\n")),
 				"Game Over",
 			)
 		}
