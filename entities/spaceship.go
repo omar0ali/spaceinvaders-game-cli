@@ -78,6 +78,7 @@ func (s *SpaceShip) GetRegisteredHits() []string {
 		if a == b {
 			return len(keys[i]) < len(keys[j])
 		}
+
 		return a > b
 	})
 
@@ -533,9 +534,9 @@ func (s *SpaceShip) LevelUp(gc *game.GameContext) {
 	}
 }
 
-func (s *SpaceShip) ScoreKill() {
+func (s *SpaceShip) ScoreKill(health int) {
 	s.Kills += 1
-	s.Score.Score += s.Kills
+	s.Score.Score += health
 }
 
 func (s *SpaceShip) ScoreHit() {

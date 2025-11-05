@@ -35,6 +35,15 @@ func NewAlienProducer(gc *game.GameContext, designs *design.LoadedDesigns) *Alie
 }
 
 func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
+	// temporary fix, stop deploying ships until game starts
+	if ui, ok := gc.FindEntity("ui").(*UI); ok {
+		if ui.MenuScreen {
+			return
+		}
+	} else {
+		return
+	}
+	// start deploying
 	if boss, ok := gc.FindEntity("boss").(*BossProducer); ok {
 		// saying if there is a boss alien ship deployed. It should stop alien ships.
 		if boss.BossAlien != nil {
@@ -45,6 +54,7 @@ func (a *AlienProducer) Update(gc *game.GameContext, delta float64) {
 			return
 		}
 	}
+
 	if len(a.Aliens) < int(a.Level) {
 		a.Aliens = append(a.Aliens, base.Deploy(a.LoadedDesigns.ListOfAlienships, a.Level, a.Aliens...))
 	}
@@ -187,7 +197,7 @@ func (a *AlienProducer) MovementAndCollision(delta float64, gc *game.GameContext
 			gc.Sounds.PlaySound("8-bit-explosion-2.mp3", -1)
 
 			a.SelectedAlien = nil
-			spaceship.ScoreKill()
+			spaceship.ScoreKill(alien.EntityHealth)
 		}
 
 		// check the alien ship height position
