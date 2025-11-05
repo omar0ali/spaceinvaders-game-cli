@@ -66,10 +66,9 @@ func (s *SoundSystem) PlaySound(name string, vol float64) {
 	}
 	sound, ok := s.Sounds[name]
 	if !ok {
-		return
-	} else {
 		Log(Error, "Failed to locate the file. %s ", name)
 	}
+
 	Log(Debug, "Sounds Playing: %s", name)
 
 	go func() {
