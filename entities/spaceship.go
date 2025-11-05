@@ -57,7 +57,11 @@ func (s *SpaceShip) GetRegisteredHits() []string {
 	for k := range s.RegisteredHits {
 		keys = append(keys, k)
 	}
-	sort.Strings(keys)
+
+	sort.Slice(keys, func(i, j int) bool {
+		return s.RegisteredHits[keys[i]] > s.RegisteredHits[keys[j]]
+	})
+
 	for _, i := range keys {
 		registeredHits = append(registeredHits, fmt.Sprintf("%s, %d times.", i, s.RegisteredHits[i]))
 	}
