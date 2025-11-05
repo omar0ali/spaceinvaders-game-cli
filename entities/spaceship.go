@@ -16,6 +16,19 @@ import (
 	"github.com/omar0ali/spaceinvaders-game-cli/game/design"
 )
 
+type SpaceshipReport struct {
+	KilledBy struct {
+		Name  string
+		Power int
+	}
+	RegisteredHits map[string]int
+}
+
+func (s *SpaceshipReport) Report(name string, power int) {
+	s.KilledBy.Name = name
+	s.KilledBy.Power = power
+}
+
 type Score struct {
 	Score          int
 	Level          int
@@ -47,7 +60,7 @@ type SpaceShip struct {
 	SelectedSpaceship *design.SpaceshipDesign
 	LoadedDesigns     *design.LoadedDesigns
 	mouseDown         bool
-	RegisteredHits    map[string]int
+	SpaceshipReport
 }
 
 func (s *SpaceShip) GetRegisteredHits() []string {
@@ -59,7 +72,13 @@ func (s *SpaceShip) GetRegisteredHits() []string {
 	}
 
 	sort.Slice(keys, func(i, j int) bool {
-		return s.RegisteredHits[keys[i]] > s.RegisteredHits[keys[j]]
+		a, b := s.RegisteredHits[keys[i]], s.RegisteredHits[keys[j]]
+		// sort (based on the lenght of the string)
+		// if we found an equal number of times recorded hit
+		if a == b {
+			return len(keys[i]) < len(keys[j])
+		}
+		return a > b
 	})
 
 	for _, i := range keys {
@@ -119,7 +138,9 @@ func NewSpaceShip(cfg game.GameConfig, gc *game.GameContext, designs *design.Loa
 		Score: Score{
 			NextLevelScore: cfg.SpaceShipConfig.NextLevelScore,
 		},
-		RegisteredHits: map[string]int{},
+		SpaceshipReport: SpaceshipReport{
+			RegisteredHits: map[string]int{},
+		},
 	}
 }
 
@@ -303,12 +324,14 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 					s.TakeDamage(alien.GetPower())
 					alien.RemoveBeam(alienBeam)
 					s.RegisterHit(fmt.Sprintf("%s POW: %d", alien.Name, alien.GunPower))
+					s.Report(alien.Name, alien.GetPower())
 				}
 			}
 			if Crash(&s.ObjectBase, &alien.ObjectBase, gc) {
 				s.TakeDamage(1)
 				alien.TakeDamage(5)
 				s.RegisterHit(fmt.Sprintf("Crashed %s", alien.Name))
+				s.Report(alien.Name, alien.GetPower())
 			}
 		}
 	}
@@ -323,6 +346,8 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 						s.TakeDamage(2)
 						p.RemoveParticle(m)
 						s.RegisterHit("Crashed Meteroid")
+						s.Report("Meteroid", 2)
+
 					}
 				}
 			}
@@ -336,6 +361,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 					s.TakeDamage(b.BossAlien.GetPower())
 					b.BossAlien.RemoveBeam(bossBeam)
 					s.RegisterHit(fmt.Sprintf("%s POW: %d", b.BossAlien.Name, b.BossAlien.GunPower))
+					s.Report(b.BossAlien.Name, b.BossAlien.GetPower())
 				}
 			}
 
@@ -344,6 +370,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 			if Crash(&s.ObjectBase, &b.BossAlien.ObjectBase, gc) {
 				s.TakeDamage(1)
 				b.BossAlien.TakeDamage(5)
+				s.Report(b.BossAlien.Name, 1)
 			}
 
 		}
@@ -354,6 +381,7 @@ func (s *SpaceShip) MovementAndCollision(delta float64, gc *game.GameContext) {
 				s.TakeDamage(2)
 				asteroid.TakeDamage(4)
 				s.RegisterHit(fmt.Sprintf("Crashed Asteroid %s", asteroid.Name))
+				s.Report(asteroid.Name, 2)
 			}
 		}
 	}

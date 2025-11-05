@@ -190,12 +190,15 @@ func (u *UI) Draw(gc *game.GameContext) {
 			Taken damage from:
 			%v
 
+			Killed By:
+			%v
+
 			Thank you for playing :)
 			---------------------------------------
 			Would you like to play again?
 			[Ctrl+R] To Restart.
 			[Ctrl+Q] To Quit.
-			`, strings.Join(s.GetRegisteredHits(), "\n")),
+			`, strings.Join(s.GetRegisteredHits(), "\n"), s.KilledBy),
 				"Game Over",
 			)
 		}
