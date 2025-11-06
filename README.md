@@ -87,7 +87,7 @@ The game is an endless space shooter where players face increasingly difficult w
     - Can select a spaceship with Left Mouse Click.
 - [X] In game audio (using: [gopxl/beeb](https://github.com/gopxl/beep))
     - Sounds downloaded from [pixabay.com/sound-effects](https://pixabay.com/sound-effects)
-- [ ] Compendium Menu showing (all entities range from all spaceships, alien-ships, abilities ...etc.)
+- [X] Compendium Menu showing (all entities range from all spaceships, alien-ships, abilities ...etc.)
 
 ### Controls
 

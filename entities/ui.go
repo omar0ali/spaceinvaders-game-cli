@@ -91,9 +91,166 @@ func NewUI(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) *UI
 						"Compendium",
 					},
 					[]string{
-						"Scan the battlefield: ships, weapons, abilities.",
+						"Scan the battlefield: ships, asteroids and abilities.",
 					}, func() {
-						SetStatus("Still under development", gc)
+						// init items for the menu
+						abilitiesItems := make([]*ui.Box, 0)
+						spaceshipsItems := make([]*ui.Box, 0)
+						asteroidsItems := make([]*ui.Box, 0)
+						alienShipsItems := make([]*ui.Box, 0)
+						bossShipsItems := make([]*ui.Box, 0)
+						modifiersItems := make([]*ui.Box, 0)
+
+						// Load designs for each items
+						if ship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+							for _, i := range ship.LoadedDesigns.ListOfAbilities {
+								descriptions := []string{
+									fmt.Sprintf("- [%s]", i.Name),
+									fmt.Sprintf("* Description:    %s", i.Description),
+									fmt.Sprintf("* Status:    %s", i.Status),
+								}
+
+								abilitiesItems = append(
+									abilitiesItems,
+									ui.NewUIBox(i.Shape, descriptions, nil), // using hover
+								)
+							}
+							for _, i := range ship.LoadedDesigns.ListOfSpaceships {
+								descriptions := []string{
+									fmt.Sprintf("- [%s]", i.Name),
+									fmt.Sprintf("* HP:         %d", i.EntityHealth),
+									fmt.Sprintf("* Gun POW:    %d", i.GunPower),
+									fmt.Sprintf("* Gun CAP:    %d", i.GunCap),
+									fmt.Sprintf("* Gun SPD:    %d", i.GunSpeed),
+									fmt.Sprintf("* Gun CD:     %d ms", i.GunCooldown),
+									fmt.Sprintf("* Gun RLD CD: %d ms", i.GunReloadCooldown),
+								}
+								spaceshipsItems = append(
+									spaceshipsItems,
+									ui.NewUIBox(i.Shape, descriptions, nil), // using hover
+								)
+							}
+							for _, i := range ship.LoadedDesigns.ListOfAsteroids.Asteroids {
+								descriptions := []string{
+									fmt.Sprintf("- [%s]", i.Name),
+									fmt.Sprintf("Color:  %s", i.Color),
+									fmt.Sprintf("Health: %d", i.EntityHealth),
+								}
+
+								asteroidsItems = append(asteroidsItems,
+									ui.NewUIBox(i.Shape, descriptions, nil))
+							}
+							for _, i := range ship.LoadedDesigns.ListOfAlienships {
+								descriptions := []string{
+									fmt.Sprintf("- [%s]", i.Name),
+									fmt.Sprintf("* HP:         %d", i.EntityHealth),
+									fmt.Sprintf("* Gun POW:    %d", i.GunPower),
+									fmt.Sprintf("* Gun CAP:    %d", i.GunCap),
+									fmt.Sprintf("* Gun SPD:    %d", i.GunSpeed),
+									fmt.Sprintf("* Gun CD:     %d ms", i.GunCooldown),
+									fmt.Sprintf("* Gun RLD CD: %d ms", i.GunReloadCooldown),
+								}
+								alienShipsItems = append(alienShipsItems,
+									ui.NewUIBox(i.Shape, descriptions, nil))
+							}
+							for _, i := range ship.LoadedDesigns.ListOfBossShips {
+								descriptions := []string{
+									fmt.Sprintf("- [%s]", i.Name),
+									fmt.Sprintf("* HP:         %d", i.EntityHealth),
+									fmt.Sprintf("* Gun POW:    %d", i.GunPower),
+									fmt.Sprintf("* Gun CAP:    %d", i.GunCap),
+									fmt.Sprintf("* Gun SPD:    %d", i.GunSpeed),
+									fmt.Sprintf("* Gun CD:     %d ms", i.GunCooldown),
+									fmt.Sprintf("* Gun RLD CD: %d ms", i.GunReloadCooldown),
+								}
+								bossShipsItems = append(bossShipsItems,
+									ui.NewUIBox(i.Shape, descriptions, nil))
+							}
+							for _, i := range ship.LoadedDesigns.ModifierDesign {
+								descriptions := []string{
+									fmt.Sprintf("- [%s]", i.Name),
+									fmt.Sprintf("* Health:     %d", i.EntityHealth),
+									fmt.Sprintf("* Modify Gun POW:     %d", i.ModifyGunCoolDown),
+									fmt.Sprintf("* Modify Gun CAP:     %d", i.ModifyGunCap),
+									fmt.Sprintf("* Modify Gun SPD:     %d", i.ModifyGunSpeed),
+									fmt.Sprintf("* Modify Gun CD:      %d", i.ModifyGunCoolDown),
+									fmt.Sprintf("* Modify Gun CD RLD:  %d", i.ModifyGunReloadCoolDown),
+									fmt.Sprintf("* Max:     %d", i.MaxValue),
+								}
+
+								modifiersItems = append(modifiersItems,
+									ui.NewUIBox(i.Shape, descriptions, nil))
+							}
+
+						}
+						layoutCodexMenu := ui.InitCodexMenu(20, 5)
+						boxes := make([]*ui.Box, 0)
+						boxes = append(boxes,
+							ui.NewUIBox(
+								[]string{
+									"Abilities",
+								},
+								[]string{
+									"Displaying the Abilities",
+								}, func() {
+									layoutCodexMenu.SetList(abilitiesItems)
+								}),
+							ui.NewUIBox(
+								[]string{
+									"Spaceships",
+								},
+								[]string{
+									"Displaying the Spaceships",
+								}, func() {
+									layoutCodexMenu.SetList(spaceshipsItems)
+								}),
+							ui.NewUIBox(
+								[]string{
+									"Asteroids",
+								},
+								[]string{
+									"Displaying the Asteroids",
+								}, func() {
+									layoutCodexMenu.SetList(asteroidsItems)
+								}),
+							ui.NewUIBox(
+								[]string{
+									"Alienships",
+								},
+								[]string{
+									"Displaying the Alienships",
+								}, func() {
+									layoutCodexMenu.SetList(alienShipsItems)
+								}),
+							ui.NewUIBox(
+								[]string{
+									"Boss Spaceships",
+								},
+								[]string{
+									"Displaying the Boss Spaceships",
+								}, func() {
+									layoutCodexMenu.SetList(bossShipsItems)
+								}),
+							ui.NewUIBox(
+								[]string{
+									"Modifiers",
+								},
+								[]string{
+									"Displaying the Modifiers",
+								}, func() {
+									layoutCodexMenu.SetList(modifiersItems)
+								}),
+							ui.NewUIBox(
+								[]string{
+									"Back",
+								},
+								[]string{
+									"Back to main menu.",
+								}, func() {
+									RestartGame(gc, u.cfg, u.exitCha)
+								}))
+						layoutCodexMenu.SetMenuItems(boxes)
+						layout.SetLayout(layoutCodexMenu)
 					},
 				),
 				ui.NewUIBox([]string{
