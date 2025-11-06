@@ -7,7 +7,7 @@ import (
 )
 
 var StartGameDesc = []string{
-	"* Space Invaders Game v1.8.0.alpha.2",
+	"* Space Invaders Game v1.8.0.alpha.3",
 	"The game is an endless space shooter where players face increasingly difficult",
 	"waves of alien ships that scale with their level.",
 	"",

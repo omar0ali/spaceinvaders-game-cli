@@ -110,6 +110,7 @@
     },
     {
         "name": "HEALTH",
+        "status": "Restore Full Health & Increase Health Capacity by 2",
         "shape": [
             "    _____    ",
             "   / +++ \\   ",

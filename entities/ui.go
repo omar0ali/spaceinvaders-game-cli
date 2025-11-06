@@ -170,7 +170,7 @@ func NewUI(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) *UI
 								descriptions := []string{
 									fmt.Sprintf("- [%s]", i.Name),
 									fmt.Sprintf("* Health:     %d", i.EntityHealth),
-									fmt.Sprintf("* Modify Gun POW:     %d", i.ModifyGunCoolDown),
+									fmt.Sprintf("* Modify Gun POW:     %d", i.ModifyGunPower),
 									fmt.Sprintf("* Modify Gun CAP:     %d", i.ModifyGunCap),
 									fmt.Sprintf("* Modify Gun SPD:     %d", i.ModifyGunSpeed),
 									fmt.Sprintf("* Modify Gun CD:      %d", i.ModifyGunCoolDown),
@@ -242,7 +242,7 @@ func NewUI(gc *game.GameContext, cfg game.GameConfig, exitCha chan struct{}) *UI
 								}),
 							ui.NewUIBox(
 								[]string{
-									"Back",
+									"< Back",
 								},
 								[]string{
 									"Back to main menu.",
@@ -348,14 +348,14 @@ func (u *UI) Draw(gc *game.GameContext) {
 			%v
 
 			Killed By:
-			%v
+			%s Level: %d
 
 			Thank you for playing :)
 			---------------------------------------
 			Would you like to play again?
 			[Ctrl+R] To Restart.
 			[Ctrl+Q] To Quit.
-			`, strings.Join(s.GetRegisteredHits(), "\n"), s.KilledBy),
+			`, strings.Join(s.GetRegisteredHits(), "\n"), s.KilledBy.Name, s.KilledBy.Power),
 				"Game Over",
 			)
 		}
@@ -443,7 +443,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 								"Restart",
 							},
 							[]string{
-								"Restart the game.",
+								"Return to Main Menu.",
 							},
 							func() {
 								RestartGame(gc, u.cfg, u.exitCha)

@@ -2,6 +2,7 @@ package entities
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/omar0ali/spaceinvaders-game-cli/base"
@@ -27,6 +28,10 @@ func NewAlienProducer(gc *game.GameContext, designs *design.LoadedDesigns) *Alie
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
 			a.Level += 0.1
+			_, f := math.Modf(a.Level)
+			if f == 0 {
+				SetStatus(fmt.Sprintf("Wave %f", a.Level), gc)
+			}
 			// clear screen from aliens when the player levels up
 			a.Aliens = nil
 		})
@@ -121,7 +126,7 @@ func (a *AlienProducer) InputEvents(event tcell.Event, gc *game.GameContext) {
 func (a *AlienProducer) UIAlienShipData(gc *game.GameContext) {
 	whiteColor := base.StyleIt(tcell.ColorWhite)
 	greenColor := base.StyleIt(tcell.ColorYellowGreen)
-	aliensStr := []rune(fmt.Sprintf("Difficulty Level: %d", int(a.Level)))
+	aliensStr := []rune(fmt.Sprintf("Wave: %d", int(a.Level)))
 	w, h := base.GetSize()
 	ui.DrawBoxOverlap(base.Point{
 		X: w - (len(aliensStr) + 4), Y: h - 5,

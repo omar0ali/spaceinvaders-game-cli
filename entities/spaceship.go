@@ -492,10 +492,15 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 
 						func() {
 							upgrade(func() bool {
-								if design.Status != "" {
-									SetStatus(design.Status, gc)
+								result := s.ApplyAbility(design.Effect, design.Effect.MaxValue)
+								if result {
+									if design.Status != "" {
+										SetStatus(design.Status, gc)
+									}
+								} else {
+									SetStatus("Ability Maxed Out!", gc)
 								}
-								return s.ApplyAbility(design.Effect, design.Effect.MaxValue)
+								return result
 							})
 						},
 					),
