@@ -379,89 +379,7 @@ func (u *UI) InputEvents(events tcell.Event, gc *game.GameContext) {
 				return
 			}
 			gc.Sounds.PlaySound("8-bit-game-sfx-sound-select.mp3", -1)
-			u.PauseScreen = !u.PauseScreen
-			if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
-				var spaceship *SpaceShip
-				if ship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-					spaceship = ship
-				}
-				if u.PauseScreen {
-					boxes := []*ui.Box{
-						ui.NewUIBox(
-							[]string{
-								"Continue",
-							},
-							[]string{
-								"Continue the game.",
-							}, func() {
-								u.PauseScreen = false
-								layout.SetLayout(nil)
-							},
-						),
-						ui.NewUIBox(
-							[]string{
-								"My Spaceship",
-							}, []string{
-								fmt.Sprintf("[%s] - [Level: %d]", spaceship.SelectedSpaceship.Name, spaceship.Level),
-								"---------------------------------",
-								fmt.Sprintf("Gun Capacity:         %d +(%d) -> %d",
-									spaceship.SelectedSpaceship.GunCap,
-									spaceship.GetCapacity()-spaceship.SelectedSpaceship.GunCap,
-									spaceship.GetCapacity(),
-								),
-								fmt.Sprintf("Gun Speed:            %d +(%d) -> %d",
-									spaceship.SelectedSpaceship.GunSpeed,
-									spaceship.GetSpeed()-spaceship.SelectedSpaceship.GunSpeed,
-									spaceship.GetSpeed(),
-								),
-								fmt.Sprintf("Gun Power:            %d +(%d) -> %d",
-									spaceship.SelectedSpaceship.GunPower,
-									spaceship.GetPower()-spaceship.SelectedSpaceship.GunPower,
-									spaceship.GetPower(),
-								),
-								fmt.Sprintf("Gun Cooldown:         %d +(%d) -> %d",
-									spaceship.SelectedSpaceship.GunCooldown,
-									int(spaceship.GetCooldown())-spaceship.SelectedSpaceship.GunCooldown,
-									spaceship.GetCooldown(),
-								),
-								fmt.Sprintf("Gun Reload Cooldown:  %d +(%d) -> %d",
-									spaceship.SelectedSpaceship.GunReloadCooldown,
-									int(spaceship.GetReloadCooldown())-spaceship.SelectedSpaceship.GunReloadCooldown,
-									spaceship.GetReloadCooldown(),
-								),
-								fmt.Sprintf("Spaceship Health:     %d +(%d) -> %d",
-									spaceship.SelectedSpaceship.EntityHealth,
-									spaceship.MaxHealth-spaceship.SelectedSpaceship.EntityHealth,
-									spaceship.MaxHealth,
-								),
-							}, func() {
-
-							},
-						),
-						ui.NewUIBox(
-							[]string{
-								"Restart",
-							},
-							[]string{
-								"Return to Main Menu.",
-							},
-							func() {
-								RestartGame(gc, u.cfg, u.exitCha)
-							},
-						),
-						ui.NewUIBox([]string{
-							"Quit Game",
-						}, []string{"Exit the game."}, func() {
-							base.ExitGame(u.exitCha)
-						}),
-					}
-					menuUi := ui.InitMainMenu(20, 5, boxes...)
-					menuUi.SelectedDesc = []string{"Paused Game"}
-					layout.SetLayout(menuUi)
-				} else {
-					layout.SetLayout(nil)
-				}
-			}
+			u.PauseGame(gc)
 		}
 	}
 }
@@ -644,4 +562,101 @@ func DrawRectStatus(text string, y int) {
 			}
 		}
 	})
+}
+
+func (u *UI) PauseGame(gc *game.GameContext) {
+	Pausing := func(layout *ui.UISystem) {
+		if u.PauseScreen {
+			layout.SetLayout(nil)
+			done := make(chan struct{})
+			SetStatus("Resume in 3 seconds", gc)
+			base.DoOnce(3*time.Second, func() {
+				u.PauseScreen = false
+			}, done)
+		} else {
+			u.PauseScreen = true
+		}
+	}
+	if layout, ok := gc.FindEntity("layout").(*ui.UISystem); ok {
+		Pausing(layout)
+		var spaceship *SpaceShip
+		if ship, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
+			spaceship = ship
+		}
+		if u.PauseScreen {
+			boxes := []*ui.Box{
+				ui.NewUIBox(
+					[]string{
+						"Continue",
+					},
+					[]string{
+						"Continue the game.",
+					}, func() {
+						Pausing(layout)
+					},
+				),
+				ui.NewUIBox(
+					[]string{
+						"My Spaceship",
+					}, []string{
+						fmt.Sprintf("[%s] - [Level: %d]", spaceship.SelectedSpaceship.Name, spaceship.Level),
+						"---------------------------------",
+						fmt.Sprintf("Gun Capacity:         %d +(%d) -> %d",
+							spaceship.SelectedSpaceship.GunCap,
+							spaceship.GetCapacity()-spaceship.SelectedSpaceship.GunCap,
+							spaceship.GetCapacity(),
+						),
+						fmt.Sprintf("Gun Speed:            %d +(%d) -> %d",
+							spaceship.SelectedSpaceship.GunSpeed,
+							spaceship.GetSpeed()-spaceship.SelectedSpaceship.GunSpeed,
+							spaceship.GetSpeed(),
+						),
+						fmt.Sprintf("Gun Power:            %d +(%d) -> %d",
+							spaceship.SelectedSpaceship.GunPower,
+							spaceship.GetPower()-spaceship.SelectedSpaceship.GunPower,
+							spaceship.GetPower(),
+						),
+						fmt.Sprintf("Gun Cooldown:         %d +(%d) -> %d",
+							spaceship.SelectedSpaceship.GunCooldown,
+							int(spaceship.GetCooldown())-spaceship.SelectedSpaceship.GunCooldown,
+							spaceship.GetCooldown(),
+						),
+						fmt.Sprintf("Gun Reload Cooldown:  %d +(%d) -> %d",
+							spaceship.SelectedSpaceship.GunReloadCooldown,
+							int(spaceship.GetReloadCooldown())-spaceship.SelectedSpaceship.GunReloadCooldown,
+							spaceship.GetReloadCooldown(),
+						),
+						fmt.Sprintf("Spaceship Health:     %d +(%d) -> %d",
+							spaceship.SelectedSpaceship.EntityHealth,
+							spaceship.MaxHealth-spaceship.SelectedSpaceship.EntityHealth,
+							spaceship.MaxHealth,
+						),
+					}, func() {
+
+					},
+				),
+				ui.NewUIBox(
+					[]string{
+						"Restart",
+					},
+					[]string{
+						"Return to Main Menu.",
+					},
+					func() {
+						RestartGame(gc, u.cfg, u.exitCha)
+					},
+				),
+				ui.NewUIBox([]string{
+					"Quit Game",
+				}, []string{"Exit the game."}, func() {
+					base.ExitGame(u.exitCha)
+				}),
+			}
+			menuUi := ui.InitMainMenu(20, 5, boxes...)
+			menuUi.SelectedDesc = []string{"Paused Game"}
+			layout.SetLayout(menuUi)
+		} else {
+			layout.SetLayout(nil)
+		}
+	}
 }

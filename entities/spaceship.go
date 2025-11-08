@@ -230,6 +230,9 @@ func (s *SpaceShip) InputEvents(event tcell.Event, gc *game.GameContext) {
 
 	switch ev := event.(type) {
 	case *tcell.EventMouse:
+		if gc.Halt {
+			return
+		}
 		x, y := ev.Position()
 		moveMouse(x, y)
 

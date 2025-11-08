@@ -71,6 +71,15 @@ func (a *AsteroidProducer) Deploy() {
 }
 
 func (a *AsteroidProducer) Update(gc *game.GameContext, delta float64) {
+	// temporary fix, stop deploying Asteroids when game starts
+	if ui, ok := gc.FindEntity("ui").(*UI); ok {
+		if ui.MenuScreen {
+			return
+		}
+	} else {
+		return
+	}
+
 	if len(a.Asteroids) < min(int(a.Level), a.LoadedDesigns.ListOfAsteroids.MaxLimit) {
 		game.Log(game.Info, "Asteroids Deployed %d Level %.1f", len(a.Asteroids), a.Level)
 		a.Deploy()
