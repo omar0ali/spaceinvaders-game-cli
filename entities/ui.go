@@ -280,7 +280,7 @@ func (u *UI) Draw(gc *game.GameContext) {
 	minutes = int(u.timeElapsed) / 60
 	seconds = int(u.timeElapsed) % 60
 
-	if !u.MenuScreen {
+	if !u.MenuScreen && !u.SpaceShipSelection {
 		w, h := base.GetSize()
 		// draw a line
 
@@ -324,13 +324,10 @@ func (u *UI) Draw(gc *game.GameContext) {
 				for i, r := range []rune(fmt.Sprintf("Kills: %d", s.Kills)) {
 					base.SetContentWithStyle(i+x+2, y+3, r, whiteColor)
 				}
+				// display spacehsip details - Also drop a health kit every minute
+				s.UISpaceshipData(gc)
 			}
 		}, greenColor)
-
-		// display spacehsip details - Also drop a health kit every minute
-		if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
-			s.UISpaceshipData(gc)
-		}
 
 		// display aliens details
 		if aliens, ok := gc.FindEntity("alien").(*AlienProducer); ok {
@@ -569,7 +566,7 @@ func (u *UI) PauseGame(gc *game.GameContext) {
 		if u.PauseScreen {
 			layout.SetLayout(nil)
 			done := make(chan struct{})
-			SetStatus("Resume in 3 seconds", gc)
+			SetStatus("Get ready! Resuming in 3 seconds", gc)
 			base.DoOnce(3*time.Second, func() {
 				u.PauseScreen = false
 			}, done)
