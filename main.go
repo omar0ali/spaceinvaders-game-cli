@@ -78,7 +78,10 @@ func main() {
 					layout.Update(&gameContext, delta)
 					layout.Draw(&gameContext)
 				}
-
+				// draw only (to display all objects when game is paused)
+				for _, entity := range gameContext.GetEntities() {
+					entity.Draw(&gameContext)
+				}
 			} else { // update everything
 				for _, entity := range gameContext.GetEntities() {
 					entity.Draw(&gameContext)
