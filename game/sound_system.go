@@ -17,7 +17,7 @@ import (
 // to limit how many sounds playing at the same time.
 var (
 	soundsPlaying int32
-	maxSounds     int32 = 10
+	maxSounds     int32 = 20
 )
 
 type nopCloser struct {

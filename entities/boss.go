@@ -29,13 +29,6 @@ func NewBossAlienProducer(gc *game.GameContext, designs *design.LoadedDesigns) *
 	if s, ok := gc.FindEntity("spaceship").(*SpaceShip); ok {
 		s.AddOnLevelUp(func(newLevel int) {
 			b.Level += 0.1
-			if b.BossAlien != nil {
-				w, _ := base.GetSize()
-				// reposition the boss ship a little back, to give player free area when choosing
-				// to level up state. To avoid hitting it.
-				b.BossAlien.Position.X = float64(w / 2)
-				b.BossAlien.Position.Y = -2.0
-			}
 		})
 	}
 

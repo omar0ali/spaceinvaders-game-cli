@@ -451,6 +451,25 @@ func (s *SpaceShip) LevelUpMenu(gc *game.GameContext) {
 					u.LevelUpScreen = false
 					layout.SetLayout(nil)
 				}
+
+				// on very level up, should clear the screen from enemies
+				if a, ok := gc.FindEntity("alien").(*AlienProducer); ok {
+					// clear screen from aliens when the player levels up
+					a.Aliens = nil
+				}
+				if a, ok := gc.FindEntity("asteroid").(*AsteroidProducer); ok {
+					a.Asteroids = nil
+				}
+				if b, ok := gc.FindEntity("boss").(*BossProducer); ok {
+					if b.BossAlien != nil {
+						w, _ := base.GetSize()
+						// reposition the boss ship a little back, to give player free area when choosing
+						// to level up state. To avoid hitting it.
+						b.BossAlien.Position.X = float64(w / 2)
+						b.BossAlien.Position.Y = -2.0
+					}
+				}
+
 			}
 
 			displayUpgrade := func(v int, max string) string {

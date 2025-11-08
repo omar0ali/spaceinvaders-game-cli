@@ -32,8 +32,6 @@ func NewAlienProducer(gc *game.GameContext, designs *design.LoadedDesigns) *Alie
 			if f == 0 {
 				SetStatus(fmt.Sprintf("Wave %f", a.Level), gc)
 			}
-			// clear screen from aliens when the player levels up
-			a.Aliens = nil
 		})
 	}
 	return a

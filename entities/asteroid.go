@@ -33,8 +33,6 @@ func NewAsteroidProducer(gc *game.GameContext, designs *design.LoadedDesigns) *A
 		s.AddOnLevelUp(func(newLevel int) {
 			a.Level += 0.1
 			game.Log(game.Warn, "Asteroid Level UP: %1.f", a.Level)
-			// clear screen from asteroids when the player levels up
-			a.Asteroids = nil
 		})
 	}
 
