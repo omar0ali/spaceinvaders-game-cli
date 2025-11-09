@@ -37,7 +37,7 @@
         ]
     },
     {
-        "name": "diamond",
+        "name": "Diamond",
         "health": 30,
         "color": "FFFAFA",
         "speed": 2,
@@ -111,7 +111,7 @@
         ]
     },
     {
-        "name": "viper",
+        "name": "Viper",
         "health": 70,
         "color": "B39EB5",
         "speed": 2,
